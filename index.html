@@ -2308,7 +2308,7 @@ async function doSearch(){
   const show000666=ql.includes('000666')||(matchesJunior(ql)&&ql.includes('666'));
   const juniorBroad=matchesJunior(ql)&&![fake,boveda,levitico,mivida3,showGata,showTeniente,showChango,showTigre,showCripto,show000666].some(Boolean);
 
-  let fp;try{fp=fetch(`https://itunes.apple.com/search?term=${encodeURIComponent(q)}&entity=album&limit=16`);}catch(e){fp=Promise.reject(e);}
+  let fp;try{fp=fetch(`https://itunes.apple.com/search?term=${encodeURIComponent(q)}&entity=album,song&limit=16`);}catch(e){fp=Promise.reject(e);}
 
   resultsEl.innerHTML=`
     <div class="panel-header">Results <span data-lucide="loader-2" style="animation:spin .8s linear infinite"></span></div>
