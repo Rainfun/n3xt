@@ -1272,7 +1272,16 @@ const db    = getFirestore(fbApp);
 const auth  = getAuth(fbApp);
 
 window._fbLogSearch = async function(q) {
-  try { await addDoc(collection(db, "searches"), { query: q, ts: serverTimestamp(), ua: navigator.userAgent.slice(0,80) }); } catch(e) {}
+  try {
+    await addDoc(collection(db, "searches"), {
+      query: q,
+      ts: serverTimestamp(),
+      ua: navigator.userAgent.slice(0, 80)
+    });
+    console.log("[N3XT] search logged:", q);
+  } catch (e) {
+    console.error("[N3XT] search log failed:", e);
+  }
 };
 window._fbLogDownload = async function(albumName, type) {
   try { await addDoc(collection(db, "downloads"), { album: albumName, type, ts: serverTimestamp() }); } catch(e) {}
