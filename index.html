@@ -960,8 +960,7 @@ img{display:block}
 
     <div class="trending-row">
       <div class="trending-label"><span data-lucide="flame"></span>Trending</div>
-      <button class="trending-pill" onclick="setSearch('Junior H')">Junior H <span class="new-badge">Hot</span></button>
-            <button class="trending-pill" onclick="setSearch('Sirena Junior H, Neton Vega')">Sirena Junior H, Neton Vega<span class="new-badge">Hot</span></button>
+      <button class="trending-pill" onclick="setSearch('Contingente II')">Contingente II<span class="new-badge">Hot</span></button>
       <button class="trending-pill" onclick="setSearch('Peso Pluma')">Peso Pluma</button>
       <button class="trending-pill" onclick="setSearch('Natanael Cano')">Natanael Cano</button>
       <button class="trending-pill" onclick="setSearch('Eslabon Armado')">Eslabon Armado</button>
@@ -1273,16 +1272,7 @@ const db    = getFirestore(fbApp);
 const auth  = getAuth(fbApp);
 
 window._fbLogSearch = async function(q) {
-  try {
-    await addDoc(collection(db, "searches"), {
-      query: q,
-      ts: serverTimestamp(),
-      ua: navigator.userAgent.slice(0, 80)
-    });
-    console.log("[N3XT] search logged:", q);
-  } catch (e) {
-    console.error("[N3XT] search log failed:", e);
-  }
+  try { await addDoc(collection(db, "searches"), { query: q, ts: serverTimestamp(), ua: navigator.userAgent.slice(0,80) }); } catch(e) {}
 };
 window._fbLogDownload = async function(albumName, type) {
   try { await addDoc(collection(db, "downloads"), { album: albumName, type, ts: serverTimestamp() }); } catch(e) {}
@@ -1725,6 +1715,32 @@ const leviticoAlbum={id:'levitico',name:'LEVITICO',artist:'Peso Pluma',year:'202
   tracks:[{name:'BELICE',artist:'Peso Pluma & Eslabon Armado & Tito Double P',len:'3:44'}],failedCount:16};
 const miVida3Album={id:'mi-vida-3',name:'Mi Vida En Un Cigarro 3',artist:'Junior H',year:'2026',source:'Instagram',
   cover:'https://github.com/Rainfun/rainfun.github.io/blob/well-known/photo_5107148283603258266_x.jpg?raw=true',dlTime:10000,failedCount:14};
+const contingente2Album={
+  id:'contingente-ii',name:'CONTINGENTE II',artist:'Junior H',year:'2026',source:'Instagram',
+  cover:'',dlTime:10000,
+  tracks:[
+    {name:'CNTGNT II (Intro)',         artist:'Junior H',                    len:'2:41'},
+    {name:'Bon Appétit',               artist:'Junior H, Ovi',               len:'3:31'},
+    {name:'Escribiendo Canciones',     artist:'Junior H',                    len:'2:53'},
+    {name:'Lo Qué Quisiera',           artist:'Junior H',                    len:'2:38'},
+    {name:'Let Me Know',               artist:'Junior H',                    len:'2:47'},
+    {name:'Tory Burch',                artist:'Junior H, Paloma Mami',       len:'3:34'},
+    {name:'Conmigo Se Va',             artist:'Junior H, Alemán',            len:'3:53'},
+    {name:'Mi Badgyal',                artist:'Junior H, Cris MJ',           len:'4:00'},
+    {name:'Desvestida',                artist:'Junior H',                    len:'3:10'},
+    {name:'Hooka',                     artist:'Junior H, Chencho Corleone',  len:'3:18'},
+    {name:'Yo Sé',                     artist:'Junior H',                    len:'2:59'},
+    {name:'Secret Service',            artist:'Junior H, OHGESSY',           len:'2:47'},
+    {name:'Hotel en Chicago',          artist:'Junior H, Krizous',           len:'3:20'},
+    {name:'No Andas Con Cualquiera',   artist:'Junior H, Maluma',            len:'2:36'},
+    {name:'Cómo Te Fue',               artist:'Junior H, Rels B',            len:'3:21'},
+    {name:'Sin Censura',               artist:'Junior H, La Santa Grifa',    len:'3:19'},
+    {name:'Tragos',                    artist:'Junior H',                    len:'2:57'},
+    {name:'Céline',                    artist:'Junior H, Luar La L',         len:'3:04'},
+    {name:'La Señal',                  artist:'Junior H',                    len:'2:34'},
+    {name:'Última Vez',                artist:'Junior H',                    len:'2:50'},
+  ]
+};
 const gataS     ={id:'s-gata',     name:'GATA',          artist:'Junior H',                      year:'2026',source:'Instagram',isSingle:true};
 const tenienteS ={id:'s-teniente', name:'EL TENIENTE',   artist:'Junior H & Gael Valenzuela',    year:'2026',source:'Instagram',isSingle:true};
 const changoS   ={id:'s-chango',   name:'EL CHANGO',     artist:'Junior H',                      year:'2026',source:'Instagram',isSingle:true};
@@ -1737,7 +1753,7 @@ const ARTISTS={
   'junior-h':{
     name:'Junior H',initials:'JH',
     albums:[
-      sadBoyzAlbum,miVida3Album,
+      sadBoyzAlbum,miVida3Album,contingente2Album,
       {id:'s-gata',name:'GATA',year:'2026',source:'Instagram',isSingle:true},
       {id:'s-teniente',name:'EL TENIENTE',year:'2026',source:'Instagram',isSingle:true},
       {id:'s-chango',name:'EL CHANGO',year:'2026',source:'Instagram',isSingle:true},
@@ -2316,9 +2332,10 @@ async function doSearch(){
   const showTigre=ql.includes('tigre')||(matchesJunior(ql)&&ql.includes('tigre'));
   const showCripto=ql.includes('cripto')||ql.includes('criptomoneda')||ql.includes('jorsshh')||ql.includes('calle 24');
   const show000666=ql.includes('000666')||(matchesJunior(ql)&&ql.includes('666'));
-  const juniorBroad=matchesJunior(ql)&&![fake,boveda,levitico,mivida3,showGata,showTeniente,showChango,showTigre,showCripto,show000666].some(Boolean);
+  const showContingente2=ql.includes('contingente')||ql.includes('cntgnt')||(matchesJunior(ql)&&ql.includes('contingente'));
+  const juniorBroad=matchesJunior(ql)&&![fake,boveda,levitico,mivida3,showGata,showTeniente,showChango,showTigre,showCripto,show000666,showContingente2].some(Boolean);
 
-  let fp;try{fp=fetch(`https://itunes.apple.com/search?term=${encodeURIComponent(q)}&entity=album,song&limit=16`);}catch(e){fp=Promise.reject(e);}
+  let fp;try{fp=fetch(`https://itunes.apple.com/search?term=${encodeURIComponent(q)}&entity=album&limit=16`);}catch(e){fp=Promise.reject(e);}
 
   resultsEl.innerHTML=`
     <div class="panel-header">Results <span data-lucide="loader-2" style="animation:spin .8s linear infinite"></span></div>
@@ -2349,11 +2366,11 @@ async function doSearch(){
     reIcons();return;
   }
   let items=(fr.results||[]).filter((v,i,a)=>a.findIndex(x=>x.collectionId===v.collectionId)===i);
-  lastResultsCache=[items,fake,boveda,levitico,q,mivida3,showGata,showTeniente,showChango,showTigre,showCripto,show000666,juniorBroad];
-  renderResults(items,fake,boveda,levitico,q,mivida3,showGata,showTeniente,showChango,showTigre,showCripto,show000666,juniorBroad);
+  lastResultsCache=[items,fake,boveda,levitico,q,mivida3,showGata,showTeniente,showChango,showTigre,showCripto,show000666,juniorBroad,showContingente2];
+  renderResults(items,fake,boveda,levitico,q,mivida3,showGata,showTeniente,showChango,showTigre,showCripto,show000666,juniorBroad,showContingente2);
 }
 
-function renderResults(items,injectFake,injectBoveda,injectLevitico,q,injectMiVida3,injectGata,injectTeniente,injectChango,injectTigre,injectCripto,inject000666,juniorBroad){
+function renderResults(items,injectFake,injectBoveda,injectLevitico,q,injectMiVida3,injectGata,injectTeniente,injectChango,injectTigre,injectCripto,inject000666,juniorBroad,injectContingente2){
   selectedResultIdx=-1;
   const f=activeFilter;
   const showFake=(injectFake||juniorBroad)&&(f==='all'||f==='Instagram');
@@ -2366,9 +2383,10 @@ function renderResults(items,injectFake,injectBoveda,injectLevitico,q,injectMiVi
   const showTigre=(injectTigre||juniorBroad)&&(f==='all'||f==='Instagram');
   const showCripto=(injectCripto||juniorBroad)&&(f==='all'||f==='Instagram');
   const show000666=(inject000666||juniorBroad)&&(f==='all'||f==='Instagram');
+  const showContingente2=(injectContingente2||juniorBroad)&&(f==='all'||f==='Instagram');
   const showApple=f==='all'||f==='Apple Music'||f==='YouTube Music'||f==='Spotify';
   const filtered=showApple?items:[];
-  const injCount=[showFake,showBoveda,showLevitico,showMiVida3,showGata,showTeniente,showChango,showTigre,showCripto,show000666].filter(Boolean).length;
+  const injCount=[showFake,showBoveda,showLevitico,showMiVida3,showGata,showTeniente,showChango,showTigre,showCripto,show000666,showContingente2].filter(Boolean).length;
   const total=filtered.length+injCount;
 
   let html=`<div class="panel-header">Results <span data-lucide="disc-3"></span></div>
@@ -2405,6 +2423,7 @@ function renderResults(items,injectFake,injectBoveda,injectLevitico,q,injectMiVi
 
   if(showFake)html+=resultRow(sadBoyzAlbum.cover?`<img class="result-thumb" src="${sadBoyzAlbum.cover}" alt="" loading="lazy">`:phThumb,sadBoyzAlbum.name,sadBoyzAlbum.artist,`<span class="badge b-ig">Instagram</span>`,'openSadBoyz()',sadBoyzAlbum.id);
   if(showMiVida3)html+=resultRow(miVida3Album.cover?`<img class="result-thumb" src="${miVida3Album.cover}" alt="" loading="lazy">`:phThumb,miVida3Album.name,miVida3Album.artist,`<span class="badge b-ig">Instagram</span>`,'openMiVida3()',miVida3Album.id);
+  if(showContingente2)html+=resultRow(phThumb,contingente2Album.name,contingente2Album.artist,`<span class="badge b-ig">Instagram</span>`,'openContingente2()',contingente2Album.id);
   if(showBoveda)html+=resultRow(`<img class="result-thumb" src="${esc(bovedeAlbum.cover)}" alt="" loading="lazy">`,bovedeAlbum.name,bovedeAlbum.artist,`<span class="badge b-tg">Telegram</span>`,'openBoveda()',bovedeAlbum.id);
   if(showLevitico)html+=resultRow(phThumb,leviticoAlbum.name,leviticoAlbum.artist,`<span class="badge b-tg">Telegram</span>`,'openLevitico()',leviticoAlbum.id);
 
@@ -2444,7 +2463,7 @@ function renderResults(items,injectFake,injectBoveda,injectLevitico,q,injectMiVi
 }
 
 window.toggleFavFromResult=function(id,btn){
-  const allItems=[sadBoyzAlbum,miVida3Album,bovedeAlbum,leviticoAlbum,gataS,tenienteS,changoS,tigreS,criptoS,s000666];
+  const allItems=[sadBoyzAlbum,miVida3Album,contingente2Album,bovedeAlbum,leviticoAlbum,gataS,tenienteS,changoS,tigreS,criptoS,s000666];
   let albumObj=allItems.find(a=>a.id===id);
   if(!albumObj)albumObj={id,name:'Album',artist:'—',cover:'',source:'Apple Music'};
   toggleFav(albumObj);
@@ -2459,6 +2478,34 @@ window.setSort=function(s){activeSort=s;if(lastResultsCache)renderResults(...las
 // ── Globals ───────────────────────────────────────────────────────
 window.openSadBoyz=openSadBoyz;window.openBoveda=openBoveda;window.openAlbum=openAlbum;window.openLevitico=openLevitico;
 window.openMiVida3=openMiVida3;
+
+function openContingente2(){
+  stopCurrentAudio();
+  const rows=contingente2Album.tracks.map((t,i)=>`
+    <div class="track" style="animation-delay:${i*.025}s">
+      ${pbHTML(true)}
+      <span class="track-no">${i+1}</span>
+      <div class="track-info"><div class="track-name">${esc(t.name)}</div><div class="track-sub">${esc(t.artist)}</div></div>
+      <span class="track-dur">${esc(t.len)}</span>
+    </div>`).join('');
+  openViewer(`
+    <div class="viewer-cover-ph"><span data-lucide="disc-3" style="width:32px;height:32px"></span></div>
+    <div class="viewer-title">${esc(contingente2Album.name)}</div>
+    <div class="viewer-artist" onclick="navigate('/artist/junior-h')">${icon('user')} ${esc(contingente2Album.artist)}</div>
+    <div class="meta-pills">
+      <span class="mpill" style="background:#833ab4;color:#fff">Instagram</span>
+      <span class="mpill">${esc(contingente2Album.year)}</span>
+      <span class="mpill">${contingente2Album.tracks.length} tracks</span>
+    </div>
+    <div class="viewer-actions">
+      ${viewerShareBtn(contingente2Album.id,contingente2Album.name)}
+      ${viewerArtistBtn('junior-h','Junior H')}
+      ${favBtnHTML(contingente2Album)}
+    </div>
+    <button class="dl-btn" onclick="handleLeakedDL(contingente2Album)">${icon('download')} Download Album</button>
+    <div class="tl-label">Tracklist</div>${rows}`,contingente2Album);
+}
+window.openContingente2=openContingente2;
 window.openSingleGata    =()=>openSingle(gataS);
 window.openSingleTeniente=()=>openSingle(tenienteS);
 window.openSingleChango  =()=>openSingle(changoS);
