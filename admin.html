@@ -1,0 +1,508 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>N3XT Admin</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;900&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#050505;--bg2:#0d0d0d;--bg3:#141414;
+  --fg:#f5f5f5;--fg2:#c0c0c0;--fg3:#555;--fg4:#2a2a2a;
+  --border:rgba(255,255,255,.07);--surface:#141414;--surface2:#1e1e1e;
+  --accent:#fa2d48;--green:#16a34a;
+  --radius:12px;--transition:.2s cubic-bezier(.4,0,.2,1);
+}
+body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--fg);-webkit-font-smoothing:antialiased;min-height:100dvh}
+body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellipse 55% 40% at 50% 0%,rgba(250,45,72,.09) 0%,transparent 70%);pointer-events:none;z-index:0}
+
+@keyframes fadeUp{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
+@keyframes spin{to{transform:rotate(360deg)}}
+@keyframes pulse{0%,100%{box-shadow:0 0 10px rgba(250,45,72,.7)}50%{box-shadow:0 0 22px rgba(250,45,72,1)}}
+
+#app{position:relative;z-index:1;min-height:100dvh;display:flex;flex-direction:column}
+
+/* ── Login ── */
+#login-screen{
+  flex:1;display:flex;align-items:center;justify-content:center;padding:24px;
+  animation:fadeUp .5s ease both;
+}
+.login-box{
+  max-width:380px;width:100%;
+  background:var(--bg2);border:1px solid var(--border);border-radius:22px;
+  padding:32px 28px;
+}
+.login-logo{display:flex;align-items:center;gap:8px;font-size:14px;font-weight:900;letter-spacing:-.05em;margin-bottom:28px}
+.login-logo-dot{width:8px;height:8px;border-radius:50%;background:var(--accent);animation:pulse 2s ease infinite;box-shadow:0 0 10px rgba(250,45,72,.7)}
+.admin-badge{display:inline-flex;align-items:center;gap:6px;font-size:9px;font-weight:700;letter-spacing:.18em;text-transform:uppercase;color:rgba(250,45,72,.7);background:rgba(250,45,72,.08);border:1px solid rgba(250,45,72,.2);padding:4px 10px;border-radius:20px;margin-left:8px}
+.admin-badge svg{width:9px;height:9px}
+.login-title{font-size:22px;font-weight:800;letter-spacing:-.04em;margin-bottom:6px}
+.login-sub{font-size:12px;color:var(--fg3);margin-bottom:24px}
+.field{margin-bottom:12px}
+.field label{display:block;font-size:10px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--fg3);margin-bottom:6px}
+.field input{
+  width:100%;height:46px;border:1.5px solid var(--border);
+  border-radius:10px;background:var(--surface);color:var(--fg);
+  padding:0 14px;font-size:14px;font-family:inherit;outline:none;
+  transition:border-color .2s,box-shadow .2s;
+}
+.field input:focus{border-color:var(--accent);box-shadow:0 0 0 3px rgba(250,45,72,.1)}
+.field input::placeholder{color:var(--fg4)}
+.login-btn{
+  width:100%;height:46px;background:var(--accent);color:#fff;
+  border:none;border-radius:10px;font-size:14px;font-weight:700;
+  cursor:pointer;font-family:inherit;display:flex;align-items:center;justify-content:center;gap:8px;
+  transition:opacity .15s,transform .1s;margin-top:4px;
+  box-shadow:0 4px 18px rgba(250,45,72,.35);
+}
+.login-btn:hover{opacity:.88}
+.login-btn:active{transform:scale(.97)}
+.login-err{font-size:11px;color:var(--accent);margin-top:10px;min-height:16px;display:flex;align-items:center;gap:5px}
+.login-err svg{width:12px;height:12px}
+
+/* ── Dashboard ── */
+#dashboard{display:none;flex:1;flex-direction:column}
+#dashboard.show{display:flex}
+
+.admin-nav{
+  height:56px;display:flex;align-items:center;justify-content:space-between;
+  padding:0 24px;border-bottom:1px solid var(--border);
+  background:rgba(5,5,5,.85);backdrop-filter:blur(20px);
+  position:sticky;top:0;z-index:40;
+}
+.admin-nav-left{display:flex;align-items:center;gap:12px}
+.admin-wordmark{font-size:14px;font-weight:900;letter-spacing:-.05em;display:flex;align-items:center;gap:7px}
+.admin-wordmark-dot{width:7px;height:7px;border-radius:50%;background:var(--accent);animation:pulse 2s ease infinite}
+.user-tag{font-size:11px;color:var(--fg3);background:var(--surface);border:1px solid var(--border);padding:3px 10px;border-radius:20px;display:flex;align-items:center;gap:5px}
+.user-tag svg{width:11px;height:11px}
+.logout-btn{height:32px;padding:0 12px;border-radius:20px;border:1px solid var(--border);background:var(--surface);color:var(--fg3);font-size:11px;font-weight:500;cursor:pointer;font-family:inherit;display:flex;align-items:center;gap:5px;transition:all .15s}
+.logout-btn:hover{background:var(--surface2);color:var(--fg)}
+.logout-btn svg{width:12px;height:12px}
+
+.dashboard-body{display:grid;grid-template-columns:220px 1fr;flex:1;min-height:0}
+
+/* Sidebar */
+.sidebar{border-right:1px solid var(--border);padding:16px 10px;overflow-y:auto}
+.sidebar-label{font-size:8px;font-weight:700;letter-spacing:.2em;text-transform:uppercase;color:var(--fg4);padding:4px 12px 8px}
+.sidebar-item{
+  display:flex;align-items:center;gap:10px;padding:9px 12px;border-radius:8px;
+  font-size:12px;font-weight:500;color:var(--fg3);cursor:pointer;transition:all .15s;
+}
+.sidebar-item:hover{background:var(--surface);color:var(--fg)}
+.sidebar-item.active{background:rgba(250,45,72,.1);color:var(--accent)}
+.sidebar-item svg{width:14px;height:14px;flex-shrink:0}
+
+/* Main area */
+.dashboard-main{overflow-y:auto;padding:28px}
+.dash-section{display:none;animation:fadeUp .3s ease both}
+.dash-section.active{display:block}
+
+.section-title{font-size:18px;font-weight:800;letter-spacing:-.04em;margin-bottom:4px}
+.section-sub{font-size:12px;color:var(--fg3);margin-bottom:24px}
+
+/* Stats */
+.stats-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:12px;margin-bottom:28px}
+.stat-card{background:var(--bg2);border:1px solid var(--border);border-radius:14px;padding:16px;animation:fadeUp .3s ease both}
+.stat-val{font-size:28px;font-weight:900;letter-spacing:-.05em;margin-bottom:2px}
+.stat-label{font-size:9px;font-weight:700;letter-spacing:.18em;text-transform:uppercase;color:var(--fg3)}
+.stat-change{font-size:10px;color:var(--green);margin-top:4px;display:flex;align-items:center;gap:3px}
+.stat-change svg{width:10px;height:10px}
+
+/* Table */
+.data-table{width:100%;border-collapse:collapse;font-size:12px}
+.data-table th{text-align:left;font-size:8px;font-weight:700;letter-spacing:.18em;text-transform:uppercase;color:var(--fg4);padding:8px 12px;border-bottom:1px solid var(--border)}
+.data-table td{padding:10px 12px;border-bottom:1px solid rgba(255,255,255,.03);color:var(--fg2)}
+.data-table tr:hover td{background:var(--surface)}
+.data-table .mono{font-family:'DM Mono',monospace;font-size:10px;color:var(--fg3)}
+
+/* Form */
+.admin-form{background:var(--bg2);border:1px solid var(--border);border-radius:16px;padding:24px;max-width:580px;animation:fadeUp .3s ease both}
+.form-row{margin-bottom:14px}
+.form-row label{display:block;font-size:10px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--fg3);margin-bottom:6px}
+.form-row input,.form-row textarea,.form-row select{
+  width:100%;height:44px;border:1.5px solid var(--border);
+  border-radius:8px;background:var(--surface);color:var(--fg);
+  padding:0 12px;font-size:13px;font-family:inherit;outline:none;
+  transition:border-color .2s;
+}
+.form-row textarea{height:80px;padding:10px 12px;resize:vertical}
+.form-row input:focus,.form-row textarea:focus,.form-row select:focus{border-color:var(--accent)}
+.form-row input::placeholder,.form-row textarea::placeholder{color:var(--fg4)}
+.form-submit{
+  height:44px;padding:0 24px;background:var(--accent);color:#fff;
+  border:none;border-radius:8px;font-size:13px;font-weight:700;
+  cursor:pointer;font-family:inherit;display:flex;align-items:center;gap:8px;
+  transition:opacity .15s;box-shadow:0 4px 18px rgba(250,45,72,.3);
+}
+.form-submit:hover{opacity:.88}
+.form-submit svg{width:14px;height:14px}
+.form-success{font-size:12px;color:var(--green);margin-top:10px;display:none;align-items:center;gap:6px}
+.form-success svg{width:14px;height:14px}
+
+/* Log table */
+.log-item{display:flex;align-items:center;gap:12px;padding:10px 14px;border-radius:10px;border-bottom:1px solid rgba(255,255,255,.03);font-size:12px;transition:background .12s}
+.log-item:hover{background:var(--surface)}
+.log-icon{width:30px;height:30px;border-radius:8px;background:var(--surface);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;flex-shrink:0;color:var(--fg3)}
+.log-icon svg{width:13px;height:13px}
+.log-info{flex:1;min-width:0}
+.log-name{font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.log-sub{font-size:10px;color:var(--fg3);margin-top:1px;font-family:'DM Mono',monospace}
+.log-badge{font-size:8px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;padding:3px 8px;border-radius:4px;flex-shrink:0}
+.log-badge.search{background:rgba(29,185,84,.1);color:#4ade80;border:1px solid rgba(29,185,84,.2)}
+.log-badge.download{background:rgba(250,45,72,.1);color:#fa2d48;border:1px solid rgba(250,45,72,.2)}
+.spinner-sm{width:16px;height:16px;border:2px solid var(--border);border-top-color:var(--fg);border-radius:50%;animation:spin .7s linear infinite;display:inline-block}
+
+@media(max-width:680px){
+  .dashboard-body{grid-template-columns:1fr}
+  .sidebar{display:flex;flex-wrap:wrap;gap:4px;border-right:none;border-bottom:1px solid var(--border);padding:10px}
+  .sidebar-label{display:none}
+  .sidebar-item{padding:7px 10px;font-size:11px}
+  .dashboard-main{padding:18px 14px}
+}
+</style>
+</head>
+<body>
+<div id="app">
+
+  <!-- Login -->
+  <div id="login-screen">
+    <div class="login-box">
+      <div class="login-logo">
+        <div class="login-logo-dot"></div>
+        N3XT
+        <div class="admin-badge"><span data-lucide="shield"></span>Admin</div>
+      </div>
+      <div class="login-title">Admin Access</div>
+      <div class="login-sub">Sign in with your admin Firebase credentials.</div>
+      <div class="field">
+        <label>Email</label>
+        <input type="email" id="email-inp" placeholder="admin@n3xt.app" autocomplete="email">
+      </div>
+      <div class="field">
+        <label>Password</label>
+        <input type="password" id="pass-inp" placeholder="••••••••" autocomplete="current-password">
+      </div>
+      <div class="login-err" id="login-err"></div>
+      <button class="login-btn" id="login-btn">
+        <span data-lucide="log-in"></span>
+        Sign In
+      </button>
+    </div>
+  </div>
+
+  <!-- Dashboard -->
+  <div id="dashboard">
+    <nav class="admin-nav">
+      <div class="admin-nav-left">
+        <div class="admin-wordmark"><div class="admin-wordmark-dot"></div>N3XT</div>
+        <div class="user-tag"><span data-lucide="user"></span><span id="user-email-tag">—</span></div>
+      </div>
+      <div style="display:flex;align-items:center;gap:8px">
+        <a href="/" style="font-size:11px;color:var(--fg3);text-decoration:none;display:flex;align-items:center;gap:5px"><span data-lucide="external-link" style="width:12px;height:12px"></span>View Site</a>
+        <button class="logout-btn" id="logout-btn"><span data-lucide="log-out"></span>Sign Out</button>
+      </div>
+    </nav>
+
+    <div class="dashboard-body">
+      <div class="sidebar">
+        <div class="sidebar-label">Navigation</div>
+        <div class="sidebar-item active" data-section="overview"><span data-lucide="layout-dashboard"></span>Overview</div>
+        <div class="sidebar-item" data-section="searches"><span data-lucide="search"></span>Search Logs</div>
+        <div class="sidebar-item" data-section="downloads"><span data-lucide="download"></span>Download Logs</div>
+        <div class="sidebar-item" data-section="add-album"><span data-lucide="plus-circle"></span>Add Album</div>
+        <div class="sidebar-item" data-section="add-single"><span data-lucide="music"></span>Add Single</div>
+        <div class="sidebar-item" data-section="settings"><span data-lucide="settings"></span>Settings</div>
+      </div>
+
+      <div class="dashboard-main">
+
+        <!-- Overview -->
+        <div class="dash-section active" id="section-overview">
+          <div class="section-title">Overview</div>
+          <div class="section-sub">Your N3XT platform at a glance.</div>
+          <div class="stats-grid">
+            <div class="stat-card">
+              <div class="stat-val" id="stat-searches">—</div>
+              <div class="stat-label">Total Searches</div>
+              <div class="stat-change"><span data-lucide="trending-up"></span>Live from Firebase</div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-val" id="stat-downloads">—</div>
+              <div class="stat-label">Downloads</div>
+              <div class="stat-change"><span data-lucide="trending-up"></span>Live from Firebase</div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-val">6</div>
+              <div class="stat-label">Injected Albums</div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-val">6</div>
+              <div class="stat-label">Singles</div>
+            </div>
+          </div>
+          <div style="background:var(--bg2);border:1px solid var(--border);border-radius:16px;padding:20px">
+            <div style="font-size:10px;font-weight:700;letter-spacing:.18em;text-transform:uppercase;color:var(--fg3);margin-bottom:14px">Recent Activity</div>
+            <div id="recent-activity"><div class="spinner-sm"></div></div>
+          </div>
+        </div>
+
+        <!-- Search Logs -->
+        <div class="dash-section" id="section-searches">
+          <div class="section-title">Search Logs</div>
+          <div class="section-sub">All searches logged to Firestore in real-time.</div>
+          <div id="search-logs"><div class="spinner-sm"></div></div>
+        </div>
+
+        <!-- Download Logs -->
+        <div class="dash-section" id="section-downloads">
+          <div class="section-title">Download Logs</div>
+          <div class="section-sub">All download attempts logged to Firestore.</div>
+          <div id="download-logs"><div class="spinner-sm"></div></div>
+        </div>
+
+        <!-- Add Album -->
+        <div class="dash-section" id="section-add-album">
+          <div class="section-title">Add Album</div>
+          <div class="section-sub">Add a new injected album to the database. It will appear in search results immediately.</div>
+          <div class="admin-form">
+            <div class="form-row"><label>Album Name *</label><input type="text" id="alb-name" placeholder="$AD BOYZ 4 LIFE III"></div>
+            <div class="form-row"><label>Artist *</label><input type="text" id="alb-artist" placeholder="Junior H"></div>
+            <div class="form-row"><label>Year</label><input type="text" id="alb-year" placeholder="2026"></div>
+            <div class="form-row"><label>Source</label>
+              <select id="alb-source">
+                <option value="Instagram">Instagram</option>
+                <option value="Telegram">Telegram</option>
+              </select>
+            </div>
+            <div class="form-row"><label>Cover Image URL</label><input type="url" id="alb-cover" placeholder="https://…"></div>
+            <div class="form-row"><label>Download URL (ZIP)</label><input type="url" id="alb-dlurl" placeholder="https://github.com/…"></div>
+            <div class="form-row"><label>Tracklist (one per line: Track Name — Artist)</label><textarea id="alb-tracks" placeholder="24K — Junior H&#10;Fotos Que Borré — Junior H, Tito Double P"></textarea></div>
+            <div class="form-row"><label>Password Override (leave blank for default)</label><input type="text" id="alb-pw" placeholder="n3xt2026"></div>
+            <button class="form-submit" id="submit-album"><span data-lucide="upload-cloud"></span>Add to Firebase</button>
+            <div class="form-success" id="album-success"><span data-lucide="check-circle"></span>Album added successfully to Firestore!</div>
+          </div>
+        </div>
+
+        <!-- Add Single -->
+        <div class="dash-section" id="section-add-single">
+          <div class="section-title">Add Single</div>
+          <div class="section-sub">Add a new single release.</div>
+          <div class="admin-form">
+            <div class="form-row"><label>Song Name *</label><input type="text" id="sng-name" placeholder="GATA"></div>
+            <div class="form-row"><label>Artist *</label><input type="text" id="sng-artist" placeholder="Junior H"></div>
+            <div class="form-row"><label>Year</label><input type="text" id="sng-year" placeholder="2026"></div>
+            <div class="form-row"><label>Source</label>
+              <select id="sng-source">
+                <option value="Instagram">Instagram</option>
+                <option value="Telegram">Telegram</option>
+              </select>
+            </div>
+            <div class="form-row"><label>Preview Audio URL (optional)</label><input type="url" id="sng-audio" placeholder="https://…"></div>
+            <button class="form-submit" id="submit-single"><span data-lucide="upload-cloud"></span>Add to Firebase</button>
+            <div class="form-success" id="single-success"><span data-lucide="check-circle"></span>Single added successfully!</div>
+          </div>
+        </div>
+
+        <!-- Settings -->
+        <div class="dash-section" id="section-settings">
+          <div class="section-title">Settings</div>
+          <div class="section-sub">Platform configuration.</div>
+          <div class="admin-form">
+            <div style="font-size:11px;color:var(--fg3);line-height:1.7;margin-bottom:16px">
+              <strong style="color:var(--fg)">Firebase Project:</strong> n3xt-c488a<br>
+              <strong style="color:var(--fg)">Firestore:</strong> Connected<br>
+              <strong style="color:var(--fg)">Auth:</strong> Email/Password<br>
+              <strong style="color:var(--fg)">Version:</strong> N3XT v6.2
+            </div>
+            <div style="background:rgba(250,45,72,.08);border:1px solid rgba(250,45,72,.2);border-radius:10px;padding:14px;font-size:11px;color:var(--fg2);line-height:1.65">
+              <strong style="color:var(--accent)">⚠ Security reminder:</strong> Restrict your Firebase API key to your Vercel domain in Google Cloud Console → APIs & Services → Credentials. Set Firestore rules to require auth for writes.
+            </div>
+          </div>
+        </div>
+
+      </div><!-- /dashboard-main -->
+    </div>
+  </div>
+
+</div>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+import { getFirestore, collection, addDoc, getDocs, query, orderBy, limit, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+import { getAuth, signInWithEmailAndPassword, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyD2bVEwvWHfBOgrDH_O3OuYdi_F2NN60uo",
+  authDomain: "n3xt-c488a.firebaseapp.com",
+  projectId: "n3xt-c488a",
+  storageBucket: "n3xt-c488a.firebasestorage.app",
+  messagingSenderId: "79620875871",
+  appId: "1:79620875871:web:1d42517573bb4300355dea"
+};
+
+const app  = initializeApp(firebaseConfig);
+const db   = getFirestore(app);
+const auth = getAuth(app);
+
+lucide.createIcons();
+
+// ── Auth state ─────────────────────────────────────────────────────
+onAuthStateChanged(auth, user => {
+  if(user) showDashboard(user);
+  else showLogin();
+});
+
+function showLogin(){
+  document.getElementById('login-screen').style.display='';
+  document.getElementById('dashboard').classList.remove('show');
+}
+function showDashboard(user){
+  document.getElementById('login-screen').style.display='none';
+  document.getElementById('dashboard').classList.add('show');
+  document.getElementById('user-email-tag').textContent=user.email||'Admin';
+  lucide.createIcons();
+  loadStats();
+}
+
+// ── Login ──────────────────────────────────────────────────────────
+document.getElementById('login-btn').addEventListener('click', async () => {
+  const email = document.getElementById('email-inp').value.trim();
+  const pass  = document.getElementById('pass-inp').value;
+  const errEl = document.getElementById('login-err');
+  const btn   = document.getElementById('login-btn');
+  if(!email||!pass){errEl.innerHTML='<span data-lucide="alert-circle"></span>Enter email and password.';lucide.createIcons();return;}
+  btn.disabled=true;btn.innerHTML='<div style="width:16px;height:16px;border:2px solid rgba(255,255,255,.3);border-top-color:#fff;border-radius:50%;animation:spin .7s linear infinite"></div> Signing in…';
+  try{
+    await signInWithEmailAndPassword(auth, email, pass);
+    errEl.innerHTML='';
+  }catch(e){
+    errEl.innerHTML=`<span data-lucide="alert-circle"></span>${e.message}`;
+    btn.disabled=false;btn.innerHTML='<span data-lucide="log-in"></span>Sign In';
+    lucide.createIcons();
+  }
+});
+document.getElementById('pass-inp').addEventListener('keydown',e=>{if(e.key==='Enter')document.getElementById('login-btn').click();});
+document.getElementById('logout-btn').addEventListener('click',()=>signOut(auth));
+
+// ── Sidebar nav ────────────────────────────────────────────────────
+document.querySelectorAll('.sidebar-item').forEach(item=>{
+  item.addEventListener('click',()=>{
+    document.querySelectorAll('.sidebar-item').forEach(i=>i.classList.remove('active'));
+    document.querySelectorAll('.dash-section').forEach(s=>s.classList.remove('active'));
+    item.classList.add('active');
+    const sec=document.getElementById('section-'+item.dataset.section);
+    if(sec)sec.classList.add('active');
+    if(item.dataset.section==='searches')loadSearchLogs();
+    if(item.dataset.section==='downloads')loadDownloadLogs();
+  });
+});
+
+// ── Stats ──────────────────────────────────────────────────────────
+async function loadStats(){
+  try{
+    const [sSnap, dSnap] = await Promise.all([
+      getDocs(collection(db,'searches')),
+      getDocs(collection(db,'downloads'))
+    ]);
+    document.getElementById('stat-searches').textContent = sSnap.size.toLocaleString();
+    document.getElementById('stat-downloads').textContent = dSnap.size.toLocaleString();
+    // Recent activity
+    const actEl = document.getElementById('recent-activity');
+    const allItems = [];
+    sSnap.forEach(d=>allItems.push({...d.data(),_type:'search'}));
+    dSnap.forEach(d=>allItems.push({...d.data(),_type:'download'}));
+    allItems.sort((a,b)=>(b.ts?.seconds||0)-(a.ts?.seconds||0));
+    actEl.innerHTML = allItems.slice(0,8).map(item=>`
+      <div class="log-item">
+        <div class="log-icon"><span data-lucide="${item._type==='search'?'search':'download'}"></span></div>
+        <div class="log-info">
+          <div class="log-name">${item.query||item.album||'—'}</div>
+          <div class="log-sub">${item.ts?new Date(item.ts.seconds*1000).toLocaleString():'—'}</div>
+        </div>
+        <div class="log-badge ${item._type}">${item._type}</div>
+      </div>`).join('') || '<div style="color:var(--fg3);font-size:12px;padding:10px 0">No activity yet.</div>';
+    lucide.createIcons();
+  }catch(e){
+    document.getElementById('stat-searches').textContent='Err';
+    document.getElementById('stat-downloads').textContent='Err';
+  }
+}
+
+async function loadSearchLogs(){
+  const el=document.getElementById('search-logs');
+  el.innerHTML='<div class="spinner-sm"></div>';
+  try{
+    const snap=await getDocs(query(collection(db,'searches'),orderBy('ts','desc'),limit(50)));
+    if(snap.empty){el.innerHTML='<div style="color:var(--fg3);font-size:12px;padding:10px 0">No searches logged yet.</div>';return;}
+    el.innerHTML=`<table class="data-table"><thead><tr><th>Query</th><th>Time</th><th>User Agent</th></tr></thead><tbody>${
+      snap.docs.map(d=>{const x=d.data();return`<tr><td>${x.query||'—'}</td><td class="mono">${x.ts?new Date(x.ts.seconds*1000).toLocaleString():'—'}</td><td class="mono" style="max-width:180px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${x.ua||'—'}</td></tr>`;}).join('')
+    }</tbody></table>`;
+  }catch(e){el.innerHTML='<div style="color:var(--fg3);font-size:12px">Error loading. Check Firestore rules.</div>';}
+}
+
+async function loadDownloadLogs(){
+  const el=document.getElementById('download-logs');
+  el.innerHTML='<div class="spinner-sm"></div>';
+  try{
+    const snap=await getDocs(query(collection(db,'downloads'),orderBy('ts','desc'),limit(50)));
+    if(snap.empty){el.innerHTML='<div style="color:var(--fg3);font-size:12px;padding:10px 0">No downloads logged yet.</div>';return;}
+    el.innerHTML=`<table class="data-table"><thead><tr><th>Album</th><th>Type</th><th>Time</th></tr></thead><tbody>${
+      snap.docs.map(d=>{const x=d.data();return`<tr><td>${x.album||'—'}</td><td>${x.type||'—'}</td><td class="mono">${x.ts?new Date(x.ts.seconds*1000).toLocaleString():'—'}</td></tr>`;}).join('')
+    }</tbody></table>`;
+  }catch(e){el.innerHTML='<div style="color:var(--fg3);font-size:12px">Error loading. Check Firestore rules.</div>';}
+}
+
+// ── Add Album ──────────────────────────────────────────────────────
+document.getElementById('submit-album').addEventListener('click', async () => {
+  const name=document.getElementById('alb-name').value.trim();
+  const artist=document.getElementById('alb-artist').value.trim();
+  if(!name||!artist){alert('Name and Artist are required.');return;}
+  const btn=document.getElementById('submit-album');
+  btn.disabled=true;btn.innerHTML='<div style="width:14px;height:14px;border:2px solid rgba(255,255,255,.3);border-top-color:#fff;border-radius:50%;animation:spin .7s linear infinite"></div>Saving…';
+  try{
+    const tracksRaw=document.getElementById('alb-tracks').value.trim();
+    const tracks=tracksRaw?tracksRaw.split('\n').map((line,i)=>{const[tname,...rest]=line.split('—');return{name:tname.trim(),artist:rest.join('—').trim()||artist};}):[];
+    await addDoc(collection(db,'albums'),{
+      name,artist,
+      year:document.getElementById('alb-year').value.trim()||'2026',
+      source:document.getElementById('alb-source').value,
+      cover:document.getElementById('alb-cover').value.trim(),
+      dlUrl:document.getElementById('alb-dlurl').value.trim(),
+      password:document.getElementById('alb-pw').value.trim()||'n3xt2026',
+      tracks,
+      createdAt:serverTimestamp()
+    });
+    const s=document.getElementById('album-success');s.style.display='flex';lucide.createIcons();
+    setTimeout(()=>s.style.display='none',4000);
+    ['alb-name','alb-artist','alb-year','alb-cover','alb-dlurl','alb-tracks','alb-pw'].forEach(id=>document.getElementById(id).value='');
+  }catch(e){alert('Error: '+e.message);}
+  btn.disabled=false;btn.innerHTML='<span data-lucide="upload-cloud"></span>Add to Firebase';lucide.createIcons();
+});
+
+// ── Add Single ─────────────────────────────────────────────────────
+document.getElementById('submit-single').addEventListener('click', async () => {
+  const name=document.getElementById('sng-name').value.trim();
+  const artist=document.getElementById('sng-artist').value.trim();
+  if(!name||!artist){alert('Name and Artist are required.');return;}
+  const btn=document.getElementById('submit-single');
+  btn.disabled=true;
+  try{
+    await addDoc(collection(db,'singles'),{
+      name,artist,
+      year:document.getElementById('sng-year').value.trim()||'2026',
+      source:document.getElementById('sng-source').value,
+      audioUrl:document.getElementById('sng-audio').value.trim(),
+      isSingle:true,
+      createdAt:serverTimestamp()
+    });
+    const s=document.getElementById('single-success');s.style.display='flex';lucide.createIcons();
+    setTimeout(()=>s.style.display='none',4000);
+    ['sng-name','sng-artist','sng-year','sng-audio'].forEach(id=>document.getElementById(id).value='');
+  }catch(e){alert('Error: '+e.message);}
+  btn.disabled=false;
+});
+</script>
+</body>
+</html>
