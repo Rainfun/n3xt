@@ -392,6 +392,7 @@ body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellips
             <label class="toggle"><input type="checkbox" id="sng-pw-toggle" checked onchange="togglePwField('sng')"><div class="toggle-slider"></div></label>
           </div>
           <div id="sng-pw-field" class="form-row"><label>Password</label><input type="text" id="sng-pw" placeholder="n3xt2026"></div>
+          <div class="form-row"><label>Cover Image URL</label><input type="url" id="sng-cover" placeholder="https://…"></div>
           <div class="form-row"><label>Preview Audio URL (optional)</label><input type="url" id="sng-audio" placeholder="https://…"></div>
           <button class="form-submit" id="submit-single"><span data-lucide="upload-cloud"></span>Add to Firebase</button>
           <div class="form-success" id="single-success"><span data-lucide="check-circle"></span>Single added!</div>
@@ -678,7 +679,7 @@ window.loadManage = async function(){
     const mode=ov.mode||'standard';
     const srcBadge=a.source==='Telegram'?'badge-tg':'badge-ig';
     return`<div class="html-album-card">
-      <div class="html-album-thumb">${a.name.slice(0,4)}</div>
+      ${(ov.cover||a.cover)?`<img class="html-album-thumb" src="${esc(ov.cover||a.cover)}" alt="" loading="lazy">`:`<div class="html-album-thumb">${a.name.slice(0,4)}</div>`}
       <div class="html-album-info">
         <div class="html-album-name">${esc(a.name)}</div>
         <div class="html-album-meta">
@@ -704,7 +705,7 @@ function renderContentRows(snap, type){
     const mode=x.mode||'standard';
     const hasPw=x.passwordEnabled!==false&&x.password;
     html+=`<div class="html-album-card">
-      <div class="html-album-thumb">${(x.name||'?').slice(0,4)}</div>
+      ${x.cover?`<img class="html-album-thumb" src="${esc(x.cover)}" alt="" loading="lazy">`:`<div class="html-album-thumb">${(x.name||'?').slice(0,4)}</div>`}
       <div class="html-album-info">
         <div class="html-album-name">${esc(x.name||'Untitled')}</div>
         <div class="html-album-meta">
@@ -735,10 +736,11 @@ window.editHTMLAlbum = function(albumId){
   const tracks = Array.isArray(ov.tracks) ? ov.tracks : (Array.isArray(a.tracks) ? a.tracks : []);
   const trackAvail = Object.fromEntries(tracks.map((t,i)=>[i, t.available !== false]));
   const downloadUrl = ov.dlUrl || a.dlUrl || '';
+  const coverUrl = ov.cover || a.cover || '';
 
   document.getElementById('edit-title-text').textContent = `Edit: ${a.name}`;
   document.getElementById('edit-body').innerHTML =
-    buildEditForm(albumId, a.name, hasPw, pw, mode, tracks, trackAvail, tracks.length, true, '', downloadUrl);
+    buildEditForm(albumId, a.name, hasPw, pw, mode, tracks, trackAvail, tracks.length, true, '', downloadUrl, coverUrl);
 
   document.getElementById('edit-overlay').classList.add('on');
   lucide.createIcons();
@@ -788,7 +790,7 @@ window.editFBContent = async function(docId, type){
 };
 
 
-function buildEditForm(id, name, hasPw, pw, mode, tracks, trackAvail, trackCount, isHTML, fbCol='', downloadUrl=''){
+function buildEditForm(id, name, hasPw, pw, mode, tracks, trackAvail, trackCount, isHTML, fbCol='', downloadUrl='', coverUrl=''){
   const safeTracks = Array.isArray(tracks) ? tracks : [];
   const trackRows = safeTracks.map((t,i)=>{
     const avail = t?.available !== false;
@@ -843,6 +845,17 @@ function buildEditForm(id, name, hasPw, pw, mode, tracks, trackAvail, trackCount
       id="em-dlurl-${id}"
       value="${esc(downloadUrl || '')}"
       placeholder="https://github.com/.../album.zip"
+      style="width:100%;height:44px;border:1.5px solid var(--border);border-radius:8px;background:var(--surface);color:var(--fg);padding:0 12px;font-size:13px;font-family:inherit;outline:none"
+    >
+  </div>
+
+  <div class="form-row">
+    <label>Cover Image URL</label>
+    <input
+      type="url"
+      id="em-cover-${id}"
+      value="${esc(coverUrl || '')}"
+      placeholder="https://.../cover.jpg"
       style="width:100%;height:44px;border:1.5px solid var(--border);border-radius:8px;background:var(--surface);color:var(--fg);padding:0 12px;font-size:13px;font-family:inherit;outline:none"
     >
   </div>
@@ -970,6 +983,7 @@ window.saveEdit = async function(id, sourceType, fbCol){
   const hasPw = document.getElementById(`em-pw-toggle-${id}`)?.checked;
   const pw = document.getElementById(`em-pw-${id}`)?.value || 'n3xt2026';
   const dlUrl = document.getElementById(`em-dlurl-${id}`)?.value?.trim() || '';
+  const cover = document.getElementById(`em-cover-${id}`)?.value?.trim() || '';
 
   const stdOn = document.getElementById(`em-std-${id}`)?.classList.contains('on');
   const mode = stdOn ? 'standard' : 'availability';
@@ -1015,6 +1029,7 @@ window.saveEdit = async function(id, sourceType, fbCol){
         password: pw,
         mode,
         dlUrl,
+        cover,
         updatedAt: serverTimestamp()
       };
 
@@ -1189,6 +1204,7 @@ document.getElementById('submit-single').addEventListener('click', async () => {
       name,artist,
       year:document.getElementById('sng-year').value.trim()||'2026',
       source:document.getElementById('sng-source').value,
+      cover:document.getElementById('sng-cover').value.trim(),
       audioUrl:document.getElementById('sng-audio').value.trim(),
       password:hasPw?pw:null,
       passwordEnabled:hasPw,
@@ -1197,7 +1213,7 @@ document.getElementById('submit-single').addEventListener('click', async () => {
     });
     const s=document.getElementById('single-success');s.style.display='flex';lucide.createIcons();
     setTimeout(()=>s.style.display='none',4000);
-    ['sng-name','sng-artist','sng-year','sng-audio','sng-pw'].forEach(id=>document.getElementById(id).value='');
+    ['sng-name','sng-artist','sng-year','sng-cover','sng-audio','sng-pw'].forEach(id=>document.getElementById(id).value='');
   }catch(e){alert('Error: '+e.message);}
   btn.disabled=false;
 });
