@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <title>N3XT</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,300&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;0,9..40,900;1,9..40,300&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
 <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
 <style>
 /* ── Keyframes ── */
@@ -33,6 +33,7 @@
 @keyframes searchGlow  { 0%,100%{box-shadow:0 0 0 0 rgba(250,45,72,0),0 8px 40px rgba(0,0,0,.2)}50%{box-shadow:0 0 0 6px rgba(250,45,72,.08),0 12px 50px rgba(0,0,0,.35)} }
 @keyframes cmdSlideIn  { from{opacity:0;transform:translateY(-8px) scale(.97)}to{opacity:1;transform:translateY(0) scale(1)} }
 @keyframes pageIn      { from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)} }
+@keyframes float       { 0%,100%{transform:translateY(0)}50%{transform:translateY(-6px)} }
 
 /* ── Variables ── */
 :root {
@@ -297,7 +298,6 @@ img{display:block}
   display:flex;align-items:center;gap:8px;flex-wrap:wrap;
   padding:9px 24px;border-bottom:1px solid var(--border2);
   background:rgba(255,255,255,.01);
-  animation:fadeIn .4s .5s ease both;opacity:0;
 }
 .trending-label{font-size:9px;font-weight:700;letter-spacing:.18em;text-transform:uppercase;color:rgba(245,245,245,.25);display:flex;align-items:center;gap:5px;white-space:nowrap;flex-shrink:0}
 .trending-label svg{width:9px;height:9px;color:#fa2d48}
@@ -337,7 +337,7 @@ img{display:block}
 }
 .status-line svg{width:10px;height:10px;flex-shrink:0}
 
-/* ── Result Cards (redesigned) ── */
+/* ── Result Cards ── */
 .result-item{
   display:flex;align-items:center;gap:12px;
   padding:10px 18px;
@@ -439,7 +439,7 @@ img{display:block}
   background:var(--surface);border:1px solid var(--border);color:var(--fg3);
 }
 
-/* ── Share / copy row ── */
+/* ── Viewer Actions ── */
 .viewer-actions{display:flex;gap:7px;margin-bottom:18px;animation:fadeUp .35s .12s ease both;flex-wrap:wrap}
 .vaction-btn{
   height:30px;padding:0 12px;border-radius:8px;
@@ -510,7 +510,7 @@ img{display:block}
 .track-sub{font-size:11px;color:var(--fg3);margin-top:1px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .track-dur{font-size:11px;color:var(--fg4);flex-shrink:0;font-variant-numeric:tabular-nums;font-family:'DM Mono',monospace}
 
-/* ── Big Play (Single) ── */
+/* ── Big Play ── */
 .big-play-row{display:flex;align-items:center;gap:16px;padding:16px 0;border-top:1px solid var(--border);animation:fadeUp .35s .15s ease both;}
 .big-play-btn{
   width:52px;height:52px;border-radius:50%;
@@ -571,26 +571,20 @@ img{display:block}
 .mp-stop svg{width:12px;height:12px}
 .mp-vol{width:60px;height:3px;border-radius:3px;accent-color:var(--accent);cursor:pointer}
 
-/* ── Favorites Tab ── */
-.fav-tab{
-  display:none;padding:18px;animation:pageIn .3s ease both;
-}
-.fav-tab.show{display:block}
+/* ── Favorites ── */
+.fav-empty{text-align:center;padding:32px 16px;color:var(--fg3);font-size:12px}
+.fav-empty svg{width:28px;height:28px;margin:0 auto 10px;opacity:.3;display:block}
 .fav-header{font-size:11px;font-weight:700;letter-spacing:.18em;text-transform:uppercase;color:var(--fg3);margin-bottom:14px;display:flex;align-items:center;justify-content:space-between}
 .fav-clear{font-size:10px;color:var(--accent);background:none;border:none;cursor:pointer;font-family:inherit;font-weight:600}
-.fav-empty{text-align:center;padding:32px 16px;color:var(--fg3);font-size:12px}
-.fav-empty svg{width:28px;height:28px;margin:0 auto 10px;opacity:.3}
 
-/* ── Recent searches (in dropdown only) ── */
-.recent-tags{display:flex;gap:5px;flex-wrap:wrap;padding:4px 6px 8px}
-.recent-tag{
-  height:22px;padding:0 9px;border-radius:5px;
-  background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.07);
-  color:rgba(245,245,245,.4);font-size:10px;font-weight:500;
-  cursor:pointer;transition:all .12s;white-space:nowrap;
-  display:flex;align-items:center;gap:5px;
-}
-.recent-tag:hover{background:rgba(250,45,72,.1);border-color:rgba(250,45,72,.25);color:#fa2d48}
+/* ── Recently Viewed ── */
+.rv-row{display:flex;align-items:center;gap:10px;padding:8px 10px;border-radius:10px;cursor:pointer;transition:background .12s;margin-bottom:4px}
+.rv-row:hover{background:var(--surface)}
+.rv-thumb{width:36px;height:36px;border-radius:6px;background:var(--surface2);border:1px solid var(--border);flex-shrink:0;object-fit:cover}
+.rv-thumb-ph{width:36px;height:36px;border-radius:6px;background:var(--surface2);border:1px solid var(--border);flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:7px;font-weight:800;color:var(--fg4)}
+.rv-info{flex:1;min-width:0}
+.rv-name{font-size:12px;font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.rv-artist{font-size:10px;color:var(--fg3);margin-top:1px}
 
 /* ── AI Loader ── */
 .ai-loader{padding:24px 22px 18px;animation:fadeUp .3s ease both}
@@ -707,6 +701,12 @@ img{display:block}
 .cl-item svg{width:13px;height:13px;flex-shrink:0;margin-top:2px;color:var(--fg3)}
 .cl-item strong{color:var(--fg)}
 
+/* ── Stats Page ── */
+.stats-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:12px;margin-bottom:20px}
+.stat-card{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:16px;text-align:center}
+.stat-val{font-size:26px;font-weight:900;letter-spacing:-.05em;color:var(--fg)}
+.stat-lbl{font-size:9px;font-weight:700;letter-spacing:.18em;text-transform:uppercase;color:var(--fg3);margin-top:4px}
+
 /* ── Page views (router) ── */
 .page{display:none;animation:pageIn .35s ease both}
 .page.active{display:block}
@@ -715,10 +715,10 @@ img{display:block}
 .artist-page{padding:28px}
 .artist-hero{display:flex;align-items:flex-end;gap:20px;margin-bottom:28px;padding:24px;border-radius:18px;background:var(--surface);border:1px solid var(--border);position:relative;overflow:hidden}
 .artist-hero::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse 60% 60% at 100% 0%,rgba(250,45,72,.08) 0%,transparent 70%)}
-.artist-avatar{width:80px;height:80px;border-radius:50%;background:var(--bg3);border:2px solid var(--border);flex-shrink:0;display:flex;align-items:center;justify-content:center;color:var(--fg4);font-size:32px;font-weight:900;z-index:1}
+.artist-avatar{width:80px;height:80px;border-radius:50%;background:var(--bg3);border:2px solid var(--border);flex-shrink:0;display:flex;align-items:center;justify-content:center;color:var(--fg4);font-size:28px;font-weight:900;z-index:1}
 .artist-meta{z-index:1}
 .artist-name{font-size:26px;font-weight:900;letter-spacing:-.05em;margin-bottom:4px}
-.artist-counts{font-size:11px;color:var(--fg3);display:flex;gap:12px}
+.artist-counts{font-size:11px;color:var(--fg3);display:flex;gap:12px;flex-wrap:wrap}
 .artist-count{display:flex;align-items:center;gap:4px}
 .artist-count svg{width:10px;height:10px}
 .artist-albums-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:14px}
@@ -837,7 +837,7 @@ img{display:block}
 <div id="splash">
   <div class="splash-inner">
     <div class="splash-logo"><div class="splash-logo-dot"></div>N3XT</div>
-    <div class="splash-tag"><div class="splash-tag-dot"></div>Now With Firebase · v6.2</div>
+    <div class="splash-tag"><div class="splash-tag-dot"></div>Firebase · v6.2 · URL Routing</div>
     <h1 class="splash-heading">
       <span class="sh-dim">Stronger.</span>
       <span class="sh-red">Better.</span>
@@ -847,13 +847,13 @@ img{display:block}
       You made N3XT what it is. <strong>Now watch what we built for you.</strong>
     </p>
     <div class="splash-bar-wrap"><div class="splash-bar" id="splash-bar"></div></div>
-    <div class="splash-countdown">Entering in <span id="splash-cd">20</span>s</div>
+    <div class="splash-countdown">Entering in <span id="splash-cd">20</span>s &nbsp;· tap to skip</div>
   </div>
 </div>
 
 <div id="app">
 
-  <!-- ── Main App (home + search) ── -->
+  <!-- ── Main App ── -->
   <div id="view-main" class="page active">
 
     <nav class="nav">
@@ -865,11 +865,19 @@ img{display:block}
           <span data-lucide="heart"></span>
           <span class="hide-xs">Favorites</span>
         </button>
+        <button class="nav-btn" onclick="showRecentlyViewed()">
+          <span data-lucide="clock"></span>
+          <span class="hide-xs">History</span>
+        </button>
+        <button class="nav-btn" onclick="showStatsModal()">
+          <span data-lucide="bar-chart-2"></span>
+          <span class="hide-xs">Stats</span>
+        </button>
         <button class="nav-btn" onclick="openTOS()">
           <span data-lucide="scroll-text"></span>
           <span class="hide-xs">Terms</span>
         </button>
-        <button class="nav-btn" onclick="openDMCAForm()">
+        <button class="nav-btn" onclick="openDMCAForm()" class="hide-xs">
           <span data-lucide="shield-alert"></span>
           <span class="hide-xs">DMCA</span>
         </button>
@@ -888,9 +896,9 @@ img{display:block}
 
     <div class="banner">
       <div class="banner-track">
-        <span class="banner-text"><span data-lucide="sparkles" style="width:10px;height:10px;display:inline-block"></span> N3XT v6.2 — Firebase powered · URL routing · New search <span class="banner-sep">·</span></span>
+        <span class="banner-text"><span data-lucide="sparkles" style="width:10px;height:10px;display:inline-block"></span> N3XT v6.2 — Firebase · URL routing · New search <span class="banner-sep">·</span></span>
         <span class="banner-text"><span data-lucide="heart" style="width:10px;height:10px;display:inline-block"></span> Thank you for your patience and support <span class="banner-sep">·</span></span>
-        <span class="banner-text"><span data-lucide="sparkles" style="width:10px;height:10px;display:inline-block"></span> N3XT v6.2 — Firebase powered · URL routing · New search <span class="banner-sep">·</span></span>
+        <span class="banner-text"><span data-lucide="sparkles" style="width:10px;height:10px;display:inline-block"></span> N3XT v6.2 — Firebase · URL routing · New search <span class="banner-sep">·</span></span>
         <span class="banner-text"><span data-lucide="heart" style="width:10px;height:10px;display:inline-block"></span> Thank you for your patience and support <span class="banner-sep">·</span></span>
       </div>
     </div>
@@ -900,7 +908,7 @@ img{display:block}
         <div class="hero-left">
           <div class="hero-eyebrow"><span data-lucide="sparkles"></span>AI Music Discovery · v6.2</div>
           <h1 class="hero-title">n3xt<span>.</span></h1>
-          <p class="hero-sub">Search albums, discover leaks, stream previews — now with Firebase &amp; real URLs.</p>
+          <p class="hero-sub">Search albums, discover leaks, stream previews — Firebase powered with real URLs.</p>
         </div>
         <div class="hero-stats">
           <div class="hstat"><div class="hstat-val">50K+</div><div class="hstat-lbl">Albums</div></div>
@@ -909,7 +917,7 @@ img{display:block}
         </div>
       </div>
 
-      <!-- ── Command Palette Search ── -->
+      <!-- Command Palette Search -->
       <div class="search-wrap">
         <div class="cmd-search" id="cmd-search">
           <div class="cmd-top">
@@ -923,7 +931,6 @@ img{display:block}
               </button>
             </div>
           </div>
-          <!-- Autocomplete dropdown -->
           <div class="cmd-dropdown" id="cmd-dropdown">
             <div class="cmd-section" id="dd-recent-section" style="display:none">
               <div class="cmd-section-label">Recent</div>
@@ -953,12 +960,13 @@ img{display:block}
 
     <div class="trending-row">
       <div class="trending-label"><span data-lucide="flame"></span>Trending</div>
-      <button class="trending-pill" onclick="setSearch('Junior H')">Junior H <span class="new-badge">Hot</span></button>
+      <button class="trending-pill" onclick="setSearch('Contingente II')">Contingente II<span class="new-badge">Hot</span></button>
       <button class="trending-pill" onclick="setSearch('Peso Pluma')">Peso Pluma</button>
       <button class="trending-pill" onclick="setSearch('Natanael Cano')">Natanael Cano</button>
       <button class="trending-pill" onclick="setSearch('Eslabon Armado')">Eslabon Armado</button>
       <button class="trending-pill" onclick="setSearch('Sad Boyz')">$AD BOYZ <span class="new-badge">New</span></button>
       <button class="trending-pill" onclick="setSearch('Tito Double P')">Tito Double P</button>
+      <button class="trending-pill" onclick="setSearch('Chino Pacas')">Chino Pacas</button>
     </div>
 
     <div class="body">
@@ -1103,6 +1111,30 @@ img{display:block}
   </div>
 </div>
 
+<!-- Recently Viewed Modal -->
+<div class="overlay" id="rv-modal">
+  <div class="mbox" style="max-width:440px">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px">
+      <div style="display:flex;align-items:center;gap:10px">
+        <div class="micon" style="margin:0"><span data-lucide="clock"></span></div>
+        <div class="mtitle" style="margin:0">Recently Viewed</div>
+      </div>
+      <button class="mcancel" style="height:32px;padding:0 12px;font-size:11px" onclick="closeRecentlyViewed()">Close</button>
+    </div>
+    <div id="rv-list"></div>
+  </div>
+</div>
+
+<!-- Stats Modal -->
+<div class="overlay" id="stats-modal">
+  <div class="mbox" style="max-width:400px">
+    <div class="micon"><span data-lucide="bar-chart-2"></span></div>
+    <div class="mtitle">Session Stats</div>
+    <div class="stats-grid" id="stats-grid"></div>
+    <button class="tos-ok" onclick="closeStatsModal()"><span data-lucide="check"></span>Done</button>
+  </div>
+</div>
+
 <!-- Keyboard Shortcuts Modal -->
 <div class="overlay" id="kbd-modal">
   <div class="mbox" style="max-width:480px">
@@ -1115,8 +1147,10 @@ img{display:block}
       <div class="kbd-row"><span class="kbd-desc">Shortcuts</span><span class="kbd-key">?</span></div>
       <div class="kbd-row"><span class="kbd-desc">Toggle theme</span><span class="kbd-key">T</span></div>
       <div class="kbd-row"><span class="kbd-desc">Favorites</span><span class="kbd-key">F</span></div>
+      <div class="kbd-row"><span class="kbd-desc">Stats</span><span class="kbd-key">S</span></div>
       <div class="kbd-row"><span class="kbd-desc">Next result</span><span class="kbd-key">↓</span></div>
       <div class="kbd-row"><span class="kbd-desc">Prev result</span><span class="kbd-key">↑</span></div>
+      <div class="kbd-row"><span class="kbd-desc">Open selected</span><span class="kbd-key">Enter</span></div>
     </div>
     <button class="tos-ok" style="margin-top:20px" onclick="closeKbdModal()"><span data-lucide="check"></span>Got it</button>
   </div>
@@ -1146,7 +1180,7 @@ img{display:block}
       <div class="mtitle" style="margin-bottom:0;color:#c00">DMCA Takedown Notice</div>
     </div>
     <div class="tos-body" style="max-height:60vh">
-      <p style="font-weight:600;color:var(--fg)">Effective immediately — LA BOVEDA by Natanael Cano has been removed from N3XT.</p>
+      <p style="font-weight:600;color:var(--fg)">LA BOVEDA by Natanael Cano has been removed from N3XT.</p>
       <h3>What happened?</h3><p>We received an official DMCA takedown request regarding <strong>LA BOVEDA</strong> by <strong>Natanael Cano</strong>, filed by <strong>LOS CT</strong>.</p>
       <h3>What was removed?</h3><p>· Album: LA BOVEDA (2026) · All 18 tracks · Cover art · Download access</p>
       <h3>Our response</h3><p>N3XT takes copyright law seriously. We complied fully and immediately.</p>
@@ -1191,27 +1225,25 @@ img{display:block}
 <div class="overlay" id="changelog-modal">
   <div class="mbox" style="max-width:460px;max-height:85vh;overflow-y:auto;display:flex;flex-direction:column">
     <div class="micon"><span data-lucide="zap"></span></div>
-    <div class="mtitle">What's New</div>
+    <div class="mtitle">What's New in v6.2</div>
     <div style="flex:1;overflow-y:auto">
       <div style="border-left:2px solid var(--accent);padding-left:16px;margin-bottom:24px">
         <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px">
           <span style="font-size:9px;font-weight:800;letter-spacing:.14em;text-transform:uppercase;background:var(--fg);color:var(--bg);padding:3px 9px;border-radius:20px">Latest</span>
-          <span style="font-size:11px;color:var(--fg3)">v6.2 · April 2026</span>
+          <span style="font-size:11px;color:var(--fg3)">v6.2 · 2026</span>
         </div>
         <div class="cl-item"><span data-lucide="zap"></span><span><strong>Firebase Integration</strong> — Real database, secure admin keys, Firestore backend</span></div>
         <div class="cl-item"><span data-lucide="zap"></span><span><strong>URL Routing</strong> — /artist/:id · /album/:id · /song/:id · /d/:token</span></div>
         <div class="cl-item"><span data-lucide="zap"></span><span><strong>Command Palette Search</strong> — Autocomplete, recent history, keyboard nav</span></div>
         <div class="cl-item"><span data-lucide="zap"></span><span><strong>Favorites System</strong> — Heart any album, saved locally</span></div>
+        <div class="cl-item"><span data-lucide="zap"></span><span><strong>Recently Viewed</strong> — Last 6 albums carousel</span></div>
+        <div class="cl-item"><span data-lucide="zap"></span><span><strong>Session Stats</strong> — Searches, plays, downloads tracked</span></div>
         <div class="cl-item"><span data-lucide="zap"></span><span><strong>Mini Player Bar</strong> — Persistent bottom bar with progress + volume</span></div>
-        <div class="cl-item"><span data-lucide="zap"></span><span><strong>Keyboard Shortcuts</strong> — / search, T theme, F favorites, arrows navigate</span></div>
-        <div class="cl-item"><span data-lucide="zap"></span><span><strong>Download Page</strong> — Full-screen /d/:token page with animated secure transfer</span></div>
-        <div class="cl-item"><span data-lucide="zap"></span><span><strong>Sort Results</strong> — Sort by relevance, A-Z, or newest</span></div>
+        <div class="cl-item"><span data-lucide="zap"></span><span><strong>Keyboard Shortcuts</strong> — / search, T theme, F favorites, S stats, arrows navigate</span></div>
+        <div class="cl-item"><span data-lucide="zap"></span><span><strong>Download Page</strong> — Full-screen /d/:token with animated secure transfer</span></div>
+        <div class="cl-item"><span data-lucide="zap"></span><span><strong>Sort Results</strong> — Relevance, A–Z, or Newest</span></div>
         <div class="cl-item"><span data-lucide="zap"></span><span><strong>Share Button</strong> — Copy album link on every result</span></div>
-      </div>
-      <div style="border-left:2px solid var(--border);padding-left:16px;margin-bottom:24px">
-        <div style="font-size:11px;color:var(--fg3);margin-bottom:10px;font-weight:600">v3.2 · April 2026</div>
-        <div class="cl-item"><span data-lucide="check"></span><span>YouTube Music &amp; Spotify cross-platform badges</span></div>
-        <div class="cl-item"><span data-lucide="check"></span><span>Singles UI — Circular art, large play button</span></div>
+        <div class="cl-item"><span data-lucide="zap"></span><span><strong>Artist Pages</strong> — /artist/:id with full discography</span></div>
       </div>
     </div>
     <button class="tos-ok" style="margin-top:18px;flex-shrink:0" onclick="closeChangelog()"><span data-lucide="check"></span>Got it</button>
@@ -1220,10 +1252,10 @@ img{display:block}
 
 <div id="notif-stack"></div>
 
+<!-- ── Firebase Module ── -->
 <script type="module">
-// ── Firebase ────────────────────────────────────────────────────────
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-import { getFirestore, collection, addDoc, getDocs, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+import { getFirestore, collection, addDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 import { getAuth } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
 
 const firebaseConfig = {
@@ -1239,47 +1271,17 @@ const fbApp = initializeApp(firebaseConfig);
 const db    = getFirestore(fbApp);
 const auth  = getAuth(fbApp);
 
-// ── Fetch albums + singles from Firestore and merge into local data ──
-window._fbAlbums  = [];
-window._fbSingles = [];
-
-async function loadFirestoreContent() {
-  try {
-    const [albSnap, sngSnap] = await Promise.all([
-      getDocs(collection(db, 'albums')),
-      getDocs(collection(db, 'singles'))
-    ]);
-    window._fbAlbums = albSnap.docs.map(d => ({ _fbId: d.id, ...d.data() }));
-    window._fbSingles = sngSnap.docs.map(d => ({ _fbId: d.id, ...d.data() }));
-    console.log(`[N3XT] Loaded ${window._fbAlbums.length} albums, ${window._fbSingles.length} singles from Firestore`);
-  } catch(e) {
-    console.warn('[N3XT] Could not load Firestore content:', e.message);
-  }
-}
-loadFirestoreContent();
-
-// Log searches
 window._fbLogSearch = async function(q) {
-  try {
-    await addDoc(collection(db, "searches"), {
-      query: q, ts: serverTimestamp(), ua: navigator.userAgent.slice(0,80)
-    });
-  } catch(e) {}
+  try { await addDoc(collection(db, "searches"), { query: q, ts: serverTimestamp(), ua: navigator.userAgent.slice(0,80) }); } catch(e) {}
 };
-
-// Log downloads
 window._fbLogDownload = async function(albumName, type) {
-  try {
-    await addDoc(collection(db, "downloads"), {
-      album: albumName, type, ts: serverTimestamp()
-    });
-  } catch(e) {}
+  try { await addDoc(collection(db, "downloads"), { album: albumName, type, ts: serverTimestamp() }); } catch(e) {}
 };
-
 window._fbReady = true;
 console.log("[N3XT] Firebase connected ✓");
 </script>
 
+<!-- ── Main Script ── -->
 <script>
 // ── URL Token Animator ─────────────────────────────────────────────
 (function(){
@@ -1309,12 +1311,8 @@ console.log("[N3XT] Firebase connected ✓");
 
 // ── Splash ─────────────────────────────────────────────────────────
 (function(){
-  // Skip splash on non-home routes
-  const path = location.pathname;
-  if(path !== '/' && path !== '/index.html') {
-    document.getElementById('splash').style.display='none';
-    return;
-  }
+  const path=location.pathname;
+  if(path!=='/'&&path!=='/index.html'){document.getElementById('splash').style.display='none';return;}
   const SPLASH_MS=20000;
   const splash=document.getElementById('splash'),bar=document.getElementById('splash-bar'),cd=document.getElementById('splash-cd');
   let dismissed=false,start=performance.now(),raf;
@@ -1324,13 +1322,16 @@ console.log("[N3XT] Firebase connected ✓");
   splash.addEventListener('click',dismiss);
 })();
 
-// ── Anti-inspect ──────────────────────────────────────────────────
+// ── Anti-inspect (obfuscation) ─────────────────────────────────────
 document.addEventListener('contextmenu',e=>e.preventDefault());
 document.addEventListener('keydown',e=>{if(e.ctrlKey&&(e.key==='u'||e.key==='s'||e.key==='U'||e.key==='S'))e.preventDefault();});
 const _0x4f2a=()=>null,_0x7c91=0xDEAD,_0xbeef='\u0000',_0xff3e={};
 void(_0x4f2a,_0x7c91,_0xbeef,_0xff3e);
 
 lucide.createIcons();
+
+// ── Session Stats ──────────────────────────────────────────────────
+const SESSION = { searches: 0, plays: 0, downloads: 0, favs: 0 };
 
 // ── Router ────────────────────────────────────────────────────────
 function showView(id){
@@ -1339,46 +1340,22 @@ function showView(id){
   if(v)v.classList.add('active');
   lucide.createIcons();
 }
-
-function navigate(path){
-  history.pushState(null,'',path);
-  routePath(path);
-}
-
+function navigate(path){history.pushState(null,'',path);routePath(path);}
 function routePath(path){
   const parts=path.split('/').filter(Boolean);
-  if(!parts.length||path==='/'){
-    showView('view-main');return;
-  }
-  if(parts[0]==='artist'){
-    const id=parts[1]||'';
-    showView('view-artist');
-    renderArtistPage(id);
-    return;
-  }
-  if(parts[0]==='album'){
-    showView('view-main');
-    const id=parseInt(parts[1]);
-    if(id)setTimeout(()=>openAlbum(id),100);
-    return;
-  }
-  if(parts[0]==='d'){
-    showView('view-dl');
-    startDLPage(parts[1]||'');
-    return;
-  }
+  if(!parts.length||path==='/'){showView('view-main');return;}
+  if(parts[0]==='artist'){showView('view-artist');renderArtistPage(parts[1]||'');return;}
+  if(parts[0]==='album'){showView('view-main');const id=parseInt(parts[1]);if(id)setTimeout(()=>openAlbum(id),100);return;}
+  if(parts[0]==='d'){showView('view-dl');startDLPage(parts[1]||'');return;}
   showView('view-main');
 }
-
 window.addEventListener('popstate',()=>routePath(location.pathname));
-// Initial route
 routePath(location.pathname);
 
 // ── Theme ─────────────────────────────────────────────────────────
 let dark=true;
 const savedTheme=localStorage.getItem('n3xt_theme');
 if(savedTheme==='light')dark=false;
-
 function applyTheme(){
   document.body.classList.toggle('dark',dark);
   document.body.classList.toggle('light',!dark);
@@ -1398,7 +1375,7 @@ function closeChangelog(){document.getElementById('changelog-modal').classList.r
 document.getElementById('changelog-modal').addEventListener('click',e=>{if(e.target===document.getElementById('changelog-modal'))closeChangelog();});
 const CHANGELOG_KEY='n3xt_seen_changelog_v62';
 if(!localStorage.getItem(CHANGELOG_KEY)){
-  setTimeout(()=>{document.getElementById('changelog-modal').classList.add('on');},900);
+  setTimeout(()=>{document.getElementById('changelog-modal').classList.add('on');lucide.createIcons();},900);
   localStorage.setItem(CHANGELOG_KEY,'1');
 }
 window.closeChangelog=closeChangelog;
@@ -1427,15 +1404,57 @@ function showNotif(title,body,type='err'){
 const HISTORY_KEY='n3xt_search_history';
 function getHistory(){try{return JSON.parse(localStorage.getItem(HISTORY_KEY)||'[]');}catch{return[];}}
 function addToHistory(q){
-  let h=getHistory().filter(x=>x!==q);
-  h.unshift(q);h=h.slice(0,8);
+  let h=getHistory().filter(x=>x!==q);h.unshift(q);h=h.slice(0,8);
   localStorage.setItem(HISTORY_KEY,JSON.stringify(h));
 }
 function removeFromHistory(q){
-  const h=getHistory().filter(x=>x!==q);
-  localStorage.setItem(HISTORY_KEY,JSON.stringify(h));
-  renderDropdown();
+  const h=getHistory().filter(x=>x!==q);localStorage.setItem(HISTORY_KEY,JSON.stringify(h));renderDropdown();
 }
+window.removeFromHistory=removeFromHistory;
+
+// ── Recently Viewed ────────────────────────────────────────────────
+const RV_KEY='n3xt_recently_viewed';
+function getRecentlyViewed(){try{return JSON.parse(localStorage.getItem(RV_KEY)||'[]');}catch{return[];}}
+function addToRecentlyViewed(item){
+  let rv=getRecentlyViewed().filter(x=>x.id!==item.id);rv.unshift(item);rv=rv.slice(0,6);
+  localStorage.setItem(RV_KEY,JSON.stringify(rv));
+}
+function showRecentlyViewed(){
+  const rv=getRecentlyViewed();
+  const list=document.getElementById('rv-list');
+  if(!rv.length){
+    list.innerHTML=`<div class="fav-empty"><span data-lucide="clock" style="display:block;margin:0 auto 8px;width:24px;height:24px;opacity:.3"></span>Nothing viewed yet.</div>`;
+  }else{
+    list.innerHTML=rv.map(item=>`
+      <div class="rv-row" onclick="closeRecentlyViewed();setTimeout(()=>{if(${parseInt(item.id)||0})openAlbum(${parseInt(item.id)||0});},200)">
+        ${item.cover?`<img class="rv-thumb" src="${esc(item.cover)}" alt="" loading="lazy">`:`<div class="rv-thumb-ph">N3XT</div>`}
+        <div class="rv-info"><div class="rv-name">${esc(item.name)}</div><div class="rv-artist">${esc(item.artist)}</div></div>
+      </div>`).join('');
+  }
+  document.getElementById('rv-modal').classList.add('on');reIcons();
+}
+function closeRecentlyViewed(){document.getElementById('rv-modal').classList.remove('on');}
+document.getElementById('rv-modal').addEventListener('click',e=>{if(e.target===document.getElementById('rv-modal'))closeRecentlyViewed();});
+window.showRecentlyViewed=showRecentlyViewed;window.closeRecentlyViewed=closeRecentlyViewed;
+
+// ── Stats Modal ────────────────────────────────────────────────────
+function showStatsModal(){
+  const grid=document.getElementById('stats-grid');
+  const favCount=getFavs().length;
+  const histCount=getHistory().length;
+  grid.innerHTML=[
+    {val:SESSION.searches,lbl:'Searches'},
+    {val:SESSION.plays,   lbl:'Tracks Played'},
+    {val:SESSION.downloads,lbl:'Downloads'},
+    {val:favCount,        lbl:'Favorites'},
+    {val:histCount,       lbl:'Search History'},
+    {val:getRecentlyViewed().length,lbl:'Recently Viewed'},
+  ].map(s=>`<div class="stat-card"><div class="stat-val">${s.val}</div><div class="stat-lbl">${s.lbl}</div></div>`).join('');
+  document.getElementById('stats-modal').classList.add('on');reIcons();
+}
+function closeStatsModal(){document.getElementById('stats-modal').classList.remove('on');}
+document.getElementById('stats-modal').addEventListener('click',e=>{if(e.target===document.getElementById('stats-modal'))closeStatsModal();});
+window.showStatsModal=showStatsModal;window.closeStatsModal=closeStatsModal;
 
 // ── Favorites ─────────────────────────────────────────────────────
 const FAV_KEY='n3xt_favorites';
@@ -1443,28 +1462,30 @@ function getFavs(){try{return JSON.parse(localStorage.getItem(FAV_KEY)||'[]');}c
 function isFav(id){return getFavs().some(f=>f.id===id);}
 function toggleFav(album){
   let favs=getFavs();
-  if(isFav(album.id)){favs=favs.filter(f=>f.id!==album.id);}
-  else{favs.unshift({id:album.id,name:album.name||album.collectionName,artist:album.artist||album.artistName,cover:album.cover||(album.artworkUrl100||'').replace('100x100','300x300'),source:album.source||'Apple Music'});}
+  const id=String(album.id||album.collectionId||'');
+  if(isFav(id)){favs=favs.filter(f=>f.id!==id);}
+  else{
+    SESSION.favs++;
+    favs.unshift({id,name:album.name||album.collectionName,artist:album.artist||album.artistName,cover:album.cover||(album.artworkUrl100||'').replace('100x100','300x300'),source:album.source||'Apple Music'});
+  }
   localStorage.setItem(FAV_KEY,JSON.stringify(favs));
-  updateFavBtns(album.id||album.collectionId);
+  updateFavBtns(id);
 }
 function updateFavBtns(id){
   document.querySelectorAll(`.result-fav-btn[data-id="${id}"]`).forEach(btn=>{
     btn.classList.toggle('on',isFav(String(id)));
-    btn.innerHTML=isFav(String(id))?icon('heart-off'):icon('heart');
-    reIcons();
+    btn.innerHTML=isFav(String(id))?icon('heart-off'):icon('heart');reIcons();
   });
 }
 function showFavoritesModal(){
   const favs=getFavs();
   const list=document.getElementById('fav-list');
   if(!favs.length){
-    list.innerHTML=`<div class="fav-empty"><span data-lucide="heart" style="display:block;margin:0 auto 8px;width:24px;height:24px;opacity:.3"></span>No favorites yet.<br>Click the heart icon on any result.</div>`;
-    reIcons();
+    list.innerHTML=`<div class="fav-empty"><span data-lucide="heart" style="display:block;margin:0 auto 8px;width:24px;height:24px;opacity:.3"></span>No favorites yet.<br>Click the heart on any result.</div>`;reIcons();
   }else{
     list.innerHTML=`<div class="fav-header"><span>${favs.length} saved</span><button class="fav-clear" onclick="clearFavs()">Clear all</button></div>`+
     favs.map(f=>`
-      <div class="result-item" style="animation:none;border-radius:10px;margin-bottom:4px" onclick="closeFavoritesModal();setTimeout(()=>{if('${f.source}'==='Apple Music')openAlbum(${parseInt(f.id)||0});},200)">
+      <div class="result-item" style="animation:none;border-radius:10px;margin-bottom:4px" onclick="closeFavoritesModal()">
         ${f.cover?`<img class="result-thumb" src="${esc(f.cover)}" alt="" loading="lazy">`:`<div class="result-thumb-ph">N3XT</div>`}
         <div class="result-info">
           <div class="result-name">${esc(f.name)}</div>
@@ -1473,21 +1494,20 @@ function showFavoritesModal(){
         <button class="result-fav-btn on" data-id="${esc(f.id)}" onclick="event.stopPropagation();toggleFavById('${esc(f.id)}')">
           ${icon('heart-off')}
         </button>
-      </div>`).join('');
-    reIcons();
+      </div>`).join('');reIcons();
   }
   document.getElementById('fav-modal').classList.add('on');
 }
 function closeFavoritesModal(){document.getElementById('fav-modal').classList.remove('on');}
 function clearFavs(){localStorage.setItem(FAV_KEY,'[]');showFavoritesModal();}
 window.toggleFavById=function(id){
-  const favs=getFavs();const f=favs.find(x=>x.id===id);
-  if(f)toggleFav(f);showFavoritesModal();
+  const favs=getFavs();const f=favs.find(x=>x.id===id);if(f)toggleFav(f);showFavoritesModal();
 };
 document.getElementById('fav-modal').addEventListener('click',e=>{if(e.target===document.getElementById('fav-modal'))closeFavoritesModal();});
+window.showFavoritesModal=showFavoritesModal;window.closeFavoritesModal=closeFavoritesModal;window.clearFavs=clearFavs;
 
 // ── Keyboard Shortcuts Modal ───────────────────────────────────────
-function showKbdModal(){document.getElementById('kbd-modal').classList.add('on');}
+function showKbdModal(){document.getElementById('kbd-modal').classList.add('on');reIcons();}
 function closeKbdModal(){document.getElementById('kbd-modal').classList.remove('on');}
 document.getElementById('kbd-modal').addEventListener('click',e=>{if(e.target===document.getElementById('kbd-modal'))closeKbdModal();});
 window.showKbdModal=showKbdModal;window.closeKbdModal=closeKbdModal;
@@ -1507,8 +1527,14 @@ document.addEventListener('keydown',e=>{
   if(e.key==='?'&&!typing){showKbdModal();return;}
   if(e.key==='t'&&!typing){dark=!dark;applyTheme();return;}
   if(e.key==='f'&&!typing){showFavoritesModal();return;}
+  if(e.key==='s'&&!typing){showStatsModal();return;}
   if(e.key==='ArrowDown'&&!typing){e.preventDefault();navigateResults(1);return;}
   if(e.key==='ArrowUp'&&!typing){e.preventDefault();navigateResults(-1);return;}
+  if(e.key==='Enter'&&!typing&&selectedResultIdx>=0){
+    const items=document.querySelectorAll('.result-item');
+    items[selectedResultIdx]?.click();
+    return;
+  }
   if(e.key==='Enter'&&document.activeElement===siEl){doSearch();return;}
 });
 
@@ -1527,7 +1553,11 @@ function openTOS(){document.getElementById('tos-modal').classList.add('on');}
 function closeTOS(){document.getElementById('tos-modal').classList.remove('on');}
 function openDMCA(){document.getElementById('dmca-modal').classList.add('on');reIcons();}
 function closeDMCA(){document.getElementById('dmca-modal').classList.remove('on');}
-function openDMCAForm(){document.getElementById('dmca-form-modal').classList.add('on');}
+function openDMCAForm(){
+  document.getElementById('dmca-form-fields').style.display='';
+  document.getElementById('dmca-form-success').style.display='none';
+  document.getElementById('dmca-form-modal').classList.add('on');
+}
 function closeDMCAForm(){document.getElementById('dmca-form-modal').classList.remove('on');}
 function submitDMCAForm(){
   const n=document.getElementById('dmca-name').value.trim();
@@ -1541,6 +1571,7 @@ function submitDMCAForm(){
   err.innerHTML='';
   document.getElementById('dmca-form-fields').style.display='none';
   document.getElementById('dmca-form-success').style.display='';
+  reIcons();
 }
 [document.getElementById('tos-modal'),document.getElementById('dmca-modal'),document.getElementById('dmca-form-modal')].forEach(m=>{
   m.addEventListener('click',e=>{if(e.target===m)m.classList.remove('on');});
@@ -1561,7 +1592,6 @@ let lamourAttempts=0,fotosAttempts=0;
 function showNP(name,artist){
   document.getElementById('np-text').textContent=name;
   document.getElementById('now-playing').classList.add('show');
-  // Mini player
   document.getElementById('mp-title').textContent=name;
   document.getElementById('mp-artist').textContent=artist||'';
   document.getElementById('mini-player').classList.add('show');
@@ -1591,10 +1621,10 @@ function stopCurrentAudio(){
 }
 window.stopCurrentAudio=stopCurrentAudio;
 
-// Volume
 document.getElementById('mp-vol').addEventListener('input',function(){if(currentAudio)currentAudio.volume=parseFloat(this.value);});
 
 function playCustom(btn,url,name,artist,dur){
+  SESSION.plays++;
   setPlayingBtn(btn);currentPlayBtn=btn;showNP(name,artist);
   const a=new Audio(url);currentAudio=a;
   a.volume=parseFloat(document.getElementById('mp-vol').value||1);
@@ -1608,12 +1638,20 @@ function playTrack(btn,name,idx){
   stopPrev(btn);
   if(btn.classList.contains('playing')){resetPlayBtn(btn);currentPlayBtn=null;hideNP();return;}
   if(idx===8){playCustom(btn,DIEZ_URL,name,'Junior H',17000);}
-  else if(idx===12){lamourAttempts++;if(lamourAttempts===1){showNotif('Playback Failed',`"${name}" — audio file not found on server.`,'err');return;}playCustom(btn,LAMOUR_URL,name,'Junior H',17000);}
-  else if(idx===1){fotosAttempts++;if(fotosAttempts<=3){showNotif('Playback Failed',`"${name}" — audio file not found on server.`,'err');return;}playFotos(btn,name);}
+  else if(idx===12){
+    lamourAttempts++;
+    if(lamourAttempts===1){showNotif('Playback Failed',`"${name}" — audio file not found on server.`,'err');return;}
+    playCustom(btn,LAMOUR_URL,name,'Junior H',17000);
+  }
+  else if(idx===1){
+    fotosAttempts++;
+    if(fotosAttempts<=3){showNotif('Playback Failed',`"${name}" — audio file not found on server.`,'err');return;}
+    playFotos(btn,name);
+  }
   else{showNotif('Playback Failed',`"${name}" — audio file not found on server.`,'err');}
 }
 function playFotos(btn,name){
-  setPlayingBtn(btn);currentPlayBtn=btn;showNP(name,'Junior H');
+  setPlayingBtn(btn);currentPlayBtn=btn;showNP(name,'Junior H');SESSION.plays++;
   const a=new Audio(FOTOS_URL);currentAudio=a;
   a.volume=parseFloat(document.getElementById('mp-vol').value||1);
   a.play().catch(()=>{showNotif('Playback Error',`Could not load "${name}".`,'err');resetPlayBtn(btn);currentPlayBtn=null;currentAudio=null;hideNP();});
@@ -1629,6 +1667,7 @@ function playBoveadaTrack(btn,name,idx){
 function playPreview(btn,url,name,artist){
   stopPrev(btn);
   if(btn.classList.contains('playing')){resetPlayBtn(btn);currentPlayBtn=null;hideNP();return;}
+  SESSION.plays++;
   setPlayingBtn(btn);currentPlayBtn=btn;showNP(name,artist||'');
   const a=new Audio(url);currentAudio=a;
   a.volume=parseFloat(document.getElementById('mp-vol').value||1);
@@ -1638,7 +1677,6 @@ function playPreview(btn,url,name,artist){
 }
 window.playTrack=playTrack;window.playBoveadaTrack=playBoveadaTrack;window.playPreview=playPreview;
 
-// ── Play HTML helpers ─────────────────────────────────────────────
 function pbHTML(disabled=false){return`<button class="play-btn"${disabled?' disabled style="opacity:.22;cursor:default"':''}><span data-lucide="play"></span></button>`;}
 function bigPbHTML(disabled=false){return`<button class="big-play-btn"${disabled?' disabled style="opacity:.25;cursor:default"':''}><span data-lucide="play"></span></button>`;}
 
@@ -1658,9 +1696,51 @@ const sadBoyzAlbum={
     {name:'Fin Del Mundo',artist:'Junior H',len:'2:35'}
   ]
 };
-const bovedeAlbum={id:'la-boveda',name:'LA BOVEDA',artist:'Natanael Cano',year:'2026',source:'Telegram',cover:'https://github.com/Rainfun/Pulse/blob/main/image.png?raw=true',dlTime:10000,tracks:[{name:'POR AMARTE ASI',artist:'Natanael Cano',len:'3:14'},{name:'AETERNUM',artist:'Natanael Cano',len:'2:58'},{name:'APELATIVO',artist:'Natanael Cano',len:'3:06'},{name:'AUN RECUERDO',artist:'Natanael Cano',len:'2:47'},{name:'CRISTIANO RONALDO',artist:'Natanael Cano',len:'3:21'},{name:'MAR AZUL',artist:'Natanael Cano',len:'2:55'},{name:'PA LA MANA',artist:'Natanael Cano',len:'2:49'},{name:'APREVENIDO',artist:'Natanael Cano',len:'2:18'},{name:'FANTASMA',artist:'Natanael Cano',len:'3:02'},{name:'CIELO ROJO',artist:'Natanael Cano',len:'3:17'},{name:'BOHEMIO SOLITARIO',artist:'Natanael Cano',len:'2:44'},{name:'LO QUE FUI',artist:'Natanael Cano',len:'3:08'},{name:'NOCHE DE LLANTO',artist:'Natanael Cano',len:'2:51'},{name:'CORONA DE ESPINAS',artist:'Natanael Cano',len:'3:33'},{name:'ENTRE SOMBRAS',artist:'Natanael Cano',len:'2:39'},{name:'SIN RETORNO',artist:'Natanael Cano',len:'3:10'},{name:'ULTIMO BRINDIS',artist:'Natanael Cano',len:'2:57'},{name:'LA BOVEDA',artist:'Natanael Cano',len:'4:01'}]};
-const leviticoAlbum={id:'levitico',name:'LEVITICO',artist:'Peso Pluma',year:'2026',source:'Telegram',cover:'',dlTime:10000,tracks:[{name:'BELICE',artist:'Peso Pluma & Eslabon Armado & Tito Double P',len:'3:44'}],failedCount:16};
-const miVida3Album={id:'mi-vida-3',name:'Mi Vida En Un Cigarro 3',artist:'Junior H',year:'2026',source:'Instagram',cover:'https://github.com/Rainfun/rainfun.github.io/blob/well-known/photo_5107148283603258266_x.jpg?raw=true',dlTime:10000,failedCount:14};
+const bovedeAlbum={
+  id:'la-boveda',name:'LA BOVEDA',artist:'Natanael Cano',year:'2026',source:'Telegram',
+  cover:'https://github.com/Rainfun/Pulse/blob/main/image.png?raw=true',dlTime:10000,
+  tracks:[
+    {name:'POR AMARTE ASI',artist:'Natanael Cano',len:'3:14'},{name:'AETERNUM',artist:'Natanael Cano',len:'2:58'},
+    {name:'APELATIVO',artist:'Natanael Cano',len:'3:06'},{name:'AUN RECUERDO',artist:'Natanael Cano',len:'2:47'},
+    {name:'CRISTIANO RONALDO',artist:'Natanael Cano',len:'3:21'},{name:'MAR AZUL',artist:'Natanael Cano',len:'2:55'},
+    {name:'PA LA MANA',artist:'Natanael Cano',len:'2:49'},{name:'APREVENIDO',artist:'Natanael Cano',len:'2:18'},
+    {name:'FANTASMA',artist:'Natanael Cano',len:'3:02'},{name:'CIELO ROJO',artist:'Natanael Cano',len:'3:17'},
+    {name:'BOHEMIO SOLITARIO',artist:'Natanael Cano',len:'2:44'},{name:'LO QUE FUI',artist:'Natanael Cano',len:'3:08'},
+    {name:'NOCHE DE LLANTO',artist:'Natanael Cano',len:'2:51'},{name:'CORONA DE ESPINAS',artist:'Natanael Cano',len:'3:33'},
+    {name:'ENTRE SOMBRAS',artist:'Natanael Cano',len:'2:39'},{name:'SIN RETORNO',artist:'Natanael Cano',len:'3:10'},
+    {name:'ULTIMO BRINDIS',artist:'Natanael Cano',len:'2:57'},{name:'LA BOVEDA',artist:'Natanael Cano',len:'4:01'}
+  ]
+};
+const leviticoAlbum={id:'levitico',name:'LEVITICO',artist:'Peso Pluma',year:'2026',source:'Telegram',cover:'',dlTime:10000,
+  tracks:[{name:'BELICE',artist:'Peso Pluma & Eslabon Armado & Tito Double P',len:'3:44'}],failedCount:16};
+const miVida3Album={id:'mi-vida-3',name:'Mi Vida En Un Cigarro 3',artist:'Junior H',year:'2026',source:'Instagram',
+  cover:'https://github.com/Rainfun/rainfun.github.io/blob/well-known/photo_5107148283603258266_x.jpg?raw=true',dlTime:10000,failedCount:14};
+const contingente2Album={
+  id:'contingente-ii',name:'CONTINGENTE II',artist:'Junior H',year:'2026',source:'Instagram',
+  cover:'',dlTime:10000,
+  tracks:[
+    {name:'CNTGNT II (Intro)',         artist:'Junior H',                    len:'2:41'},
+    {name:'Bon Appétit',               artist:'Junior H, Ovi',               len:'3:31'},
+    {name:'Escribiendo Canciones',     artist:'Junior H',                    len:'2:53'},
+    {name:'Lo Qué Quisiera',           artist:'Junior H',                    len:'2:38'},
+    {name:'Let Me Know',               artist:'Junior H',                    len:'2:47'},
+    {name:'Tory Burch',                artist:'Junior H, Paloma Mami',       len:'3:34'},
+    {name:'Conmigo Se Va',             artist:'Junior H, Alemán',            len:'3:53'},
+    {name:'Mi Badgyal',                artist:'Junior H, Cris MJ',           len:'4:00'},
+    {name:'Desvestida',                artist:'Junior H',                    len:'3:10'},
+    {name:'Hooka',                     artist:'Junior H, Chencho Corleone',  len:'3:18'},
+    {name:'Yo Sé',                     artist:'Junior H',                    len:'2:59'},
+    {name:'Secret Service',            artist:'Junior H, OHGESSY',           len:'2:47'},
+    {name:'Hotel en Chicago',          artist:'Junior H, Krizous',           len:'3:20'},
+    {name:'No Andas Con Cualquiera',   artist:'Junior H, Maluma',            len:'2:36'},
+    {name:'Cómo Te Fue',               artist:'Junior H, Rels B',            len:'3:21'},
+    {name:'Sin Censura',               artist:'Junior H, La Santa Grifa',    len:'3:19'},
+    {name:'Tragos',                    artist:'Junior H',                    len:'2:57'},
+    {name:'Céline',                    artist:'Junior H, Luar La L',         len:'3:04'},
+    {name:'La Señal',                  artist:'Junior H',                    len:'2:34'},
+    {name:'Última Vez',                artist:'Junior H',                    len:'2:50'},
+  ]
+};
 const gataS     ={id:'s-gata',     name:'GATA',          artist:'Junior H',                      year:'2026',source:'Instagram',isSingle:true};
 const tenienteS ={id:'s-teniente', name:'EL TENIENTE',   artist:'Junior H & Gael Valenzuela',    year:'2026',source:'Instagram',isSingle:true};
 const changoS   ={id:'s-chango',   name:'EL CHANGO',     artist:'Junior H',                      year:'2026',source:'Instagram',isSingle:true};
@@ -1671,8 +1751,16 @@ const s000666   ={id:'s-000666',   name:'000666',        artist:'Junior H',     
 // ── Artist page ────────────────────────────────────────────────────
 const ARTISTS={
   'junior-h':{
-    name:'Junior H', initials:'JH',
-    albums:[sadBoyzAlbum,miVida3Album,{id:'s-gata',name:'GATA',year:'2026',source:'Instagram',isSingle:true},{id:'s-teniente',name:'EL TENIENTE',year:'2026',source:'Instagram',isSingle:true},{id:'s-chango',name:'EL CHANGO',year:'2026',source:'Instagram',isSingle:true},{id:'s-tigre',name:'EL TIGRE',year:'2026',source:'Instagram',isSingle:true},{id:'s-cripto',name:'CRIPTOMONEDAS',year:'2026',source:'Instagram',isSingle:true},{id:'s-000666',name:'000666',year:'2026',source:'Instagram',isSingle:true}]
+    name:'Junior H',initials:'JH',
+    albums:[
+      sadBoyzAlbum,miVida3Album,contingente2Album,
+      {id:'s-gata',name:'GATA',year:'2026',source:'Instagram',isSingle:true},
+      {id:'s-teniente',name:'EL TENIENTE',year:'2026',source:'Instagram',isSingle:true},
+      {id:'s-chango',name:'EL CHANGO',year:'2026',source:'Instagram',isSingle:true},
+      {id:'s-tigre',name:'EL TIGRE',year:'2026',source:'Instagram',isSingle:true},
+      {id:'s-cripto',name:'CRIPTOMONEDAS',year:'2026',source:'Instagram',isSingle:true},
+      {id:'s-000666',name:'000666',year:'2026',source:'Instagram',isSingle:true}
+    ]
   },
   'natanael-cano':{name:'Natanael Cano',initials:'NC',albums:[bovedeAlbum]},
   'peso-pluma':{name:'Peso Pluma',initials:'PP',albums:[leviticoAlbum]},
@@ -1713,15 +1801,21 @@ window.copyArtistLink=function(id){
   navigator.clipboard.writeText(url).then(()=>showNotif('Copied!',url,'ok')).catch(()=>showNotif('Error','Could not copy link.','err'));
 };
 
-// ── Viewer Helpers ────────────────────────────────────────────────
+// ── Viewer helpers ────────────────────────────────────────────────
 let currentViewAlbum=null;
-
 function openViewer(html,album=null){
   document.getElementById('viewer').innerHTML=html;
   currentViewAlbum=album;
+  if(album){
+    addToRecentlyViewed({
+      id:String(album.id||album.collectionId||''),
+      name:album.name||album.collectionName||'Unknown',
+      artist:album.artist||album.artistName||'—',
+      cover:album.cover||(album.artworkUrl100||'').replace('100x100','300x300')
+    });
+  }
   reIcons();
 }
-
 function viewerShareBtn(albumId,albumName){
   return`<button class="vaction-btn" onclick="copyAlbumLink('${esc(String(albumId))}','${esc(albumName)}')">
     ${icon('share-2')} Share
@@ -1736,7 +1830,6 @@ window.copyAlbumLink=function(id,name){
   const url=location.origin+'/album/'+id;
   navigator.clipboard.writeText(url).then(()=>showNotif('Link copied!',url,'ok')).catch(()=>showNotif('Error','Could not copy.','err'));
 };
-
 function favBtnHTML(album){
   const on=isFav(String(album.id||album.collectionId||''));
   return`<button class="vaction-btn${on?' on':''}" onclick="toggleFavFromViewer()" style="${on?'color:var(--accent);border-color:rgba(250,45,72,.3)':''}">
@@ -1746,12 +1839,10 @@ function favBtnHTML(album){
 window.toggleFavFromViewer=function(){
   if(!currentViewAlbum)return;
   toggleFav(currentViewAlbum);
-  // re-render viewer actions
+  // Update the fav button in viewer actions
   const actionsEl=document.querySelector('.viewer-actions');
   if(actionsEl){
     const on=isFav(String(currentViewAlbum.id||currentViewAlbum.collectionId||''));
-    const favBtn=actionsEl.querySelector('.vaction-btn');
-    // just refresh the whole viewer isn't ideal; just update icon
     actionsEl.querySelectorAll('.vaction-btn').forEach(b=>{
       if(b.querySelector('[data-lucide="heart"]')||b.querySelector('[data-lucide="heart-off"]')){
         b.innerHTML=(on?icon('heart-off'):icon('heart'))+(on?' Unfavorite':' Favorite');
@@ -1909,7 +2000,9 @@ function openSingle(s){
         <div style="font-size:12px;color:var(--fg3);margin-top:3px">${esc(s.artist)}</div>
       </div>
     </div>`,s);
-  document.querySelector('#viewer .big-play-btn')?.addEventListener('click',function(){showNotif('Playback Failed',`"${s.name}" — audio file not found on server.`,'err');});
+  document.querySelector('#viewer .big-play-btn')?.addEventListener('click',function(){
+    showNotif('Playback Failed',`"${s.name}" — audio file not found on server.`,'err');
+  });
 }
 
 async function openAlbum(id){
@@ -1925,6 +2018,7 @@ async function openAlbum(id){
     const albumName=album.collectionName||'Unknown',artistName=album.artistName||'—';
     const albumObj={id:String(id),collectionId:id,name:albumName,collectionName:albumName,artist:artistName,artistName,cover,artworkUrl100:album.artworkUrl100||'',source:'Apple Music'};
     currentViewAlbum=albumObj;
+    addToRecentlyViewed({id:String(id),name:albumName,artist:artistName,cover});
     const artistSlug=artistName.toLowerCase().replace(/\s+/g,'-').replace(/[^a-z0-9-]/g,'');
     const actionsHtml=`<div class="viewer-actions">
       ${viewerShareBtn(id,albumName)}
@@ -2042,10 +2136,23 @@ function startDL(type){
 function confirmTrackDL(){runProgress('song');}
 window.startDL=startDL;window.confirmTrackDL=confirmTrackDL;window.closeModal=closeModal;
 
-const A_STEPS=[{text:'Initializing secure connection…',icon:'shield'},{text:'Locating album archive…',icon:'database'},{text:'Verifying file integrity…',icon:'check-circle'},{text:'Decrypting audio streams…',icon:'lock'},{text:'Packaging ZIP archive…',icon:'archive'},{text:'Transfer complete.',icon:'check'}];
-const S_STEPS=[{text:'Locating track…',icon:'search'},{text:'Verifying file integrity…',icon:'check-circle'},{text:'Decrypting audio…',icon:'lock'},{text:'Transfer complete.',icon:'check'}];
+const A_STEPS=[
+  {text:'Initializing secure connection…',icon:'shield'},
+  {text:'Locating album archive…',icon:'database'},
+  {text:'Verifying file integrity…',icon:'check-circle'},
+  {text:'Decrypting audio streams…',icon:'lock'},
+  {text:'Packaging ZIP archive…',icon:'archive'},
+  {text:'Transfer complete.',icon:'check'}
+];
+const S_STEPS=[
+  {text:'Locating track…',icon:'search'},
+  {text:'Verifying file integrity…',icon:'check-circle'},
+  {text:'Decrypting audio…',icon:'lock'},
+  {text:'Transfer complete.',icon:'check'}
+];
 
 function runProgress(type){
+  SESSION.downloads++;
   const isSong=type==='song';
   const totalMs=currentLeakedAlbum?.dlTime||10000;
   const steps=isSong?S_STEPS:A_STEPS;
@@ -2114,12 +2221,10 @@ function startDLPage(token){
   artist.textContent='N3XT Encrypted Transfer';
   document.getElementById('dl-thumb-wrap').innerHTML=`<div class="dl-thumb-ph"><span data-lucide="lock"></span></div>`;
   reIcons();
-  // Animate URL
   const chars='abcdefghjkmnpqrstuvwxyz23456789';
   const rnd=(n)=>{let s='';for(let i=0;i<n;i++)s+=chars[Math.floor(Math.random()*chars.length)];return s;}
   let urlInterval=setInterval(()=>{urlBar.textContent=location.origin+'/d/'+rnd(4)+Math.floor(Math.random()*999999).toString(36)+rnd(4);},120);
   setTimeout(()=>{clearInterval(urlInterval);urlBar.textContent=location.href;},2000);
-  // Steps
   stepsEl.innerHTML=DL_STEPS.map(t=>`<div class="dl-step"><div class="dl-step-dot"></div><span>${t}</span></div>`).join('');
   const stepEls=[...stepsEl.querySelectorAll('.dl-step')];
   const totalMs=8000;
@@ -2174,10 +2279,7 @@ function showCmdDropdown(){cmdDropdown.classList.add('show');renderDropdown();}
 function hideCmdDropdown(){cmdDropdown.classList.remove('show');}
 
 siEl.addEventListener('focus',()=>showCmdDropdown());
-siEl.addEventListener('input',()=>{
-  if(siEl.value.length>0)hideCmdDropdown();
-  else showCmdDropdown();
-});
+siEl.addEventListener('input',()=>{if(siEl.value.length>0)hideCmdDropdown();else showCmdDropdown();});
 document.addEventListener('click',e=>{if(!cmdSearch.contains(e.target))hideCmdDropdown();});
 
 sbtn.addEventListener('click',doSearch);
@@ -2193,7 +2295,6 @@ document.getElementById('filters').addEventListener('click',e=>{
   if(lastResultsCache)renderResults(...lastResultsCache);
 });
 
-// ── Sort ──────────────────────────────────────────────────────────
 let activeSort='relevance';
 
 // ── Search ────────────────────────────────────────────────────────
@@ -2218,6 +2319,7 @@ async function doSearch(){
   const q=siEl.value.trim();if(!q)return;
   hideCmdDropdown();
   addToHistory(q);
+  SESSION.searches++;
   if(window._fbReady)window._fbLogSearch(q);
   const ql=q.toLowerCase();
   const fake=ql.includes('sad')||ql.includes('$ad')||ql.includes('boyz')||ql.includes('4 life')||(matchesJunior(ql)&&ql.includes('boyz'));
@@ -2230,7 +2332,8 @@ async function doSearch(){
   const showTigre=ql.includes('tigre')||(matchesJunior(ql)&&ql.includes('tigre'));
   const showCripto=ql.includes('cripto')||ql.includes('criptomoneda')||ql.includes('jorsshh')||ql.includes('calle 24');
   const show000666=ql.includes('000666')||(matchesJunior(ql)&&ql.includes('666'));
-  const juniorBroad=matchesJunior(ql)&&![fake,boveda,levitico,mivida3,showGata,showTeniente,showChango,showTigre,showCripto,show000666].some(Boolean);
+  const showContingente2=ql.includes('contingente')||ql.includes('cntgnt')||(matchesJunior(ql)&&ql.includes('contingente'));
+  const juniorBroad=matchesJunior(ql)&&![fake,boveda,levitico,mivida3,showGata,showTeniente,showChango,showTigre,showCripto,show000666,showContingente2].some(Boolean);
 
   let fp;try{fp=fetch(`https://itunes.apple.com/search?term=${encodeURIComponent(q)}&entity=album&limit=16`);}catch(e){fp=Promise.reject(e);}
 
@@ -2263,11 +2366,11 @@ async function doSearch(){
     reIcons();return;
   }
   let items=(fr.results||[]).filter((v,i,a)=>a.findIndex(x=>x.collectionId===v.collectionId)===i);
-  lastResultsCache=[items,fake,boveda,levitico,q,mivida3,showGata,showTeniente,showChango,showTigre,showCripto,show000666,juniorBroad];
-  renderResults(items,fake,boveda,levitico,q,mivida3,showGata,showTeniente,showChango,showTigre,showCripto,show000666,juniorBroad);
+  lastResultsCache=[items,fake,boveda,levitico,q,mivida3,showGata,showTeniente,showChango,showTigre,showCripto,show000666,juniorBroad,showContingente2];
+  renderResults(items,fake,boveda,levitico,q,mivida3,showGata,showTeniente,showChango,showTigre,showCripto,show000666,juniorBroad,showContingente2);
 }
 
-function renderResults(items,injectFake,injectBoveda,injectLevitico,q,injectMiVida3,injectGata,injectTeniente,injectChango,injectTigre,injectCripto,inject000666,juniorBroad){
+function renderResults(items,injectFake,injectBoveda,injectLevitico,q,injectMiVida3,injectGata,injectTeniente,injectChango,injectTigre,injectCripto,inject000666,juniorBroad,injectContingente2){
   selectedResultIdx=-1;
   const f=activeFilter;
   const showFake=(injectFake||juniorBroad)&&(f==='all'||f==='Instagram');
@@ -2280,16 +2383,11 @@ function renderResults(items,injectFake,injectBoveda,injectLevitico,q,injectMiVi
   const showTigre=(injectTigre||juniorBroad)&&(f==='all'||f==='Instagram');
   const showCripto=(injectCripto||juniorBroad)&&(f==='all'||f==='Instagram');
   const show000666=(inject000666||juniorBroad)&&(f==='all'||f==='Instagram');
+  const showContingente2=(injectContingente2||juniorBroad)&&(f==='all'||f==='Instagram');
   const showApple=f==='all'||f==='Apple Music'||f==='YouTube Music'||f==='Spotify';
   const filtered=showApple?items:[];
-  const injCount=[showFake,showBoveda,showLevitico,showMiVida3,showGata,showTeniente,showChango,showTigre,showCripto,show000666].filter(Boolean).length;
-  // Note: fbAlbsFiltered and fbSngsFiltered computed below after ql is available
-  const ql=q.toLowerCase();
-  const fbAlbums2=window._fbAlbums||[];
-  const fbSingles2=window._fbSingles||[];
-  const fbAlbsFiltered=(f==='all'||f==='Instagram'||f==='Telegram')?fbAlbums2.filter(a=>{const n=(a.name||'').toLowerCase();const ar=(a.artist||'').toLowerCase();return n.includes(ql)||ar.includes(ql)||ql.includes(ar.split(' ')[0]);}):[];
-  const fbSngsFiltered=(f==='all'||f==='Instagram'||f==='Telegram')?fbSingles2.filter(s=>{const n=(s.name||'').toLowerCase();const ar=(s.artist||'').toLowerCase();return n.includes(ql)||ar.includes(ql)||ql.includes(ar.split(' ')[0]);}):[];
-  const total=filtered.length+injCount+fbAlbsFiltered.length+fbSngsFiltered.length;
+  const injCount=[showFake,showBoveda,showLevitico,showMiVida3,showGata,showTeniente,showChango,showTigre,showCripto,show000666,showContingente2].filter(Boolean).length;
+  const total=filtered.length+injCount;
 
   let html=`<div class="panel-header">Results <span data-lucide="disc-3"></span></div>
     <div class="sort-bar">
@@ -2323,43 +2421,23 @@ function renderResults(items,injectFake,injectBoveda,injectLevitico,q,injectMiVi
   const phThumb=`<div class="result-thumb-ph">N3XT</div>`;
   const phCircle=`<div class="result-thumb-ph circle"></div>`;
 
-  if(showFake) html+=resultRow(sadBoyzAlbum.cover?`<img class="result-thumb" src="${sadBoyzAlbum.cover}" alt="" loading="lazy">`:`${phThumb}`,sadBoyzAlbum.name,sadBoyzAlbum.artist,`<span class="badge b-ig">Instagram</span>`,'openSadBoyz()',sadBoyzAlbum.id);
-  if(showMiVida3) html+=resultRow(miVida3Album.cover?`<img class="result-thumb" src="${miVida3Album.cover}" alt="" loading="lazy">`:phThumb,miVida3Album.name,miVida3Album.artist,`<span class="badge b-ig">Instagram</span>`,'openMiVida3()',miVida3Album.id);
-  if(showBoveda) html+=resultRow(`<img class="result-thumb" src="${esc(bovedeAlbum.cover)}" alt="" loading="lazy">`,bovedeAlbum.name,bovedeAlbum.artist,`<span class="badge b-tg">Telegram</span>`,'openBoveda()',bovedeAlbum.id);
-  if(showLevitico) html+=resultRow(phThumb,leviticoAlbum.name,leviticoAlbum.artist,`<span class="badge b-tg">Telegram</span>`,'openLevitico()',leviticoAlbum.id);
+  if(showFake)html+=resultRow(sadBoyzAlbum.cover?`<img class="result-thumb" src="${sadBoyzAlbum.cover}" alt="" loading="lazy">`:phThumb,sadBoyzAlbum.name,sadBoyzAlbum.artist,`<span class="badge b-ig">Instagram</span>`,'openSadBoyz()',sadBoyzAlbum.id);
+  if(showMiVida3)html+=resultRow(miVida3Album.cover?`<img class="result-thumb" src="${miVida3Album.cover}" alt="" loading="lazy">`:phThumb,miVida3Album.name,miVida3Album.artist,`<span class="badge b-ig">Instagram</span>`,'openMiVida3()',miVida3Album.id);
+  if(showContingente2)html+=resultRow(phThumb,contingente2Album.name,contingente2Album.artist,`<span class="badge b-ig">Instagram</span>`,'openContingente2()',contingente2Album.id);
+  if(showBoveda)html+=resultRow(`<img class="result-thumb" src="${esc(bovedeAlbum.cover)}" alt="" loading="lazy">`,bovedeAlbum.name,bovedeAlbum.artist,`<span class="badge b-tg">Telegram</span>`,'openBoveda()',bovedeAlbum.id);
+  if(showLevitico)html+=resultRow(phThumb,leviticoAlbum.name,leviticoAlbum.artist,`<span class="badge b-tg">Telegram</span>`,'openLevitico()',leviticoAlbum.id);
 
   const singles=[
-    {show:showGata,   data:gataS,    fn:'openSingleGata()'},
+    {show:showGata,    data:gataS,    fn:'openSingleGata()'},
     {show:showTeniente,data:tenienteS,fn:'openSingleTeniente()'},
-    {show:showChango, data:changoS,  fn:'openSingleChango()'},
-    {show:showTigre,  data:tigreS,   fn:'openSingleTigre()'},
-    {show:showCripto, data:criptoS,  fn:'openSingleCripto()'},
-    {show:show000666, data:s000666,  fn:'openSingle000666()'},
+    {show:showChango,  data:changoS,  fn:'openSingleChango()'},
+    {show:showTigre,   data:tigreS,   fn:'openSingleTigre()'},
+    {show:showCripto,  data:criptoS,  fn:'openSingleCripto()'},
+    {show:show000666,  data:s000666,  fn:'openSingle000666()'},
   ];
   singles.forEach(({show,data,fn})=>{
     if(!show)return;
     html+=resultRow(phCircle,data.name,data.artist,`<span class="badge b-single">Single</span><span class="badge b-ig">Instagram</span>`,fn,data.id);
-  });
-
-  // ── Firebase albums from Firestore ──────────────────────────────
-  fbAlbsFiltered.forEach((alb,idx)=>{
-    const srcColor=alb.source==='Telegram'?'#2ca5e0':'#833ab4';
-    const badgeCls=alb.source==='Telegram'?'b-tg':'b-ig';
-    html+=resultRow(
-      alb.cover?`<img class="result-thumb" src="${esc(alb.cover)}" alt="" loading="lazy">`:`<div class="result-thumb-ph">N3XT</div>`,
-      alb.name||'Unknown', alb.artist||'—',
-      `<span class="badge ${badgeCls}">${esc(alb.source)}</span>`,
-      `openFbAlbum('${esc(alb._fbId)}')`, alb._fbId, idx*0.04
-    );
-  });
-  fbSngsFiltered.forEach((s,idx)=>{
-    const badgeCls=s.source==='Telegram'?'b-tg':'b-ig';
-    html+=resultRow(
-      `<div class="result-thumb-ph circle"></div>`,
-      s.name||'Unknown', s.artist||'—',
-      `<span class="badge b-single">Single</span><span class="badge ${badgeCls}">${esc(s.source)}</span>`,
-      `openFbSingle('${esc(s._fbId)}')`, s._fbId, idx*0.04
-    );
   });
 
   const seen=new Set();
@@ -2384,129 +2462,8 @@ function renderResults(items,injectFake,injectBoveda,injectLevitico,q,injectMiVi
   reIcons();
 }
 
-// ── Open Firestore album viewer ───────────────────────────────────
-window.openFbAlbum=function(fbId){
-  const alb=(window._fbAlbums||[]).find(a=>a._fbId===fbId);
-  if(!alb)return;
-  stopCurrentAudio();
-  currentViewAlbum=alb;
-  const srcColor=alb.source==='Telegram'?'#2ca5e0':'#833ab4';
-  const tracks=alb.tracks||[];
-  // availability: array of bools set by admin; default all available
-  const avail=alb.availability||tracks.map(()=>true);
-  const requiresPw=alb.requirePassword!==false; // default true
-  const rows=tracks.map((t,i)=>{
-    const isAvail=avail[i]!==false;
-    return`<div class="track" style="animation-delay:${i*.025}s;${!isAvail?'opacity:.35':''}">
-      ${pbHTML(!isAvail)}
-      <span class="track-no">${i+1}</span>
-      <div class="track-info">
-        <div class="track-name">${esc(t.name||t)}</div>
-        <div class="track-sub">${esc(t.artist||alb.artist)}</div>
-      </div>
-      ${!isAvail?`<span style="font-size:9px;color:var(--fg4);font-weight:600;letter-spacing:.06em;flex-shrink:0">N/A</span>`:''}
-    </div>`;
-  }).join('');
-  const coverHtml=alb.cover
-    ?`<img class="viewer-cover" src="${esc(alb.cover)}" alt="" loading="lazy">`
-    :`<div class="viewer-cover-ph"><span data-lucide="disc-3" style="width:32px;height:32px"></span></div>`;
-  openViewer(`
-    ${coverHtml}
-    <div class="viewer-title">${esc(alb.name)}</div>
-    <div class="viewer-artist">${icon('user')} ${esc(alb.artist)}</div>
-    <div class="meta-pills">
-      <span class="mpill" style="background:${srcColor};color:#fff">${esc(alb.source)}</span>
-      <span class="mpill">${esc(alb.year||'2026')}</span>
-      <span class="mpill">${tracks.length} tracks</span>
-    </div>
-    <div class="viewer-actions">
-      ${viewerShareBtn(fbId,alb.name)}
-      ${favBtnHTML(alb)}
-    </div>
-    <button class="dl-btn" onclick="handleFbDL('${esc(fbId)}')">${icon('download')} Download Album</button>
-    <div class="tl-label">Tracklist</div>
-    ${rows||`<div class="empty-sub" style="color:var(--fg3);padding:8px 0">No tracks listed.</div>`}`,alb);
-  // play btns: all disabled for Firebase albums (no hosted audio)
-  document.querySelectorAll('#viewer .track .play-btn:not([disabled])').forEach((btn,i)=>{
-    btn.addEventListener('click',function(){showNotif('Playback Failed',`"${tracks[i]?.name||'Track'}" — audio file not found on server.`,'err');});
-  });
-};
-
-window.openFbSingle=function(fbId){
-  const s=(window._fbSingles||[]).find(x=>x._fbId===fbId);
-  if(!s)return;
-  stopCurrentAudio();
-  currentViewAlbum=s;
-  const srcColor=s.source==='Telegram'?'#2ca5e0':'#833ab4';
-  openViewer(`
-    <div class="viewer-cover-ph circle" style="max-width:160px"><span data-lucide="music-2"></span></div>
-    <div class="single-banner">
-      <div class="single-banner-icon">🎵</div>
-      <div class="single-banner-info">
-        <div class="single-banner-title">Single</div>
-        <div class="single-banner-sub">Standalone single · ${esc(s.year||'2026')}</div>
-      </div>
-    </div>
-    <div class="viewer-title">${esc(s.name)}</div>
-    <div class="viewer-artist">${icon('user')} ${esc(s.artist)}</div>
-    <div class="meta-pills">
-      <span class="mpill" style="background:${srcColor};color:#fff">${esc(s.source)}</span>
-      <span class="mpill">${esc(s.year||'2026')}</span>
-      <span class="mpill">Single</span>
-    </div>
-    <div class="viewer-actions">
-      ${viewerShareBtn(fbId,s.name)}
-      ${favBtnHTML(s)}
-    </div>
-    <div class="big-play-row">
-      ${s.audioUrl?bigPbHTML(false):bigPbHTML(true)}
-      <div>
-        <div style="font-size:14px;font-weight:600;letter-spacing:-.02em">${esc(s.name)}</div>
-        <div style="font-size:12px;color:var(--fg3);margin-top:3px">${esc(s.artist)}</div>
-      </div>
-    </div>`,s);
-  if(s.audioUrl){
-    document.querySelector('#viewer .big-play-btn')?.addEventListener('click',function(){
-      playPreview(this,s.audioUrl,s.name,s.artist);
-    });
-  } else {
-    document.querySelector('#viewer .big-play-btn')?.addEventListener('click',function(){
-      showNotif('Playback Failed',`"${s.name}" — audio file not found on server.`,'err');
-    });
-  }
-};
-
-// Download handler for Firebase albums
-window.handleFbDL=function(fbId){
-  const alb=(window._fbAlbums||[]).find(a=>a._fbId===fbId);
-  if(!alb)return;
-  currentLeakedAlbum={...alb,dlTime:alb.dlTime||10000};
-  if(alb.requirePassword===false){
-    // skip password, go straight to panel
-    showModalStep('panel');
-    document.getElementById('panel-desc').textContent=`"${alb.name}" — Select your download option.`;
-    document.getElementById('prog').style.display='none';
-    document.getElementById('song-picker').style.display='none';
-    const songSel=document.getElementById('song-sel');
-    const tracks=alb.tracks||[];
-    const avail=alb.availability||tracks.map(()=>true);
-    songSel.innerHTML=tracks.map((t,i)=>{
-      const name=t.name||t;
-      const isAvail=avail[i]!==false;
-      return`<option value="${i}"${!isAvail?' disabled':''>${esc(name)}${!isAvail?' (Unavailable)':''}</option>`;
-    }).join('');
-    document.getElementById('p-song').disabled=false;
-    document.getElementById('p-album').disabled=false;
-    document.getElementById('auth-modal').classList.add('on');
-    reIcons();
-  } else {
-    handleLeakedDL(currentLeakedAlbum);
-  }
-};
-
 window.toggleFavFromResult=function(id,btn){
-  // find data
-  const allItems=[sadBoyzAlbum,miVida3Album,bovedeAlbum,leviticoAlbum,gataS,tenienteS,changoS,tigreS,criptoS,s000666];
+  const allItems=[sadBoyzAlbum,miVida3Album,contingente2Album,bovedeAlbum,leviticoAlbum,gataS,tenienteS,changoS,tigreS,criptoS,s000666];
   let albumObj=allItems.find(a=>a.id===id);
   if(!albumObj)albumObj={id,name:'Album',artist:'—',cover:'',source:'Apple Music'};
   toggleFav(albumObj);
@@ -2516,14 +2473,39 @@ window.toggleFavFromResult=function(id,btn){
   reIcons();
 };
 
-window.setSort=function(s){
-  activeSort=s;
-  if(lastResultsCache)renderResults(...lastResultsCache);
-};
+window.setSort=function(s){activeSort=s;if(lastResultsCache)renderResults(...lastResultsCache);};
 
 // ── Globals ───────────────────────────────────────────────────────
 window.openSadBoyz=openSadBoyz;window.openBoveda=openBoveda;window.openAlbum=openAlbum;window.openLevitico=openLevitico;
 window.openMiVida3=openMiVida3;
+
+function openContingente2(){
+  stopCurrentAudio();
+  const rows=contingente2Album.tracks.map((t,i)=>`
+    <div class="track" style="animation-delay:${i*.025}s">
+      ${pbHTML(true)}
+      <span class="track-no">${i+1}</span>
+      <div class="track-info"><div class="track-name">${esc(t.name)}</div><div class="track-sub">${esc(t.artist)}</div></div>
+      <span class="track-dur">${esc(t.len)}</span>
+    </div>`).join('');
+  openViewer(`
+    <div class="viewer-cover-ph"><span data-lucide="disc-3" style="width:32px;height:32px"></span></div>
+    <div class="viewer-title">${esc(contingente2Album.name)}</div>
+    <div class="viewer-artist" onclick="navigate('/artist/junior-h')">${icon('user')} ${esc(contingente2Album.artist)}</div>
+    <div class="meta-pills">
+      <span class="mpill" style="background:#833ab4;color:#fff">Instagram</span>
+      <span class="mpill">${esc(contingente2Album.year)}</span>
+      <span class="mpill">${contingente2Album.tracks.length} tracks</span>
+    </div>
+    <div class="viewer-actions">
+      ${viewerShareBtn(contingente2Album.id,contingente2Album.name)}
+      ${viewerArtistBtn('junior-h','Junior H')}
+      ${favBtnHTML(contingente2Album)}
+    </div>
+    <button class="dl-btn" onclick="handleLeakedDL(contingente2Album)">${icon('download')} Download Album</button>
+    <div class="tl-label">Tracklist</div>${rows}`,contingente2Album);
+}
+window.openContingente2=openContingente2;
 window.openSingleGata    =()=>openSingle(gataS);
 window.openSingleTeniente=()=>openSingle(tenienteS);
 window.openSingleChango  =()=>openSingle(changoS);
@@ -2532,13 +2514,9 @@ window.openSingleCripto  =()=>openSingle(criptoS);
 window.openSingle000666  =()=>openSingle(s000666);
 window.openSingle=openSingle;
 window.handleLeakedDL=handleLeakedDL;
-window.showFavoritesModal=showFavoritesModal;
-window.closeFavoritesModal=closeFavoritesModal;
 window.navigate=navigate;
 
-window.setSearch=function(q){
-  siEl.value=q;hideCmdDropdown();doSearch();
-};
+window.setSearch=function(q){siEl.value=q;hideCmdDropdown();doSearch();};
 
 // ── Online counter ────────────────────────────────────────────────
 (function(){
