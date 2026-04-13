@@ -1276,11 +1276,31 @@ const s000666   ={id:'s-000666',  name:'000666',        artist:'Junior H',      
 
 // ── Override resolution (admin edits to HTML albums) ───────────────
 function _getOverride(albumObj){
-  const id=albumObj?.id||albumObj?._firestoreId||'';
-  if(!albumObj?._fromFirestore&&window._fbOverrides&&window._fbOverrides[id])return window._fbOverrides[id];
+  if(!albumObj || albumObj._fromFirestore) return null;
+  const id = albumObj.id || '';
+  if(window._fbOverrides && window._fbOverrides[id]) return window._fbOverrides[id];
   return null;
 }
+function getEffectiveTracks(albumObj){
+  if(!albumObj) return [];
+  if(albumObj._fromFirestore) return Array.isArray(albumObj.tracks) ? albumObj.tracks : [];
+  const ov = _getOverride(albumObj);
+  if(Array.isArray(ov?.tracks)) return ov.tracks;
+  return Array.isArray(albumObj.tracks) ? albumObj.tracks : [];
+}
+function getEffectiveAlbum(albumObj){
+  if(!albumObj) return {};
+  const ov = _getOverride(albumObj);
+  const merged = {...albumObj};
+  merged.tracks = getEffectiveTracks(albumObj);
+  if(ov?.mode) merged.mode = ov.mode;
+  if(ov?.passwordEnabled != null) merged.passwordEnabled = ov.passwordEnabled;
+  if(ov?.password != null) merged.password = ov.password;
+  if(ov?.dlUrl != null) merged.dlUrl = ov.dlUrl;
+  return merged;
+}
 function getAlbumPassword(albumObj){
+
   const ov=_getOverride(albumObj);
   if(ov&&ov.password!=null)return ov.password;
   if(albumObj&&albumObj.password!=null)return albumObj.password;
@@ -1299,9 +1319,10 @@ function albumMode(albumObj){
   return m==='availability'?'availability':'standard';
 }
 function getAlbumTrackAvailability(albumObj){
-  const ov=_getOverride(albumObj);
-  if(ov&&ov.trackAvailability)return ov.trackAvailability;
-  return null;
+  const tracks = getEffectiveTracks(albumObj);
+  const out = {};
+  tracks.forEach((t,i)=>{ out[i] = t?.available !== false; });
+  return out;
 }
 // ── URL Scrambler (persistent while modal open) ────────────────────
 let _urlScramblerIv=null;
@@ -1332,7 +1353,7 @@ function stopURLScramble(restorePath){
 let currentLeakedAlbum=null;
 
 function handleLeakedDL(albumObj){
-  currentLeakedAlbum=albumObj;
+  currentLeakedAlbum=getEffectiveAlbum(albumObj);
   // URL scramble starts IMMEDIATELY when modal opens
   startURLScramble();
   if(albumHasPassword(albumObj)){
@@ -1444,14 +1465,16 @@ window.startDL=startDL;window.confirmTrackDL=confirmTrackDL;window.closeModal=cl
 const A_STEPS=[{text:'Initializing secure connection…',icon:'shield'},{text:'Locating album archive…',icon:'database'},{text:'Verifying file integrity…',icon:'check-circle'},{text:'Decrypting audio streams…',icon:'lock'},{text:'Packaging ZIP archive…',icon:'archive'},{text:'Transfer complete.',icon:'check'}];
 const S_STEPS=[{text:'Locating track…',icon:'search'},{text:'Verifying file integrity…',icon:'check-circle'},{text:'Decrypting audio…',icon:'lock'},{text:'Transfer complete.',icon:'check'}];
 
+
 function runProgress(type){
   SESSION.downloads++;
   const isSong=type==='song';
   const totalMs=currentLeakedAlbum?.dlTime||10000;
   const steps=isSong?S_STEPS:A_STEPS;
   const albumName=currentLeakedAlbum?.name||'Album';
-  const songIdx=document.getElementById('song-sel').value;
-  const songName=isSong?currentLeakedAlbum?.tracks?.[songIdx]?.name||'Track':null;
+  const songIdx=parseInt(document.getElementById('song-sel').value,10);
+  const selectedTrack=isSong?(currentLeakedAlbum?.tracks?.[songIdx]||null):null;
+  const songName=selectedTrack?.name||'Track';
   document.getElementById('p-song').disabled=true;document.getElementById('p-album').disabled=true;
   const progEl=document.getElementById('prog'),lbl=document.getElementById('prog-lbl-text'),bar=document.getElementById('prog-bar'),stepsEl=document.getElementById('prog-steps');
   progEl.style.display='';lbl.textContent=isSong?'Downloading track…':'Downloading full album…';bar.style.width='0%';bar.style.transition='';stepsEl.innerHTML='';
@@ -1467,24 +1490,39 @@ function runProgress(type){
     cancelAnimationFrame(raf);bar.style.transition='width .3s ease';bar.style.width='100%';
     if(els.length)els[els.length-1].classList.add('done');
     setTimeout(()=>{
-      closeModal(); // this also calls stopURLScramble
-      const dlToken=genToken();
+      closeModal();
+      const mob=/iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+
+      const fullAlbumUrl = currentLeakedAlbum?.dlUrl || '';
+      const trackUrl = selectedTrack?.dlUrl || '';
+
+      function triggerDownload(url, filename){
+        if(!url) return false;
+        if(mob){window.location.href=url;return true;}
+        fetch(url).then(r=>r.blob()).then(blob=>{
+          const u=URL.createObjectURL(blob);
+          const a=document.createElement('a');
+          a.href=u;a.download=filename;
+          document.body.appendChild(a);a.click();document.body.removeChild(a);
+          setTimeout(()=>URL.revokeObjectURL(u),10000);
+        }).catch(()=>window.open(url,'_blank'));
+        return true;
+      }
+
       if(!isSong){
-        const mob=/iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
-        const albumDLMap={'$AD BOYZ 4 LIFE III':'https://github.com/Rainfun/Pulse/raw/refs/heads/main/n3xt.github.io%20$AD%20BOYZ%204%20LIFE%20III.zip'};
-        const dlUrl=albumDLMap[albumName];
-        if(dlUrl){
+        if(triggerDownload(fullAlbumUrl, `${albumName}.zip`)){
           showNotif('Download Complete',`"${albumName}" — downloaded successfully.`,'ok');
-          if(mob){window.location.href=dlUrl;}
-          else{fetch(dlUrl).then(r=>r.blob()).then(blob=>{const u=URL.createObjectURL(blob);const a=document.createElement('a');a.href=u;a.download=albumName+'.zip';document.body.appendChild(a);a.click();document.body.removeChild(a);setTimeout(()=>URL.revokeObjectURL(u),10000);}).catch(()=>window.open(dlUrl,'_blank'));}
-        }else{showNotif('Download Failed',`"${albumName}" — connection lost. Try again later.`,'err');}
+        }else{
+          showNotif('Download Failed',`"${albumName}" has no full album URL set.`,'err');
+        }
       }else{
-        if(songName==='Fotos Que Borré'){
-          const mob=/iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+        if(selectedTrack?.available===false){
+          showNotif('Download Failed',`"${songName}" is unavailable.`,'err');
+        }else if(triggerDownload(trackUrl, `${songName}.mp3`)){
           showNotif('Download Complete',`"${songName}" — downloaded successfully.`,'ok');
-          if(mob){window.location.href=FOTOS_DL;}
-          else{fetch(FOTOS_DL).then(r=>r.blob()).then(blob=>{const u=URL.createObjectURL(blob);const a=document.createElement('a');a.href=u;a.download='Fotos Que Borré.mp3';document.body.appendChild(a);a.click();document.body.removeChild(a);setTimeout(()=>URL.revokeObjectURL(u),10000);}).catch(()=>window.open(FOTOS_DL,'_blank'));}
-        }else{showNotif('Download Failed',`"${songName}" — transfer error.`,'err');}
+        }else{
+          showNotif('Download Failed',`"${songName}" has no track URL set.`,'err');
+        }
       }
     },500);
   },totalMs);
