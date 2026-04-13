@@ -455,21 +455,107 @@ lucide.createIcons();
 // ── HTML-embedded albums (mirrors index.html data) ─────────────────
 // These are the hardcoded albums. Admin can edit password/mode/availability via Firestore overrides collection.
 const HTML_ALBUMS = [
-  { id:'sad-boyz-4-life-iii', name:'$AD BOYZ 4 LIFE III', artist:'Junior H', year:'2026', source:'Instagram', tracks:17 },
-  { id:'la-boveda',           name:'LA BOVEDA',            artist:'Natanael Cano', year:'2026', source:'Telegram', tracks:18 },
-  { id:'levitico',            name:'LEVITICO',             artist:'Peso Pluma',    year:'2026', source:'Telegram', tracks:1  },
-  { id:'mi-vida-3',           name:'Mi Vida En Un Cigarro 3', artist:'Junior H',  year:'2026', source:'Instagram', tracks:0 },
-  { id:'contingente-ii',      name:'CONTINGENTE II',       artist:'Junior H',      year:'2026', source:'Instagram', tracks:20 },
+  {
+    id:'sad-boyz-4-life-iii',
+    name:'$AD BOYZ 4 LIFE III',
+    artist:'Junior H',
+    year:'2026',
+    source:'Instagram',
+    tracks:[
+      {name:'24K',artist:'Junior H',len:'3:27'},
+      {name:'Fotos Que Borré',artist:'Junior H, Tito Double P',len:'3:16'},
+      {name:'Bohemio',artist:'Junior H',len:'2:53'},
+      {name:'Vogue Girl',artist:'Junior H, Chino Pacas',len:'3:51'},
+      {name:'Otro Polvo',artist:'Junior H, Gael Valenzuela',len:'3:03'},
+      {name:'Vestido Rojo',artist:'Junior H, Luis R Conriquez',len:'3:57'},
+      {name:'Tormenta',artist:'Junior H',len:'3:06'},
+      {name:'Ya No Llames',artist:'Junior H, Gabriel SSOE',len:'3:00'},
+      {name:'Diez De Copas',artist:'Junior H, Peso Pluma',len:'3:38'},
+      {name:'Noche Eterna',artist:'Junior H',len:'3:21'},
+      {name:'Cicatrices',artist:'Junior H, Jasiel Núñez',len:'3:55'},
+      {name:'Mi Nombre En La Radio',artist:'Junior H',len:'2:53'},
+      {name:"L'Amour",artist:'Junior H, Eslabon Armado',len:'4:04'},
+      {name:'Milán',artist:'Junior H',len:'3:33'},
+      {name:'Reina De Mi Amor',artist:'Junior H',len:'2:39'},
+      {name:'Sirena',artist:'Junior H, Neton Vega',len:'4:17'},
+      {name:'Fin Del Mundo',artist:'Junior H',len:'2:35'}
+    ]
+  },
+  {
+    id:'la-boveda',
+    name:'LA BOVEDA',
+    artist:'Natanael Cano',
+    year:'2026',
+    source:'Telegram',
+    tracks:[
+      {name:'POR AMARTE ASI',artist:'Natanael Cano',len:'3:14'},
+      {name:'AETERNUM',artist:'Natanael Cano',len:'2:58'},
+      {name:'APELATIVO',artist:'Natanael Cano',len:'3:06'},
+      {name:'AUN RECUERDO',artist:'Natanael Cano',len:'2:47'},
+      {name:'CRISTIANO RONALDO',artist:'Natanael Cano',len:'3:21'},
+      {name:'MAR AZUL',artist:'Natanael Cano',len:'2:55'},
+      {name:'PA LA MANA',artist:'Natanael Cano',len:'2:49'},
+      {name:'APREVENIDO',artist:'Natanael Cano',len:'2:18'},
+      {name:'FANTASMA',artist:'Natanael Cano',len:'3:02'},
+      {name:'CIELO ROJO',artist:'Natanael Cano',len:'3:17'},
+      {name:'BOHEMIO SOLITARIO',artist:'Natanael Cano',len:'2:44'},
+      {name:'LO QUE FUI',artist:'Natanael Cano',len:'3:08'},
+      {name:'NOCHE DE LLANTO',artist:'Natanael Cano',len:'2:51'},
+      {name:'CORONA DE ESPINAS',artist:'Natanael Cano',len:'3:33'},
+      {name:'ENTRE SOMBRAS',artist:'Natanael Cano',len:'2:39'},
+      {name:'SIN RETORNO',artist:'Natanael Cano',len:'3:10'},
+      {name:'ULTIMO BRINDIS',artist:'Natanael Cano',len:'2:57'},
+      {name:'LA BOVEDA',artist:'Natanael Cano',len:'4:01'}
+    ]
+  },
+  {
+    id:'levitico',
+    name:'LEVITICO',
+    artist:'Peso Pluma',
+    year:'2026',
+    source:'Telegram',
+    tracks:[
+      {name:'BELICE',artist:'Peso Pluma & Eslabon Armado & Tito Double P',len:'3:44'}
+    ]
+  },
+  {
+    id:'mi-vida-3',
+    name:'Mi Vida En Un Cigarro 3',
+    artist:'Junior H',
+    year:'2026',
+    source:'Instagram',
+    tracks:[]
+  },
+  {
+    id:'contingente-ii',
+    name:'CONTINGENTE II',
+    artist:'Junior H',
+    year:'2026',
+    source:'Instagram',
+    tracks:[
+      {name:'CNTGNT II (Intro)',artist:'Junior H',len:'2:41'},
+      {name:'Bon Appétit',artist:'Junior H, Ovi',len:'3:31'},
+      {name:'Escribiendo Canciones',artist:'Junior H',len:'2:53'},
+      {name:'Lo Qué Quisiera',artist:'Junior H',len:'2:38'},
+      {name:'Let Me Know',artist:'Junior H',len:'2:47'},
+      {name:'Tory Burch',artist:'Junior H, Paloma Mami',len:'3:34'},
+      {name:'Conmigo Se Va',artist:'Junior H, Alemán',len:'3:53'},
+      {name:'Mi Badgyal',artist:'Junior H, Cris MJ',len:'4:00'},
+      {name:'Desvestida',artist:'Junior H',len:'3:10'},
+      {name:'Hooka',artist:'Junior H, Chencho Corleone',len:'3:18'},
+      {name:'Yo Sé',artist:'Junior H',len:'2:59'},
+      {name:'Secret Service',artist:'Junior H, OHGESSY',len:'2:47'},
+      {name:'Hotel en Chicago',artist:'Junior H, Krizous',len:'3:20'},
+      {name:'No Andas Con Cualquiera',artist:'Junior H, Maluma',len:'2:36'},
+      {name:'Cómo Te Fue',artist:'Junior H, Rels B',len:'3:21'},
+      {name:'Sin Censura',artist:'Junior H, La Santa Grifa',len:'3:19'},
+      {name:'Tragos',artist:'Junior H',len:'2:57'},
+      {name:'Céline',artist:'Junior H, Luar La L',len:'3:04'},
+      {name:'La Señal',artist:'Junior H',len:'2:34'},
+      {name:'Última Vez',artist:'Junior H',len:'2:50'}
+    ]
+  }
 ];
-const HTML_SINGLES = [
-  { id:'s-gata',     name:'GATA',          artist:'Junior H',                    year:'2026', source:'Instagram' },
-  { id:'s-teniente', name:'EL TENIENTE',   artist:'Junior H & Gael Valenzuela', year:'2026', source:'Instagram' },
-  { id:'s-chango',   name:'EL CHANGO',     artist:'Junior H',                    year:'2026', source:'Instagram' },
-  { id:'s-tigre',    name:'EL TIGRE',      artist:'Junior H',                    year:'2026', source:'Instagram' },
-  { id:'s-cripto',   name:'CRIPTOMONEDAS', artist:'Junior H, Jorsshh & Calle 24',year:'2026', source:'Instagram' },
-  { id:'s-000666',   name:'000666',        artist:'Junior H',                    year:'2026', source:'Instagram' },
-];
-
 // ── Overrides collection: stores admin edits to html-embedded content ─
 // Key: htmlAlbumId, Value: { password, passwordEnabled, mode, trackAvailability:{idx:bool} }
 let overridesCache = {};
@@ -599,7 +685,7 @@ window.loadManage = async function(){
           <span class="badge ${srcBadge}">${esc(a.source)}</span>
           <span class="badge ${mode==='availability'?'badge-avail':'badge-std'}">${mode}</span>
           ${hasPw?'<span class="badge" style="background:rgba(245,245,245,.07);color:var(--fg3);border:1px solid var(--border)">🔒 password</span>':'<span class="badge" style="background:rgba(22,163,74,.1);color:#4ade80;border:1px solid rgba(22,163,74,.2)">🔓 open</span>'}
-          <span style="color:var(--fg4)">${a.tracks} tracks</span>
+          <span style="color:var(--fg4)">${Array.isArray(a.tracks) ? a.tracks.length : Number(a.tracks || 0)} tracks</span>
         </div>
       </div>
       <div class="html-album-actions">
@@ -639,16 +725,21 @@ function renderContentRows(snap, type){
 
 // ── Edit HTML-embedded album (overrides in Firestore) ───────────────
 window.editHTMLAlbum = function(albumId){
-  const a=HTML_ALBUMS.find(x=>x.id===albumId);
-  if(!a)return;
-  const ov=overridesCache[albumId]||{};
-  const hasPw=ov.passwordEnabled!==false;
-  const pw=ov.password||'n3xt2026';
-  const mode=ov.mode||'standard';
-  // Build track availability data from override
-  const trackAvail=ov.trackAvailability||{};
-  document.getElementById('edit-title-text').textContent=`Edit: ${a.name}`;
-  document.getElementById('edit-body').innerHTML=buildEditForm(albumId, a.name, hasPw, pw, mode, null, trackAvail, a.tracks, true, false);
+  const a = HTML_ALBUMS.find(x => x.id === albumId);
+  if(!a) return;
+
+  const ov = overridesCache[albumId] || {};
+  const hasPw = ov.passwordEnabled !== false;
+  const pw = ov.password || 'n3xt2026';
+  const mode = ov.mode || 'standard';
+  const trackAvail = ov.trackAvailability || {};
+
+  const tracks = Array.isArray(a.tracks) ? a.tracks : [];
+
+  document.getElementById('edit-title-text').textContent = `Edit: ${a.name}`;
+  document.getElementById('edit-body').innerHTML =
+    buildEditForm(albumId, a.name, hasPw, pw, mode, tracks, trackAvail, tracks.length, true, false);
+
   document.getElementById('edit-overlay').classList.add('on');
   lucide.createIcons();
 };
