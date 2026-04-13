@@ -355,8 +355,8 @@ body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellips
 
           <!-- Tracklist -->
           <div class="form-row">
-            <label>Tracklist — one per line: Track Name | Artist | Duration</label>
-            <textarea id="alb-tracks" placeholder="24K | Junior H | 3:27&#10;Fotos Que Borré | Junior H, Tito Double P | 3:16"></textarea>
+            <label>Tracklist — one per line: Track Name | Artist | Duration | URL</label>
+            <textarea id="alb-tracks" placeholder="24K | Junior H | 3:27 | https://example.com/24k.mp3&#10;Fotos Que Borré | Junior H, Tito Double P | 3:16 | https://example.com/fotos.mp3"></textarea>
           </div>
 
           <!-- Availability editor (shown when mode=availability) -->
@@ -557,7 +557,7 @@ const HTML_ALBUMS = [
   }
 ];
 // ── Overrides collection: stores admin edits to html-embedded content ─
-// Key: htmlAlbumId, Value: { password, passwordEnabled, mode, trackAvailability:{idx:bool} }
+// Key: htmlAlbumId, Value: { password, passwordEnabled, mode, dlUrl, tracks:[{name,artist,len,available,dlUrl}] }
 let overridesCache = {};
 async function loadOverrides(){
   try{
@@ -732,13 +732,13 @@ window.editHTMLAlbum = function(albumId){
   const hasPw = ov.passwordEnabled !== false;
   const pw = ov.password || 'n3xt2026';
   const mode = ov.mode || 'standard';
-  const trackAvail = ov.trackAvailability || {};
-  const tracks = Array.isArray(a.tracks) ? a.tracks : [];
+  const tracks = Array.isArray(ov.tracks) ? ov.tracks : (Array.isArray(a.tracks) ? a.tracks : []);
+  const trackAvail = Object.fromEntries(tracks.map((t,i)=>[i, t.available !== false]));
   const downloadUrl = ov.dlUrl || a.dlUrl || '';
 
   document.getElementById('edit-title-text').textContent = `Edit: ${a.name}`;
   document.getElementById('edit-body').innerHTML =
-    buildEditForm(albumId, a.name, hasPw, pw, mode, tracks, trackAvail, tracks.length, true, false, downloadUrl);
+    buildEditForm(albumId, a.name, hasPw, pw, mode, tracks, trackAvail, tracks.length, true, '', downloadUrl);
 
   document.getElementById('edit-overlay').classList.add('on');
   lucide.createIcons();
@@ -787,19 +787,19 @@ window.editFBContent = async function(docId, type){
   }
 };
 
+
 function buildEditForm(id, name, hasPw, pw, mode, tracks, trackAvail, trackCount, isHTML, fbCol='', downloadUrl=''){
-  const trackRows = tracks ? tracks.map((t,i)=>{
-    const avail = trackAvail[i] !== false;
-    return `<div class="track-avail-item">
-      <span class="track-avail-num">${i+1}</span>
-      <span class="track-avail-name">${esc(t.name || 'Track ' + (i+1))}</span>
-      <div class="avail-toggle">
-        <button class="avail-toggle-btn ${avail ? 'avail' : 'unavail'}" id="avbtn_${id}_${i}" onclick="toggleAvailBtn('${id}',${i})" data-avail="${avail ? '1' : '0'}">
-          ${avail ? 'Available' : 'Unavailable'}
-        </button>
-      </div>
-    </div>`;
-  }).join('') : '';
+  const safeTracks = Array.isArray(tracks) ? tracks : [];
+  const trackRows = safeTracks.map((t,i)=>{
+    const avail = t?.available !== false;
+    return buildTrackRowHTML(id, i, {
+      name: t?.name || '',
+      artist: t?.artist || '',
+      len: t?.len || '',
+      available: avail,
+      dlUrl: t?.dlUrl || ''
+    });
+  }).join('');
 
   return `
   <div class="form-row"><label>Mode</label>
@@ -809,8 +809,8 @@ function buildEditForm(id, name, hasPw, pw, mode, tracks, trackAvail, trackCount
     </div>
     <div style="font-size:10px;color:var(--fg3);margin-top:6px" id="em-desc-${id}">
       ${mode==='availability'
-        ? 'Users pick individual tracks — each can be toggled available or not.'
-        : 'Users pick full album or single track.'}
+        ? 'Users pick individual tracks — each can be toggled available or not, and each track can have its own URL.'
+        : 'Users pick full album or single track. Full album uses the album ZIP URL below.'}
     </div>
   </div>
 
@@ -837,7 +837,7 @@ function buildEditForm(id, name, hasPw, pw, mode, tracks, trackAvail, trackCount
   </div>
 
   <div class="form-row">
-    <label>Download URL (ZIP)</label>
+    <label>Full Album Download URL (ZIP)</label>
     <input
       type="url"
       id="em-dlurl-${id}"
@@ -847,13 +847,16 @@ function buildEditForm(id, name, hasPw, pw, mode, tracks, trackAvail, trackCount
     >
   </div>
 
-  ${tracks && tracks.length ? `
-  <div id="em-avail-section-${id}" style="${mode==='availability' ? '' : 'display:none'}">
-    <div class="form-row">
-      <label>Track Availability</label>
-      <div class="track-avail-list">${trackRows}</div>
+  <div class="form-row">
+    <div style="display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:8px">
+      <label style="margin-bottom:0">Tracks</label>
+      <div style="display:flex;gap:8px;align-items:center">
+        <button class="action-btn primary" type="button" onclick="addEditTrack('${id}')"><span data-lucide="plus"></span>Add Track</button>
+      </div>
     </div>
-  </div>` : ''}
+    <div id="track-editor-${id}" class="track-avail-list">${trackRows || '<div style="padding:14px;font-size:12px;color:var(--fg3)">No tracks yet. Add one.</div>'}</div>
+    <div style="font-size:10px;color:var(--fg3);margin-top:8px">Each track can have its own name, artist, duration, availability, and download URL. Reorder with ↑ ↓.</div>
+  </div>
 
   <div style="display:flex;gap:8px;margin-top:8px">
     <button class="form-submit" style="flex:1" onclick="saveEdit('${id}','${isHTML ? 'html' : 'fb'}','${fbCol || ''}')">
@@ -867,7 +870,27 @@ function buildEditForm(id, name, hasPw, pw, mode, tracks, trackAvail, trackCount
   </div>`;
 }
 
+
+
 // ── Edit helpers ───────────────────────────────────────────────────
+function buildTrackRowHTML(id, idx, track={}){
+  const avail = track.available !== false;
+  return `<div class="track-edit-row" data-track-row="${idx}" style="padding:12px 14px;border-bottom:1px solid rgba(255,255,255,.04)">
+    <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px">
+      <span class="track-avail-num" style="width:28px">${idx+1}</span>
+      <input type="text" id="trackname_${id}_${idx}" value="${esc(track.name || '')}" placeholder="Track name" style="flex:1;height:34px;border:1.5px solid var(--border);border-radius:8px;background:var(--surface);color:var(--fg);padding:0 10px;font-size:12px;font-family:inherit;outline:none">
+      <button class="avail-toggle-btn ${avail ? 'avail' : 'unavail'}" id="avbtn_${id}_${idx}" onclick="toggleAvailBtn('${id}',${idx})" data-avail="${avail ? '1' : '0'}" type="button">${avail ? 'Available' : 'Unavailable'}</button>
+      <button class="action-btn" type="button" onclick="moveTrackRow('${id}',${idx},-1)">↑</button>
+      <button class="action-btn" type="button" onclick="moveTrackRow('${id}',${idx},1)">↓</button>
+      <button class="action-btn danger" type="button" onclick="removeTrackRow('${id}',${idx})"><span data-lucide="trash-2"></span></button>
+    </div>
+    <div style="display:grid;grid-template-columns:1.2fr .9fr 2fr;gap:8px">
+      <input type="text" id="trackartist_${id}_${idx}" value="${esc(track.artist || '')}" placeholder="Artist" style="height:34px;border:1.5px solid var(--border);border-radius:8px;background:var(--surface);color:var(--fg);padding:0 10px;font-size:12px;font-family:inherit;outline:none">
+      <input type="text" id="tracklen_${id}_${idx}" value="${esc(track.len || '')}" placeholder="3:27" style="height:34px;border:1.5px solid var(--border);border-radius:8px;background:var(--surface);color:var(--fg);padding:0 10px;font-size:12px;font-family:inherit;outline:none">
+      <input type="url" id="trackdl_${id}_${idx}" value="${esc(track.dlUrl || '')}" placeholder="Track download URL (optional)" style="height:34px;border:1.5px solid var(--border);border-radius:8px;background:var(--surface);color:var(--fg);padding:0 10px;font-size:12px;font-family:inherit;outline:none">
+    </div>
+  </div>`;
+}
 window.toggleEditPwField=function(id){
   const t=document.getElementById(`em-pw-toggle-${id}`);
   const f=document.getElementById(`em-pw-field-${id}`);
@@ -876,28 +899,73 @@ window.toggleEditPwField=function(id){
 window.setEditMode=function(id,mode){
   const stdBtn=document.getElementById(`em-std-${id}`);
   const avBtn=document.getElementById(`em-av-${id}`);
-  const avSec=document.getElementById(`em-avail-section-${id}`);
   const desc=document.getElementById(`em-desc-${id}`);
   if(stdBtn)stdBtn.classList.toggle('on',mode==='standard');
   if(avBtn)avBtn.classList.toggle('on',mode==='availability');
-  if(avSec)avSec.style.display=mode==='availability'?'':'none';
-  if(desc)desc.textContent=mode==='availability'?'Users pick individual tracks — each can be toggled available or not.':'Users pick full album or single track.';
+  if(desc)desc.textContent=mode==='availability'
+    ? 'Users pick individual tracks — each can be toggled available or not, and each track can have its own URL.'
+    : 'Users pick full album or single track. Full album uses the album ZIP URL below.';
 };
 window.toggleAvailBtn=function(id,idx){
   const btn=document.getElementById(`avbtn_${id}_${idx}`);
   if(!btn)return;
   const cur=btn.dataset.avail==='1';
-  const newAvail=!cur;
-  btn.dataset.avail=newAvail?'1':'0';
-  btn.className=`avail-toggle-btn ${newAvail?'avail':'unavail'}`;
-  btn.textContent=newAvail?'Available':'Unavailable';
+  const next=!cur;
+  btn.dataset.avail=next?'1':'0';
+  btn.className=`avail-toggle-btn ${next?'avail':'unavail'}`;
+  btn.textContent=next?'Available':'Unavailable';
 };
+window.addEditTrack=function(id){
+  const wrap=document.getElementById(`track-editor-${id}`);
+  const tracks=getEditTracks(id);
+  tracks.push({name:'',artist:'',len:'',available:true,dlUrl:''});
+  renderEditTracks(id, tracks);
+};
+window.moveTrackRow=function(id,idx,dir){
+  const tracks=getEditTracks(id);
+  const ni=idx+dir;
+  if(ni<0||ni>=tracks.length)return;
+  const tmp=tracks[idx];
+  tracks[idx]=tracks[ni];
+  tracks[ni]=tmp;
+  renderEditTracks(id, tracks);
+};
+window.removeTrackRow=function(id,idx){
+  const tracks=getEditTracks(id);
+  tracks.splice(idx,1);
+  renderEditTracks(id, tracks);
+};
+function getEditTracks(id){
+  const rows=[...document.querySelectorAll(`#track-editor-${id} [data-track-row]`)];
+  return rows.map((row, orderIdx)=>{
+    const idx=row.getAttribute('data-track-row');
+    return {
+      name: document.getElementById(`trackname_${id}_${idx}`)?.value?.trim() || '',
+      artist: document.getElementById(`trackartist_${id}_${idx}`)?.value?.trim() || '',
+      len: document.getElementById(`tracklen_${id}_${idx}`)?.value?.trim() || '',
+      available: document.getElementById(`avbtn_${id}_${idx}`)?.dataset?.avail === '1',
+      dlUrl: document.getElementById(`trackdl_${id}_${idx}`)?.value?.trim() || ''
+    };
+  });
+}
+function renderEditTracks(id, tracks){
+  const wrap=document.getElementById(`track-editor-${id}`);
+  if(!wrap)return;
+  if(!tracks.length){
+    wrap.innerHTML='<div style="padding:14px;font-size:12px;color:var(--fg3)">No tracks yet. Add one.</div>';
+    return;
+  }
+  wrap.innerHTML=tracks.map((t,i)=>buildTrackRowHTML(id,i,t)).join('');
+  lucide.createIcons();
+}
 window.closeEdit=function(){
   document.getElementById('edit-overlay').classList.remove('on');
 };
 document.getElementById('edit-overlay').addEventListener('click',e=>{if(e.target===document.getElementById('edit-overlay'))closeEdit();});
 
+
 // ── Save edit ──────────────────────────────────────────────────────
+
 window.saveEdit = async function(id, sourceType, fbCol){
   const hasPw = document.getElementById(`em-pw-toggle-${id}`)?.checked;
   const pw = document.getElementById(`em-pw-${id}`)?.value || 'n3xt2026';
@@ -906,41 +974,37 @@ window.saveEdit = async function(id, sourceType, fbCol){
   const stdOn = document.getElementById(`em-std-${id}`)?.classList.contains('on');
   const mode = stdOn ? 'standard' : 'availability';
 
-  const trackAvailability = {};
-  document.querySelectorAll(`[id^="avbtn_${id}_"]`).forEach(btn=>{
-    const idx = parseInt(btn.id.split('_').pop(), 10);
-    trackAvailability[idx] = btn.dataset.avail === '1';
-  });
+  let tracks = getEditTracks(id).map(t=>({
+    name: t.name || 'Untitled Track',
+    artist: t.artist || '',
+    len: t.len || '',
+    available: t.available !== false,
+    dlUrl: t.dlUrl || ''
+  }));
 
   try{
     if(sourceType === 'html'){
       const overrideRef = doc(db, 'overrides', id);
-
-      await updateDoc(overrideRef, {
+      const payload = {
         passwordEnabled: hasPw,
         password: pw,
         mode,
-        trackAvailability,
         dlUrl,
+        tracks,
         updatedAt: serverTimestamp()
-      }).catch(async()=>{
+      };
+
+      await updateDoc(overrideRef, payload).catch(async()=>{
         const { setDoc } = await import("https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js");
-        await setDoc(overrideRef, {
-          passwordEnabled: hasPw,
-          password: pw,
-          mode,
-          trackAvailability,
-          dlUrl,
-          updatedAt: serverTimestamp()
-        });
+        await setDoc(overrideRef, payload);
       });
 
       overridesCache[id] = {
         passwordEnabled: hasPw,
         password: pw,
         mode,
-        trackAvailability,
-        dlUrl
+        dlUrl,
+        tracks
       };
     } else {
       const colName = fbCol || 'albums';
@@ -954,16 +1018,8 @@ window.saveEdit = async function(id, sourceType, fbCol){
         updatedAt: serverTimestamp()
       };
 
-      if(Object.keys(trackAvailability).length > 0){
-        const snap = await getDocs(collection(db, colName));
-        let existingTracks = [];
-        snap.forEach(d => {
-          if(d.id === id) existingTracks = d.data().tracks || [];
-        });
-        updateData.tracks = existingTracks.map((t,i)=>({
-          ...t,
-          available: trackAvailability[i] !== false
-        }));
+      if(colName === 'albums'){
+        updateData.tracks = tracks;
       }
 
       await updateDoc(docRef, updateData);
@@ -983,6 +1039,7 @@ window.saveEdit = async function(id, sourceType, fbCol){
     alert('Save failed: ' + e.message);
   }
 };
+
 
 // ── Delete Firestore content ───────────────────────────────────────
 window.deleteFBContent=async function(docId,type){
@@ -1047,12 +1104,16 @@ function buildAvailList(){
   listEl.innerHTML=lines.map((line,i)=>{
     const parts=line.split('|');
     const name=(parts[0]||'Track '+(i+1)).trim();
-    return`<div class="track-avail-item">
-      <span class="track-avail-num">${i+1}</span>
-      <span class="track-avail-name">${esc(name)}</span>
-      <div class="avail-toggle">
-        <button class="avail-toggle-btn avail" id="new-avbtn-${i}" onclick="toggleNewAvail(${i})" data-avail="1">Available</button>
+    const url=(parts[3]||'').trim();
+    return`<div class="track-avail-item" style="display:block">
+      <div style="display:flex;align-items:center;gap:10px;margin-bottom:8px">
+        <span class="track-avail-num">${i+1}</span>
+        <span class="track-avail-name">${esc(name)}</span>
+        <div class="avail-toggle">
+          <button class="avail-toggle-btn avail" id="new-avbtn-${i}" onclick="toggleNewAvail(${i})" data-avail="1">Available</button>
+        </div>
       </div>
+      <input type="url" id="new-trackdl-${i}" value="${esc(url)}" placeholder="Track download URL (optional)" style="width:100%;height:34px;border:1.5px solid var(--border);border-radius:8px;background:var(--surface);color:var(--fg);padding:0 10px;font-size:12px;font-family:inherit;outline:none">
     </div>`;
   }).join('');
 }
@@ -1087,9 +1148,10 @@ document.getElementById('submit-album').addEventListener('click', async () => {
       const tname=(parts[0]||'Track '+(i+1)).trim();
       const tartist=(parts[1]||artist).trim();
       const tlen=(parts[2]||'').trim();
+      const turl=(document.getElementById(`new-trackdl-${i}`)?.value || parts[3] || '').trim();
       const avBtn=document.getElementById(`new-avbtn-${i}`);
       const available=avBtn?avBtn.dataset.avail!=='0':true;
-      return{name:tname,artist:tartist,len:tlen,available};
+      return{name:tname,artist:tartist,len:tlen,available,dlUrl:turl};
     });
     const hasPw=document.getElementById('alb-pw-toggle').checked;
     const pw=document.getElementById('alb-pw').value.trim()||'n3xt2026';
