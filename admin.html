@@ -733,12 +733,12 @@ window.editHTMLAlbum = function(albumId){
   const pw = ov.password || 'n3xt2026';
   const mode = ov.mode || 'standard';
   const trackAvail = ov.trackAvailability || {};
-
   const tracks = Array.isArray(a.tracks) ? a.tracks : [];
+  const downloadUrl = ov.dlUrl || a.dlUrl || '';
 
   document.getElementById('edit-title-text').textContent = `Edit: ${a.name}`;
   document.getElementById('edit-body').innerHTML =
-    buildEditForm(albumId, a.name, hasPw, pw, mode, tracks, trackAvail, tracks.length, true, false);
+    buildEditForm(albumId, a.name, hasPw, pw, mode, tracks, trackAvail, tracks.length, true, false, downloadUrl);
 
   document.getElementById('edit-overlay').classList.add('on');
   lucide.createIcons();
@@ -747,61 +747,124 @@ window.editHTMLAlbum = function(albumId){
 // ── Edit Firestore album/single ─────────────────────────────────────
 window.editFBContent = async function(docId, type){
   try{
-    const snap=await getDocs(collection(db, type==='album'?'albums':'singles'));
-    let data=null;
-    snap.forEach(d=>{ if(d.id===docId)data={...d.data(),_id:d.id}; });
-    if(!data)return;
-    const hasPw=data.passwordEnabled!==false;
-    const pw=data.password||'n3xt2026';
-    const mode=data.mode||'standard';
-    const tracks=(data.tracks||[]);
-    const trackAvail={};
-    tracks.forEach((t,i)=>{ trackAvail[i]=t.available!==false; });
-    document.getElementById('edit-title-text').textContent=`Edit: ${data.name}`;
-    document.getElementById('edit-body').innerHTML=buildEditForm(docId, data.name, hasPw, pw, mode, tracks, trackAvail, tracks.length, false, true);
+    const colName = type === 'album' ? 'albums' : 'singles';
+    const snap = await getDocs(collection(db, colName));
+    let data = null;
+
+    snap.forEach(d => {
+      if(d.id === docId) data = {...d.data(), _id:d.id};
+    });
+
+    if(!data) return;
+
+    const hasPw = data.passwordEnabled !== false;
+    const pw = data.password || 'n3xt2026';
+    const mode = data.mode || 'standard';
+    const tracks = data.tracks || [];
+    const trackAvail = {};
+    tracks.forEach((t,i) => { trackAvail[i] = t.available !== false; });
+
+    document.getElementById('edit-title-text').textContent = `Edit: ${data.name}`;
+    document.getElementById('edit-body').innerHTML =
+  buildEditForm(
+  docId,
+  data.name,
+  hasPw,
+  pw,
+  mode,
+  tracks,
+  trackAvail,
+  tracks.length,
+  false,
+  colName,
+  data.dlUrl || ''
+);
+
     document.getElementById('edit-overlay').classList.add('on');
     lucide.createIcons();
-  }catch(e){alert('Error loading: '+e.message);}
+  }catch(e){
+    alert('Error loading: ' + e.message);
+  }
 };
 
-function buildEditForm(id, name, hasPw, pw, mode, tracks, trackAvail, trackCount, isHTML, isFB){
-  const trackRows=tracks?tracks.map((t,i)=>{
-    const avail=trackAvail[i]!==false;
-    return`<div class="track-avail-item">
+function buildEditForm(id, name, hasPw, pw, mode, tracks, trackAvail, trackCount, isHTML, fbCol='', downloadUrl=''){
+  const trackRows = tracks ? tracks.map((t,i)=>{
+    const avail = trackAvail[i] !== false;
+    return `<div class="track-avail-item">
       <span class="track-avail-num">${i+1}</span>
-      <span class="track-avail-name">${esc(t.name||'Track '+(i+1))}</span>
+      <span class="track-avail-name">${esc(t.name || 'Track ' + (i+1))}</span>
       <div class="avail-toggle">
-        <button class="avail-toggle-btn ${avail?'avail':'unavail'}" id="avbtn_${id}_${i}" onclick="toggleAvailBtn('${id}',${i})" data-avail="${avail?'1':'0'}">
-          ${avail?'Available':'Unavailable'}
+        <button class="avail-toggle-btn ${avail ? 'avail' : 'unavail'}" id="avbtn_${id}_${i}" onclick="toggleAvailBtn('${id}',${i})" data-avail="${avail ? '1' : '0'}">
+          ${avail ? 'Available' : 'Unavailable'}
         </button>
       </div>
     </div>`;
-  }).join(''):'';
+  }).join('') : '';
 
-  return`
+  return `
   <div class="form-row"><label>Mode</label>
     <div class="mode-btns">
       <button class="mode-btn ${mode==='standard'?'on':''}" id="em-std-${id}" onclick="setEditMode('${id}','standard')"><span data-lucide="album"></span>Standard</button>
       <button class="mode-btn ${mode==='availability'?'on':''}" id="em-av-${id}" onclick="setEditMode('${id}','availability')"><span data-lucide="list-checks"></span>Availability</button>
     </div>
-    <div style="font-size:10px;color:var(--fg3);margin-top:6px" id="em-desc-${id}">${mode==='availability'?'Users pick individual tracks — each can be toggled available or not.':'Users pick full album or single track.'}</div>
+    <div style="font-size:10px;color:var(--fg3);margin-top:6px" id="em-desc-${id}">
+      ${mode==='availability'
+        ? 'Users pick individual tracks — each can be toggled available or not.'
+        : 'Users pick full album or single track.'}
+    </div>
   </div>
+
   <div class="toggle-row">
-    <div><div class="toggle-label">Password Protection</div><div class="toggle-sub">Require password before download</div></div>
-    <label class="toggle"><input type="checkbox" id="em-pw-toggle-${id}" ${hasPw?'checked':''} onchange="toggleEditPwField('${id}')"><div class="toggle-slider"></div></label>
+    <div>
+      <div class="toggle-label">Password Protection</div>
+      <div class="toggle-sub">Require password before download</div>
+    </div>
+    <label class="toggle">
+      <input type="checkbox" id="em-pw-toggle-${id}" ${hasPw ? 'checked' : ''} onchange="toggleEditPwField('${id}')">
+      <div class="toggle-slider"></div>
+    </label>
   </div>
-  <div id="em-pw-field-${id}" class="form-row" style="${hasPw?'':'display:none'}"><label>Password</label><input type="text" id="em-pw-${id}" value="${esc(pw)}" placeholder="n3xt2026" style="width:100%;height:44px;border:1.5px solid var(--border);border-radius:8px;background:var(--surface);color:var(--fg);padding:0 12px;font-size:13px;font-family:inherit;outline:none"></div>
-  ${tracks&&tracks.length?`
-  <div id="em-avail-section-${id}" style="${mode==='availability'?'':'display:none'}">
-    <div class="form-row"><label>Track Availability</label>
+
+  <div id="em-pw-field-${id}" class="form-row" style="${hasPw ? '' : 'display:none'}">
+    <label>Password</label>
+    <input
+      type="text"
+      id="em-pw-${id}"
+      value="${esc(pw)}"
+      placeholder="n3xt2026"
+      style="width:100%;height:44px;border:1.5px solid var(--border);border-radius:8px;background:var(--surface);color:var(--fg);padding:0 12px;font-size:13px;font-family:inherit;outline:none"
+    >
+  </div>
+
+  <div class="form-row">
+    <label>Download URL (ZIP)</label>
+    <input
+      type="url"
+      id="em-dlurl-${id}"
+      value="${esc(downloadUrl || '')}"
+      placeholder="https://github.com/.../album.zip"
+      style="width:100%;height:44px;border:1.5px solid var(--border);border-radius:8px;background:var(--surface);color:var(--fg);padding:0 12px;font-size:13px;font-family:inherit;outline:none"
+    >
+  </div>
+
+  ${tracks && tracks.length ? `
+  <div id="em-avail-section-${id}" style="${mode==='availability' ? '' : 'display:none'}">
+    <div class="form-row">
+      <label>Track Availability</label>
       <div class="track-avail-list">${trackRows}</div>
     </div>
-  </div>`:''}
+  </div>` : ''}
+
   <div style="display:flex;gap:8px;margin-top:8px">
-    <button class="form-submit" style="flex:1" onclick="saveEdit('${id}','${isHTML?'html':'fb'}','${isFB?'albums':''}')"><span data-lucide="save"></span>Save Changes</button>
+    <button class="form-submit" style="flex:1" onclick="saveEdit('${id}','${isHTML ? 'html' : 'fb'}','${fbCol || ''}')">
+      <span data-lucide="save"></span>Save Changes
+    </button>
     <button class="action-btn" style="height:44px;padding:0 16px" onclick="closeEdit()">Cancel</button>
   </div>
-  <div id="em-success-${id}" style="display:none;font-size:12px;color:var(--green);margin-top:10px;display:flex;align-items:center;gap:6px"><span data-lucide="check-circle"></span>Saved!</div>`;
+
+  <div id="em-success-${id}" style="display:none;font-size:12px;color:var(--green);margin-top:10px;display:flex;align-items:center;gap:6px">
+    <span data-lucide="check-circle"></span>Saved!
+  </div>`;
 }
 
 // ── Edit helpers ───────────────────────────────────────────────────
@@ -835,49 +898,90 @@ window.closeEdit=function(){
 document.getElementById('edit-overlay').addEventListener('click',e=>{if(e.target===document.getElementById('edit-overlay'))closeEdit();});
 
 // ── Save edit ──────────────────────────────────────────────────────
-window.saveEdit=async function(id, sourceType, fbCol){
-  const hasPw=document.getElementById(`em-pw-toggle-${id}`)?.checked;
-  const pw=document.getElementById(`em-pw-${id}`)?.value||'n3xt2026';
-  // Determine mode
-  const stdOn=document.getElementById(`em-std-${id}`)?.classList.contains('on');
-  const mode=stdOn?'standard':'availability';
-  // Gather track availability from buttons
-  const trackAvailability={};
+window.saveEdit = async function(id, sourceType, fbCol){
+  const hasPw = document.getElementById(`em-pw-toggle-${id}`)?.checked;
+  const pw = document.getElementById(`em-pw-${id}`)?.value || 'n3xt2026';
+  const dlUrl = document.getElementById(`em-dlurl-${id}`)?.value?.trim() || '';
+
+  const stdOn = document.getElementById(`em-std-${id}`)?.classList.contains('on');
+  const mode = stdOn ? 'standard' : 'availability';
+
+  const trackAvailability = {};
   document.querySelectorAll(`[id^="avbtn_${id}_"]`).forEach(btn=>{
-    const idx=parseInt(btn.id.split('_').pop());
-    trackAvailability[idx]=btn.dataset.avail==='1';
+    const idx = parseInt(btn.id.split('_').pop(), 10);
+    trackAvailability[idx] = btn.dataset.avail === '1';
   });
 
   try{
-    if(sourceType==='html'){
-      // Save to overrides collection
-      const overrideRef=doc(db,'overrides',id);
-      await updateDoc(overrideRef,{ passwordEnabled:hasPw, password:pw, mode, trackAvailability, updatedAt:serverTimestamp() })
-        .catch(async()=>{
-          // doc may not exist yet, use addDoc workaround via set
-          const {setDoc}=await import("https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js");
-          await setDoc(overrideRef,{ passwordEnabled:hasPw, password:pw, mode, trackAvailability, updatedAt:serverTimestamp() });
+    if(sourceType === 'html'){
+      const overrideRef = doc(db, 'overrides', id);
+
+      await updateDoc(overrideRef, {
+        passwordEnabled: hasPw,
+        password: pw,
+        mode,
+        trackAvailability,
+        dlUrl,
+        updatedAt: serverTimestamp()
+      }).catch(async()=>{
+        const { setDoc } = await import("https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js");
+        await setDoc(overrideRef, {
+          passwordEnabled: hasPw,
+          password: pw,
+          mode,
+          trackAvailability,
+          dlUrl,
+          updatedAt: serverTimestamp()
         });
-      overridesCache[id]={passwordEnabled:hasPw,password:pw,mode,trackAvailability};
-    }else{
-      // Update Firestore document directly
-      // Also update track availability inside tracks array if mode=availability
-      const colName=fbCol||'albums';
-      const docRef=doc(db,colName,id);
-      const updateData={ passwordEnabled:hasPw, password:pw, mode, updatedAt:serverTimestamp() };
-      if(Object.keys(trackAvailability).length>0){
-        // We need to update track.available on each track — read first
-        const snap=await getDocs(collection(db,colName));
-        let existingTracks=[];
-        snap.forEach(d=>{ if(d.id===id)existingTracks=d.data().tracks||[]; });
-        updateData.tracks=existingTracks.map((t,i)=>({...t,available:trackAvailability[i]!==false}));
+      });
+
+      overridesCache[id] = {
+        passwordEnabled: hasPw,
+        password: pw,
+        mode,
+        trackAvailability,
+        dlUrl
+      };
+    } else {
+      const colName = fbCol || 'albums';
+      const docRef = doc(db, colName, id);
+
+      const updateData = {
+        passwordEnabled: hasPw,
+        password: pw,
+        mode,
+        dlUrl,
+        updatedAt: serverTimestamp()
+      };
+
+      if(Object.keys(trackAvailability).length > 0){
+        const snap = await getDocs(collection(db, colName));
+        let existingTracks = [];
+        snap.forEach(d => {
+          if(d.id === id) existingTracks = d.data().tracks || [];
+        });
+        updateData.tracks = existingTracks.map((t,i)=>({
+          ...t,
+          available: trackAvailability[i] !== false
+        }));
       }
-      await updateDoc(docRef,updateData);
+
+      await updateDoc(docRef, updateData);
     }
-    const succEl=document.getElementById(`em-success-${id}`);
-    if(succEl){succEl.style.display='flex';lucide.createIcons();}
-    setTimeout(()=>{ closeEdit();loadManage(); },1200);
-  }catch(e){alert('Save failed: '+e.message);}
+
+    const succEl = document.getElementById(`em-success-${id}`);
+    if(succEl){
+      succEl.style.display = 'flex';
+      lucide.createIcons();
+    }
+
+    setTimeout(()=>{
+      closeEdit();
+      loadManage();
+    },1200);
+  }catch(e){
+    alert('Save failed: ' + e.message);
+  }
 };
 
 // ── Delete Firestore content ───────────────────────────────────────
