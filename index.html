@@ -1612,7 +1612,7 @@ function openSadBoyz(){
   stopCurrentAudio();
   const rows=sadBoyzAlbum.tracks.map((t,i)=>`<div class="track" style="animation-delay:${i*.025}s">${pbHTML()}<span class="track-no">${i+1}</span><div class="track-info"><div class="track-name">${esc(t.name)}</div><div class="track-sub">${esc(t.artist)}</div></div><span class="track-dur">${esc(t.len)}</span></div>`).join('');
   const sadView=getEffectiveAlbum(sadBoyzAlbum);
-  openViewer(`${coverHTML(sadView)}`
+  openViewer(`${coverHTML(sadView)}
     <div class="viewer-title">${esc(sadBoyzAlbum.name)}</div>
     <div class="viewer-artist" onclick="navigate('/artist/junior-h')">${icon('user')} ${esc(sadBoyzAlbum.artist)}</div>
     <div class="meta-pills"><span class="mpill" style="background:#833ab4;color:#fff">Instagram</span><span class="mpill">${esc(sadBoyzAlbum.year)}</span><span class="mpill">${sadBoyzAlbum.tracks.length} tracks</span></div>
@@ -1639,7 +1639,7 @@ function openLevitico(){
   stopCurrentAudio();
   const t=leviticoAlbum.tracks[0];
   const contView=getEffectiveAlbum(contingente2Album);
-  openViewer(`${coverHTML(contView)}`
+  openViewer(`${coverHTML(contView)}
     <div class="viewer-title">${esc(leviticoAlbum.name)}</div>
     <div class="viewer-artist" onclick="navigate('/artist/peso-pluma')">${icon('user')} ${esc(leviticoAlbum.artist)}</div>
     <div class="meta-pills"><span class="mpill" style="background:#2ca5e0;color:#fff">Telegram</span><span class="mpill">${esc(leviticoAlbum.year)}</span><span class="mpill">Partial archive</span></div>
@@ -1654,7 +1654,7 @@ function openLevitico(){
 function openMiVida3(){
   stopCurrentAudio();
   const miView=getEffectiveAlbum(miVida3Album);
-  openViewer(`${coverHTML(miView)}`
+  openViewer(`${coverHTML(miView)}
     <div class="viewer-title">${esc(miVida3Album.name)}</div>
     <div class="viewer-artist" onclick="navigate('/artist/junior-h')">${icon('user')} ${esc(miVida3Album.artist)}</div>
     <div class="meta-pills"><span class="mpill" style="background:#833ab4;color:#fff">Instagram</span><span class="mpill">${esc(miVida3Album.year)}</span><span class="mpill">Failed archive</span></div>
@@ -1668,7 +1668,7 @@ function openContingente2(){
   stopCurrentAudio();
   const rows=contingente2Album.tracks.map((t,i)=>`<div class="track" style="animation-delay:${i*.025}s">${pbHTML(true)}<span class="track-no">${i+1}</span><div class="track-info"><div class="track-name">${esc(t.name)}</div><div class="track-sub">${esc(t.artist)}</div></div><span class="track-dur">${esc(t.len)}</span></div>`).join('');
   const levView=getEffectiveAlbum(leviticoAlbum);
-  openViewer(`${coverHTML(levView)}`
+  openViewer(`${coverHTML(levView)}
     <div class="viewer-title">${esc(contingente2Album.name)}</div>
     <div class="viewer-artist" onclick="navigate('/artist/junior-h')">${icon('user')} ${esc(contingente2Album.artist)}</div>
     <div class="meta-pills"><span class="mpill" style="background:#833ab4;color:#fff">Instagram</span><span class="mpill">${esc(contingente2Album.year)}</span><span class="mpill">${contingente2Album.tracks.length} tracks</span></div>
@@ -1681,7 +1681,7 @@ function openSingle(s){
   stopCurrentAudio();
   const srcColor=s.source==='Telegram'?'#2ca5e0':'#833ab4';
   const artistSlug=s.artist.toLowerCase().includes('junior')?'junior-h':s.artist.toLowerCase().replace(/\s+/g,'-');
-  openViewer(`${coverHTML(s,true)}`
+  openViewer(`${coverHTML(s,true)}
     <div class="single-banner"><div class="single-banner-icon">🎵</div><div class="single-banner-info"><div class="single-banner-title">Single</div><div class="single-banner-sub">Standalone single release · ${esc(s.year)}</div></div></div>
     <div class="viewer-title">${esc(s.name)}</div>
     <div class="viewer-artist" onclick="navigate('/artist/${artistSlug}')">${icon('user')} ${esc(s.artist)}</div>
@@ -1700,7 +1700,7 @@ window.openFBAlbum=function(firestoreId){
   const rows=tracks.map((t,i)=>`<div class="track" style="animation-delay:${i*.025}s">${pbHTML(true)}<span class="track-no">${i+1}</span><div class="track-info"><div class="track-name">${esc(t.name)}</div><div class="track-sub">${esc(t.artist||a.artist||'')}</div></div><span class="track-dur">${esc(t.len||'')}</span></div>`).join('');
   const srcColor=a.source==='Telegram'?'#2ca5e0':'#833ab4';
   const albumObj={...a,id:a._firestoreId||a.id};
-  openViewer(`${coverHTML(a)}`
+  openViewer(`${coverHTML(a)}
     <div class="viewer-title">${esc(a.name)}</div>
     <div class="viewer-artist">${icon('user')} ${esc(a.artist||'—')}</div>
     <div class="meta-pills"><span class="mpill" style="background:${srcColor};color:#fff">${esc(a.source||'Instagram')}</span><span class="mpill">${esc(a.year||'—')}</span><span class="mpill">${tracks.length} tracks</span></div>
@@ -1715,7 +1715,7 @@ window.openFBSingle=function(firestoreId){
   stopCurrentAudio();
   const srcColor=s.source==='Telegram'?'#2ca5e0':'#833ab4';
   const sObj={...s,id:s._firestoreId||s.id};
-  openViewer(`${coverHTML(s,true)}`
+  openViewer(`${coverHTML(s,true)}
     <div class="single-banner"><div class="single-banner-icon">🎵</div><div class="single-banner-info"><div class="single-banner-title">Single</div><div class="single-banner-sub">Standalone single · ${esc(s.year||'—')}</div></div></div>
     <div class="viewer-title">${esc(s.name)}</div>
     <div class="viewer-artist">${icon('user')} ${esc(s.artist||'—')}</div>
