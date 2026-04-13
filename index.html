@@ -1297,6 +1297,7 @@ function getEffectiveAlbum(albumObj){
   if(ov?.passwordEnabled != null) merged.passwordEnabled = ov.passwordEnabled;
   if(ov?.password != null) merged.password = ov.password;
   if(ov?.dlUrl != null) merged.dlUrl = ov.dlUrl;
+  if(ov?.cover != null) merged.cover = ov.cover;
   return merged;
 }
 function getAlbumPassword(albumObj){
@@ -1323,6 +1324,16 @@ function getAlbumTrackAvailability(albumObj){
   const out = {};
   tracks.forEach((t,i)=>{ out[i] = t?.available !== false; });
   return out;
+}
+function coverHTML(albumObj, circle=false){
+  const a=getEffectiveAlbum(albumObj);
+  if(a?.cover){return `<img class="viewer-cover${circle?' circle':''}" src="${esc(a.cover)}" alt="" loading="lazy"${circle?' style="max-width:160px"':''}>`;}
+  return `<div class="viewer-cover-ph${circle?' circle':''}"${circle?' style="max-width:160px"':''}><span data-lucide="${circle?'music-2':'disc-3'}"${circle?'':' style=\"width:32px;height:32px\"'}></span></div>`;
+}
+function resultThumbHTML(albumObj, circle=false){
+  const a=getEffectiveAlbum(albumObj);
+  if(a?.cover){return `<img class="result-thumb${circle?' circle':''}" src="${esc(a.cover)}" alt="" loading="lazy">`;}
+  return `<div class="result-thumb-ph${circle?' circle':''}">${circle?'':'N3XT'}</div>`;
 }
 // ── URL Scrambler (persistent while modal open) ────────────────────
 let _urlScramblerIv=null;
@@ -1600,7 +1611,8 @@ window.toggleFavFromViewer=function(){
 function openSadBoyz(){
   stopCurrentAudio();
   const rows=sadBoyzAlbum.tracks.map((t,i)=>`<div class="track" style="animation-delay:${i*.025}s">${pbHTML()}<span class="track-no">${i+1}</span><div class="track-info"><div class="track-name">${esc(t.name)}</div><div class="track-sub">${esc(t.artist)}</div></div><span class="track-dur">${esc(t.len)}</span></div>`).join('');
-  openViewer(`${sadBoyzAlbum.cover?`<img class="viewer-cover" src="${sadBoyzAlbum.cover}" alt="" loading="lazy">`:`<div class="viewer-cover-ph"><span data-lucide="disc-3"></span></div>`}
+  const sadView=getEffectiveAlbum(sadBoyzAlbum);
+  openViewer(`${coverHTML(sadView)}`
     <div class="viewer-title">${esc(sadBoyzAlbum.name)}</div>
     <div class="viewer-artist" onclick="navigate('/artist/junior-h')">${icon('user')} ${esc(sadBoyzAlbum.artist)}</div>
     <div class="meta-pills"><span class="mpill" style="background:#833ab4;color:#fff">Instagram</span><span class="mpill">${esc(sadBoyzAlbum.year)}</span><span class="mpill">${sadBoyzAlbum.tracks.length} tracks</span></div>
@@ -1613,7 +1625,7 @@ function openSadBoyz(){
 function openBoveda(){
   stopCurrentAudio();
   openViewer(`<div style="animation:fadeUp .35s ease both">
-    <img class="viewer-cover" src="${esc(bovedeAlbum.cover)}" alt="" loading="lazy" style="filter:grayscale(1);opacity:.5">
+    ${getEffectiveAlbum(bovedeAlbum).cover?`<img class="viewer-cover" src="${esc(getEffectiveAlbum(bovedeAlbum).cover)}" alt="" loading="lazy" style="filter:grayscale(1);opacity:.5">`:`<div class="viewer-cover-ph"><span data-lucide="disc-3" style="width:32px;height:32px"></span></div>`}
     <div class="viewer-title" style="opacity:.5">${esc(bovedeAlbum.name)}</div>
     <div class="viewer-artist" style="opacity:.5">${icon('user')} ${esc(bovedeAlbum.artist)}</div>
     <div style="margin:20px 0 12px;padding:16px;border-radius:12px;background:rgba(229,62,62,.1);border:1px solid rgba(229,62,62,.3)">
@@ -1626,7 +1638,8 @@ function openBoveda(){
 function openLevitico(){
   stopCurrentAudio();
   const t=leviticoAlbum.tracks[0];
-  openViewer(`<div class="viewer-cover-ph"><span data-lucide="disc-3" style="width:32px;height:32px"></span></div>
+  const contView=getEffectiveAlbum(contingente2Album);
+  openViewer(`${coverHTML(contView)}`
     <div class="viewer-title">${esc(leviticoAlbum.name)}</div>
     <div class="viewer-artist" onclick="navigate('/artist/peso-pluma')">${icon('user')} ${esc(leviticoAlbum.artist)}</div>
     <div class="meta-pills"><span class="mpill" style="background:#2ca5e0;color:#fff">Telegram</span><span class="mpill">${esc(leviticoAlbum.year)}</span><span class="mpill">Partial archive</span></div>
@@ -1640,7 +1653,8 @@ function openLevitico(){
 
 function openMiVida3(){
   stopCurrentAudio();
-  openViewer(`${miVida3Album.cover?`<img class="viewer-cover" src="${miVida3Album.cover}" alt="" loading="lazy">`:`<div class="viewer-cover-ph"><span data-lucide="disc-3"></span></div>`}
+  const miView=getEffectiveAlbum(miVida3Album);
+  openViewer(`${coverHTML(miView)}`
     <div class="viewer-title">${esc(miVida3Album.name)}</div>
     <div class="viewer-artist" onclick="navigate('/artist/junior-h')">${icon('user')} ${esc(miVida3Album.artist)}</div>
     <div class="meta-pills"><span class="mpill" style="background:#833ab4;color:#fff">Instagram</span><span class="mpill">${esc(miVida3Album.year)}</span><span class="mpill">Failed archive</span></div>
@@ -1653,7 +1667,8 @@ function openMiVida3(){
 function openContingente2(){
   stopCurrentAudio();
   const rows=contingente2Album.tracks.map((t,i)=>`<div class="track" style="animation-delay:${i*.025}s">${pbHTML(true)}<span class="track-no">${i+1}</span><div class="track-info"><div class="track-name">${esc(t.name)}</div><div class="track-sub">${esc(t.artist)}</div></div><span class="track-dur">${esc(t.len)}</span></div>`).join('');
-  openViewer(`<div class="viewer-cover-ph"><span data-lucide="disc-3" style="width:32px;height:32px"></span></div>
+  const levView=getEffectiveAlbum(leviticoAlbum);
+  openViewer(`${coverHTML(levView)}`
     <div class="viewer-title">${esc(contingente2Album.name)}</div>
     <div class="viewer-artist" onclick="navigate('/artist/junior-h')">${icon('user')} ${esc(contingente2Album.artist)}</div>
     <div class="meta-pills"><span class="mpill" style="background:#833ab4;color:#fff">Instagram</span><span class="mpill">${esc(contingente2Album.year)}</span><span class="mpill">${contingente2Album.tracks.length} tracks</span></div>
@@ -1666,7 +1681,7 @@ function openSingle(s){
   stopCurrentAudio();
   const srcColor=s.source==='Telegram'?'#2ca5e0':'#833ab4';
   const artistSlug=s.artist.toLowerCase().includes('junior')?'junior-h':s.artist.toLowerCase().replace(/\s+/g,'-');
-  openViewer(`<div class="viewer-cover-ph circle" style="max-width:160px"><span data-lucide="music-2"></span></div>
+  openViewer(`${coverHTML(s,true)}`
     <div class="single-banner"><div class="single-banner-icon">🎵</div><div class="single-banner-info"><div class="single-banner-title">Single</div><div class="single-banner-sub">Standalone single release · ${esc(s.year)}</div></div></div>
     <div class="viewer-title">${esc(s.name)}</div>
     <div class="viewer-artist" onclick="navigate('/artist/${artistSlug}')">${icon('user')} ${esc(s.artist)}</div>
@@ -1685,7 +1700,7 @@ window.openFBAlbum=function(firestoreId){
   const rows=tracks.map((t,i)=>`<div class="track" style="animation-delay:${i*.025}s">${pbHTML(true)}<span class="track-no">${i+1}</span><div class="track-info"><div class="track-name">${esc(t.name)}</div><div class="track-sub">${esc(t.artist||a.artist||'')}</div></div><span class="track-dur">${esc(t.len||'')}</span></div>`).join('');
   const srcColor=a.source==='Telegram'?'#2ca5e0':'#833ab4';
   const albumObj={...a,id:a._firestoreId||a.id};
-  openViewer(`${a.cover?`<img class="viewer-cover" src="${esc(a.cover)}" alt="" loading="lazy">`:`<div class="viewer-cover-ph"><span data-lucide="disc-3" style="width:32px;height:32px"></span></div>`}
+  openViewer(`${coverHTML(a)}`
     <div class="viewer-title">${esc(a.name)}</div>
     <div class="viewer-artist">${icon('user')} ${esc(a.artist||'—')}</div>
     <div class="meta-pills"><span class="mpill" style="background:${srcColor};color:#fff">${esc(a.source||'Instagram')}</span><span class="mpill">${esc(a.year||'—')}</span><span class="mpill">${tracks.length} tracks</span></div>
@@ -1700,7 +1715,7 @@ window.openFBSingle=function(firestoreId){
   stopCurrentAudio();
   const srcColor=s.source==='Telegram'?'#2ca5e0':'#833ab4';
   const sObj={...s,id:s._firestoreId||s.id};
-  openViewer(`<div class="viewer-cover-ph circle" style="max-width:160px"><span data-lucide="music-2"></span></div>
+  openViewer(`${coverHTML(s,true)}`
     <div class="single-banner"><div class="single-banner-icon">🎵</div><div class="single-banner-info"><div class="single-banner-title">Single</div><div class="single-banner-sub">Standalone single · ${esc(s.year||'—')}</div></div></div>
     <div class="viewer-title">${esc(s.name)}</div>
     <div class="viewer-artist">${icon('user')} ${esc(s.artist||'—')}</div>
@@ -1913,11 +1928,11 @@ function renderResults(items,injectFake,injectBoveda,injectLevitico,q,injectMiVi
   const phThumb=`<div class="result-thumb-ph">N3XT</div>`;
   const phCircle=`<div class="result-thumb-ph circle"></div>`;
 
-  if(showFake)html+=resultRow(sadBoyzAlbum.cover?`<img class="result-thumb" src="${sadBoyzAlbum.cover}" alt="" loading="lazy">`:phThumb,sadBoyzAlbum.name,sadBoyzAlbum.artist,`<span class="badge b-ig">Instagram</span>`,'openSadBoyz()',sadBoyzAlbum.id);
-  if(showMiVida3)html+=resultRow(miVida3Album.cover?`<img class="result-thumb" src="${miVida3Album.cover}" alt="" loading="lazy">`:phThumb,miVida3Album.name,miVida3Album.artist,`<span class="badge b-ig">Instagram</span>`,'openMiVida3()',miVida3Album.id);
-  if(showContingente2)html+=resultRow(phThumb,contingente2Album.name,contingente2Album.artist,`<span class="badge b-ig">Instagram</span>`,'openContingente2()',contingente2Album.id);
-  if(showBoveda)html+=resultRow(`<img class="result-thumb" src="${esc(bovedeAlbum.cover)}" alt="" loading="lazy">`,bovedeAlbum.name,bovedeAlbum.artist,`<span class="badge b-tg">Telegram</span>`,'openBoveda()',bovedeAlbum.id);
-  if(showLevitico)html+=resultRow(phThumb,leviticoAlbum.name,leviticoAlbum.artist,`<span class="badge b-tg">Telegram</span>`,'openLevitico()',leviticoAlbum.id);
+  if(showFake){const a=getEffectiveAlbum(sadBoyzAlbum);html+=resultRow(resultThumbHTML(a),a.name,a.artist,`<span class="badge b-ig">Instagram</span>`,'openSadBoyz()',a.id);}
+  if(showMiVida3){const a=getEffectiveAlbum(miVida3Album);html+=resultRow(resultThumbHTML(a),a.name,a.artist,`<span class="badge b-ig">Instagram</span>`,'openMiVida3()',a.id);}
+  if(showContingente2){const a=getEffectiveAlbum(contingente2Album);html+=resultRow(resultThumbHTML(a),a.name,a.artist,`<span class="badge b-ig">Instagram</span>`,'openContingente2()',a.id);}
+  if(showBoveda){const a=getEffectiveAlbum(bovedeAlbum);html+=resultRow(resultThumbHTML(a),a.name,a.artist,`<span class="badge b-tg">Telegram</span>`,'openBoveda()',a.id);}
+  if(showLevitico){const a=getEffectiveAlbum(leviticoAlbum);html+=resultRow(resultThumbHTML(a),a.name,a.artist,`<span class="badge b-tg">Telegram</span>`,'openLevitico()',a.id);}
 
   const singles=[{show:showGata,data:gataS,fn:'openSingleGata()'},{show:showTeniente,data:tenienteS,fn:'openSingleTeniente()'},{show:showChango,data:changoS,fn:'openSingleChango()'},{show:showTigre,data:tigreS,fn:'openSingleTigre()'},{show:showCripto,data:criptoS,fn:'openSingleCripto()'},{show:show000666,data:s000666,fn:'openSingle000666()'}];
   singles.forEach(({show,data,fn})=>{if(!show)return;html+=resultRow(phCircle,data.name,data.artist,`<span class="badge b-single">Single</span><span class="badge b-ig">Instagram</span>`,fn,data.id);});
@@ -1931,7 +1946,7 @@ function renderResults(items,injectFake,injectBoveda,injectLevitico,q,injectMiVi
   // Firestore dynamic singles
   fbSinglesFiltered.forEach(s=>{
     const srcClass=s.source==='Telegram'?'b-tg':'b-ig';
-    html+=resultRow(phCircle,s.name||'Unknown',s.artist||'—',`<span class="badge b-single">Single</span><span class="badge ${srcClass}">${esc(s.source||'IG')}</span>`,`openFBSingle('${esc(s._firestoreId||s.id||'')}')`,s._firestoreId||s.id||'');
+    html+=resultRow(s.cover?`<img class="result-thumb circle" src="${esc(s.cover)}" alt="" loading="lazy">`:phCircle,s.name||'Unknown',s.artist||'—',`<span class="badge b-single">Single</span><span class="badge ${srcClass}">${esc(s.source||'IG')}</span>`,`openFBSingle('${esc(s._firestoreId||s.id||'')}')`,s._firestoreId||s.id||'');
   });
 
   const seen=new Set();
