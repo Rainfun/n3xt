@@ -12,7 +12,7 @@
   --bg:#050505;--bg2:#0d0d0d;--bg3:#141414;
   --fg:#f5f5f5;--fg2:#c0c0c0;--fg3:#555;--fg4:#2a2a2a;
   --border:rgba(255,255,255,.07);--surface:#141414;--surface2:#1e1e1e;
-  --accent:#fa2d48;--green:#16a34a;
+  --accent:#fa2d48;--green:#16a34a;--blue:#3b82f6;--yellow:#f59e0b;
   --radius:12px;--transition:.2s cubic-bezier(.4,0,.2,1);
 }
 body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--fg);-webkit-font-smoothing:antialiased;min-height:100dvh}
@@ -21,127 +21,140 @@ body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellips
 @keyframes fadeUp{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
 @keyframes spin{to{transform:rotate(360deg)}}
 @keyframes pulse{0%,100%{box-shadow:0 0 10px rgba(250,45,72,.7)}50%{box-shadow:0 0 22px rgba(250,45,72,1)}}
+@keyframes slideIn{from{opacity:0;transform:translateX(-12px)}to{opacity:1;transform:translateX(0)}}
+@keyframes shake{0%,100%{transform:translateX(0)}20%{transform:translateX(-7px)}40%{transform:translateX(7px)}60%{transform:translateX(-4px)}80%{transform:translateX(4px)}}
 
 #app{position:relative;z-index:1;min-height:100dvh;display:flex;flex-direction:column}
 
 /* ── Login ── */
-#login-screen{
-  flex:1;display:flex;align-items:center;justify-content:center;padding:24px;
-  animation:fadeUp .5s ease both;
-}
-.login-box{
-  max-width:380px;width:100%;
-  background:var(--bg2);border:1px solid var(--border);border-radius:22px;
-  padding:32px 28px;
-}
+#login-screen{flex:1;display:flex;align-items:center;justify-content:center;padding:24px;animation:fadeUp .5s ease both}
+.login-box{max-width:380px;width:100%;background:var(--bg2);border:1px solid var(--border);border-radius:22px;padding:32px 28px}
 .login-logo{display:flex;align-items:center;gap:8px;font-size:14px;font-weight:900;letter-spacing:-.05em;margin-bottom:28px}
-.login-logo-dot{width:8px;height:8px;border-radius:50%;background:var(--accent);animation:pulse 2s ease infinite;box-shadow:0 0 10px rgba(250,45,72,.7)}
+.login-logo-dot{width:8px;height:8px;border-radius:50%;background:var(--accent);animation:pulse 2s ease infinite}
 .admin-badge{display:inline-flex;align-items:center;gap:6px;font-size:9px;font-weight:700;letter-spacing:.18em;text-transform:uppercase;color:rgba(250,45,72,.7);background:rgba(250,45,72,.08);border:1px solid rgba(250,45,72,.2);padding:4px 10px;border-radius:20px;margin-left:8px}
-.admin-badge svg{width:9px;height:9px}
 .login-title{font-size:22px;font-weight:800;letter-spacing:-.04em;margin-bottom:6px}
 .login-sub{font-size:12px;color:var(--fg3);margin-bottom:24px}
 .field{margin-bottom:12px}
 .field label{display:block;font-size:10px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--fg3);margin-bottom:6px}
-.field input{
-  width:100%;height:46px;border:1.5px solid var(--border);
-  border-radius:10px;background:var(--surface);color:var(--fg);
-  padding:0 14px;font-size:14px;font-family:inherit;outline:none;
-  transition:border-color .2s,box-shadow .2s;
-}
-.field input:focus{border-color:var(--accent);box-shadow:0 0 0 3px rgba(250,45,72,.1)}
+.field input{width:100%;height:46px;border:1.5px solid var(--border);border-radius:10px;background:var(--surface);color:var(--fg);padding:0 14px;font-size:14px;font-family:inherit;outline:none;transition:border-color .2s}
+.field input:focus{border-color:var(--accent)}
 .field input::placeholder{color:var(--fg4)}
-.login-btn{
-  width:100%;height:46px;background:var(--accent);color:#fff;
-  border:none;border-radius:10px;font-size:14px;font-weight:700;
-  cursor:pointer;font-family:inherit;display:flex;align-items:center;justify-content:center;gap:8px;
-  transition:opacity .15s,transform .1s;margin-top:4px;
-  box-shadow:0 4px 18px rgba(250,45,72,.35);
-}
+.login-btn{width:100%;height:46px;background:var(--accent);color:#fff;border:none;border-radius:10px;font-size:14px;font-weight:700;cursor:pointer;font-family:inherit;display:flex;align-items:center;justify-content:center;gap:8px;transition:opacity .15s;margin-top:4px;box-shadow:0 4px 18px rgba(250,45,72,.35)}
 .login-btn:hover{opacity:.88}
-.login-btn:active{transform:scale(.97)}
 .login-err{font-size:11px;color:var(--accent);margin-top:10px;min-height:16px;display:flex;align-items:center;gap:5px}
-.login-err svg{width:12px;height:12px}
 
 /* ── Dashboard ── */
 #dashboard{display:none;flex:1;flex-direction:column}
 #dashboard.show{display:flex}
-
-.admin-nav{
-  height:56px;display:flex;align-items:center;justify-content:space-between;
-  padding:0 24px;border-bottom:1px solid var(--border);
-  background:rgba(5,5,5,.85);backdrop-filter:blur(20px);
-  position:sticky;top:0;z-index:40;
-}
+.admin-nav{height:56px;display:flex;align-items:center;justify-content:space-between;padding:0 24px;border-bottom:1px solid var(--border);background:rgba(5,5,5,.85);backdrop-filter:blur(20px);position:sticky;top:0;z-index:40}
 .admin-nav-left{display:flex;align-items:center;gap:12px}
 .admin-wordmark{font-size:14px;font-weight:900;letter-spacing:-.05em;display:flex;align-items:center;gap:7px}
 .admin-wordmark-dot{width:7px;height:7px;border-radius:50%;background:var(--accent);animation:pulse 2s ease infinite}
 .user-tag{font-size:11px;color:var(--fg3);background:var(--surface);border:1px solid var(--border);padding:3px 10px;border-radius:20px;display:flex;align-items:center;gap:5px}
-.user-tag svg{width:11px;height:11px}
 .logout-btn{height:32px;padding:0 12px;border-radius:20px;border:1px solid var(--border);background:var(--surface);color:var(--fg3);font-size:11px;font-weight:500;cursor:pointer;font-family:inherit;display:flex;align-items:center;gap:5px;transition:all .15s}
 .logout-btn:hover{background:var(--surface2);color:var(--fg)}
-.logout-btn svg{width:12px;height:12px}
 
 .dashboard-body{display:grid;grid-template-columns:220px 1fr;flex:1;min-height:0}
-
-/* Sidebar */
 .sidebar{border-right:1px solid var(--border);padding:16px 10px;overflow-y:auto}
 .sidebar-label{font-size:8px;font-weight:700;letter-spacing:.2em;text-transform:uppercase;color:var(--fg4);padding:4px 12px 8px}
-.sidebar-item{
-  display:flex;align-items:center;gap:10px;padding:9px 12px;border-radius:8px;
-  font-size:12px;font-weight:500;color:var(--fg3);cursor:pointer;transition:all .15s;
-}
+.sidebar-item{display:flex;align-items:center;gap:10px;padding:9px 12px;border-radius:8px;font-size:12px;font-weight:500;color:var(--fg3);cursor:pointer;transition:all .15s}
 .sidebar-item:hover{background:var(--surface);color:var(--fg)}
 .sidebar-item.active{background:rgba(250,45,72,.1);color:var(--accent)}
 .sidebar-item svg{width:14px;height:14px;flex-shrink:0}
 
-/* Main area */
 .dashboard-main{overflow-y:auto;padding:28px}
 .dash-section{display:none;animation:fadeUp .3s ease both}
 .dash-section.active{display:block}
-
 .section-title{font-size:18px;font-weight:800;letter-spacing:-.04em;margin-bottom:4px}
 .section-sub{font-size:12px;color:var(--fg3);margin-bottom:24px}
 
-/* Stats */
+/* ── Stats ── */
 .stats-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:12px;margin-bottom:28px}
-.stat-card{background:var(--bg2);border:1px solid var(--border);border-radius:14px;padding:16px;animation:fadeUp .3s ease both}
+.stat-card{background:var(--bg2);border:1px solid var(--border);border-radius:14px;padding:16px}
 .stat-val{font-size:28px;font-weight:900;letter-spacing:-.05em;margin-bottom:2px}
 .stat-label{font-size:9px;font-weight:700;letter-spacing:.18em;text-transform:uppercase;color:var(--fg3)}
 .stat-change{font-size:10px;color:var(--green);margin-top:4px;display:flex;align-items:center;gap:3px}
-.stat-change svg{width:10px;height:10px}
 
-/* Table */
-.data-table{width:100%;border-collapse:collapse;font-size:12px}
-.data-table th{text-align:left;font-size:8px;font-weight:700;letter-spacing:.18em;text-transform:uppercase;color:var(--fg4);padding:8px 12px;border-bottom:1px solid var(--border)}
-.data-table td{padding:10px 12px;border-bottom:1px solid rgba(255,255,255,.03);color:var(--fg2)}
-.data-table tr:hover td{background:var(--surface)}
-.data-table .mono{font-family:'DM Mono',monospace;font-size:10px;color:var(--fg3)}
+/* ── Content Table ── */
+.content-table{width:100%;border-collapse:collapse;font-size:12px;margin-top:8px}
+.content-table th{text-align:left;font-size:8px;font-weight:700;letter-spacing:.18em;text-transform:uppercase;color:var(--fg4);padding:8px 12px;border-bottom:1px solid var(--border)}
+.content-table td{padding:10px 12px;border-bottom:1px solid rgba(255,255,255,.03);color:var(--fg2);vertical-align:middle}
+.content-table tr:hover td{background:var(--surface)}
+.mono{font-family:'DM Mono',monospace;font-size:10px;color:var(--fg3)}
 
-/* Form */
-.admin-form{background:var(--bg2);border:1px solid var(--border);border-radius:16px;padding:24px;max-width:580px;animation:fadeUp .3s ease both}
+/* ── Form ── */
+.admin-form{background:var(--bg2);border:1px solid var(--border);border-radius:16px;padding:24px;max-width:620px}
 .form-row{margin-bottom:14px}
 .form-row label{display:block;font-size:10px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--fg3);margin-bottom:6px}
-.form-row input,.form-row textarea,.form-row select{
-  width:100%;height:44px;border:1.5px solid var(--border);
-  border-radius:8px;background:var(--surface);color:var(--fg);
-  padding:0 12px;font-size:13px;font-family:inherit;outline:none;
-  transition:border-color .2s;
-}
+.form-row input,.form-row textarea,.form-row select{width:100%;height:44px;border:1.5px solid var(--border);border-radius:8px;background:var(--surface);color:var(--fg);padding:0 12px;font-size:13px;font-family:inherit;outline:none;transition:border-color .2s}
 .form-row textarea{height:80px;padding:10px 12px;resize:vertical}
 .form-row input:focus,.form-row textarea:focus,.form-row select:focus{border-color:var(--accent)}
 .form-row input::placeholder,.form-row textarea::placeholder{color:var(--fg4)}
-.form-submit{
-  height:44px;padding:0 24px;background:var(--accent);color:#fff;
-  border:none;border-radius:8px;font-size:13px;font-weight:700;
-  cursor:pointer;font-family:inherit;display:flex;align-items:center;gap:8px;
-  transition:opacity .15s;box-shadow:0 4px 18px rgba(250,45,72,.3);
-}
+.form-row-half{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:14px}
+.form-row-half .form-row{margin-bottom:0}
+.form-submit{height:44px;padding:0 24px;background:var(--accent);color:#fff;border:none;border-radius:8px;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit;display:flex;align-items:center;gap:8px;transition:opacity .15s;box-shadow:0 4px 18px rgba(250,45,72,.3)}
 .form-submit:hover{opacity:.88}
-.form-submit svg{width:14px;height:14px}
+.form-submit:disabled{opacity:.5;pointer-events:none}
 .form-success{font-size:12px;color:var(--green);margin-top:10px;display:none;align-items:center;gap:6px}
-.form-success svg{width:14px;height:14px}
 
-/* Log table */
+/* ── Toggle switch ── */
+.toggle-row{display:flex;align-items:center;justify-content:space-between;padding:10px 14px;border-radius:10px;background:var(--surface);border:1px solid var(--border);margin-bottom:10px}
+.toggle-label{font-size:12px;font-weight:600;color:var(--fg2)}
+.toggle-sub{font-size:10px;color:var(--fg3);margin-top:2px}
+.toggle{position:relative;width:40px;height:22px;flex-shrink:0}
+.toggle input{opacity:0;width:0;height:0}
+.toggle-slider{position:absolute;inset:0;border-radius:22px;background:var(--fg4);cursor:pointer;transition:.2s}
+.toggle-slider::before{content:'';position:absolute;width:16px;height:16px;left:3px;top:3px;border-radius:50%;background:#fff;transition:.2s}
+.toggle input:checked+.toggle-slider{background:var(--accent)}
+.toggle input:checked+.toggle-slider::before{transform:translateX(18px)}
+
+/* ── Mode selector ── */
+.mode-btns{display:flex;gap:8px;margin-bottom:0}
+.mode-btn{flex:1;height:38px;border-radius:8px;border:1.5px solid var(--border);background:var(--surface);color:var(--fg3);font-size:11px;font-weight:700;letter-spacing:.04em;cursor:pointer;font-family:inherit;transition:all .15s;display:flex;align-items:center;justify-content:center;gap:5px}
+.mode-btn svg{width:12px;height:12px}
+.mode-btn:hover{border-color:var(--fg4);color:var(--fg)}
+.mode-btn.on{border-color:var(--accent);background:rgba(250,45,72,.1);color:var(--accent)}
+
+/* ── Track availability editor ── */
+.track-avail-list{border:1px solid var(--border);border-radius:10px;overflow:hidden;max-height:280px;overflow-y:auto;margin-top:8px}
+.track-avail-item{display:flex;align-items:center;gap:10px;padding:9px 14px;border-bottom:1px solid rgba(255,255,255,.04);font-size:12px;transition:background .12s}
+.track-avail-item:last-child{border-bottom:none}
+.track-avail-item:hover{background:var(--surface)}
+.track-avail-num{font-size:11px;color:var(--fg4);width:22px;text-align:right;font-family:'DM Mono',monospace;flex-shrink:0}
+.track-avail-name{flex:1;font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.avail-toggle{flex-shrink:0}
+.avail-toggle-btn{height:24px;padding:0 10px;border-radius:6px;font-size:9px;font-weight:700;letter-spacing:.08em;cursor:pointer;font-family:inherit;border:1px solid;transition:all .15s}
+.avail-toggle-btn.avail{background:rgba(22,163,74,.12);color:#4ade80;border-color:rgba(22,163,74,.3)}
+.avail-toggle-btn.avail:hover{background:rgba(22,163,74,.2)}
+.avail-toggle-btn.unavail{background:rgba(245,245,245,.05);color:var(--fg4);border-color:var(--border)}
+.avail-toggle-btn.unavail:hover{background:rgba(245,245,245,.08);color:var(--fg3)}
+
+/* ── Edit modal ── */
+.edit-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.7);backdrop-filter:blur(10px);z-index:200;align-items:center;justify-content:center;padding:20px}
+.edit-overlay.on{display:flex}
+.edit-box{background:var(--bg2);border:1px solid var(--border);border-radius:20px;padding:28px;max-width:560px;width:100%;max-height:85vh;overflow-y:auto;animation:fadeUp .3s ease both;box-shadow:0 24px 80px rgba(0,0,0,.9)}
+.edit-title{font-size:16px;font-weight:800;letter-spacing:-.04em;margin-bottom:20px;display:flex;align-items:center;justify-content:space-between}
+.edit-close{width:28px;height:28px;border-radius:8px;background:var(--surface);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;cursor:pointer;color:var(--fg3);transition:all .15s}
+.edit-close:hover{color:var(--fg);background:var(--surface2)}
+.edit-close svg{width:13px;height:13px}
+
+/* ── Badge ── */
+.badge{display:inline-flex;align-items:center;font-size:8px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;padding:2px 8px;border-radius:4px}
+.badge-ig{background:rgba(131,58,180,.15);color:#c084fc;border:1px solid rgba(131,58,180,.25)}
+.badge-tg{background:rgba(44,165,224,.15);color:#67c9f5;border:1px solid rgba(44,165,224,.25)}
+.badge-fb{background:rgba(250,45,72,.1);color:#fa2d48;border:1px solid rgba(250,45,72,.2)}
+.badge-avail{background:rgba(22,163,74,.12);color:#4ade80;border:1px solid rgba(22,163,74,.25)}
+.badge-std{background:rgba(245,245,245,.07);color:var(--fg3);border:1px solid var(--border)}
+
+/* ── Action buttons ── */
+.action-btn{height:28px;padding:0 10px;border-radius:6px;font-size:10px;font-weight:600;cursor:pointer;font-family:inherit;border:1px solid var(--border);background:var(--surface);color:var(--fg3);display:inline-flex;align-items:center;gap:4px;transition:all .15s}
+.action-btn svg{width:11px;height:11px}
+.action-btn:hover{background:var(--surface2);color:var(--fg);border-color:var(--fg4)}
+.action-btn.danger:hover{background:rgba(250,45,72,.1);color:var(--accent);border-color:rgba(250,45,72,.3)}
+.action-btn.primary{background:rgba(250,45,72,.1);color:var(--accent);border-color:rgba(250,45,72,.3)}
+.action-btn.primary:hover{background:rgba(250,45,72,.18)}
+
+/* ── Log items ── */
 .log-item{display:flex;align-items:center;gap:12px;padding:10px 14px;border-radius:10px;border-bottom:1px solid rgba(255,255,255,.03);font-size:12px;transition:background .12s}
 .log-item:hover{background:var(--surface)}
 .log-icon{width:30px;height:30px;border-radius:8px;background:var(--surface);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;flex-shrink:0;color:var(--fg3)}
@@ -152,7 +165,29 @@ body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellips
 .log-badge{font-size:8px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;padding:3px 8px;border-radius:4px;flex-shrink:0}
 .log-badge.search{background:rgba(29,185,84,.1);color:#4ade80;border:1px solid rgba(29,185,84,.2)}
 .log-badge.download{background:rgba(250,45,72,.1);color:#fa2d48;border:1px solid rgba(250,45,72,.2)}
+
 .spinner-sm{width:16px;height:16px;border:2px solid var(--border);border-top-color:var(--fg);border-radius:50%;animation:spin .7s linear infinite;display:inline-block}
+.section-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px}
+
+/* ── HTML Albums list ── */
+.html-album-card{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:14px 16px;margin-bottom:10px;display:flex;align-items:center;gap:14px;transition:background .15s}
+.html-album-card:hover{background:var(--surface2)}
+.html-album-thumb{width:40px;height:40px;border-radius:8px;background:var(--bg2);border:1px solid var(--border);flex-shrink:0;object-fit:cover;display:flex;align-items:center;justify-content:center;font-size:8px;font-weight:800;color:var(--fg4)}
+.html-album-info{flex:1;min-width:0}
+.html-album-name{font-size:13px;font-weight:600;letter-spacing:-.02em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.html-album-meta{font-size:10px;color:var(--fg3);margin-top:3px;display:flex;gap:8px;flex-wrap:wrap}
+.html-album-actions{display:flex;gap:6px;flex-shrink:0}
+
+/* ── Confirm delete ── */
+.confirm-box{background:var(--bg2);border:1px solid rgba(250,45,72,.3);border-radius:14px;padding:16px;margin-top:12px;display:none}
+.confirm-box.on{display:block}
+.confirm-box-title{font-size:12px;font-weight:700;color:var(--accent);margin-bottom:8px;display:flex;align-items:center;gap:6px}
+.confirm-box-title svg{width:13px;height:13px}
+.confirm-btns{display:flex;gap:8px;margin-top:10px}
+.confirm-yes{height:32px;padding:0 16px;border-radius:8px;background:var(--accent);color:#fff;border:none;font-size:11px;font-weight:700;cursor:pointer;font-family:inherit;transition:opacity .15s}
+.confirm-yes:hover{opacity:.85}
+.confirm-no{height:32px;padding:0 16px;border-radius:8px;background:var(--surface);color:var(--fg3);border:1px solid var(--border);font-size:11px;font-weight:600;cursor:pointer;font-family:inherit;transition:all .15s}
+.confirm-no:hover{background:var(--surface2)}
 
 @media(max-width:680px){
   .dashboard-body{grid-template-columns:1fr}
@@ -160,177 +195,246 @@ body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellips
   .sidebar-label{display:none}
   .sidebar-item{padding:7px 10px;font-size:11px}
   .dashboard-main{padding:18px 14px}
+  .form-row-half{grid-template-columns:1fr}
 }
 </style>
 </head>
 <body>
 <div id="app">
 
-  <!-- Login -->
-  <div id="login-screen">
-    <div class="login-box">
-      <div class="login-logo">
-        <div class="login-logo-dot"></div>
-        N3XT
-        <div class="admin-badge"><span data-lucide="shield"></span>Admin</div>
-      </div>
-      <div class="login-title">Admin Access</div>
-      <div class="login-sub">Sign in with your admin Firebase credentials.</div>
-      <div class="field">
-        <label>Email</label>
-        <input type="email" id="email-inp" placeholder="admin@n3xt.app" autocomplete="email">
-      </div>
-      <div class="field">
-        <label>Password</label>
-        <input type="password" id="pass-inp" placeholder="••••••••" autocomplete="current-password">
-      </div>
-      <div class="login-err" id="login-err"></div>
-      <button class="login-btn" id="login-btn">
-        <span data-lucide="log-in"></span>
-        Sign In
-      </button>
+<!-- Login -->
+<div id="login-screen">
+  <div class="login-box">
+    <div class="login-logo">
+      <div class="login-logo-dot"></div>N3XT
+      <div class="admin-badge"><span data-lucide="shield"></span>Admin</div>
     </div>
+    <div class="login-title">Admin Access</div>
+    <div class="login-sub">Sign in with your Firebase admin credentials.</div>
+    <div class="field"><label>Email</label><input type="email" id="email-inp" placeholder="admin@n3xt.app" autocomplete="email"></div>
+    <div class="field"><label>Password</label><input type="password" id="pass-inp" placeholder="••••••••" autocomplete="current-password"></div>
+    <div class="login-err" id="login-err"></div>
+    <button class="login-btn" id="login-btn"><span data-lucide="log-in"></span>Sign In</button>
   </div>
+</div>
 
-  <!-- Dashboard -->
-  <div id="dashboard">
-    <nav class="admin-nav">
-      <div class="admin-nav-left">
-        <div class="admin-wordmark"><div class="admin-wordmark-dot"></div>N3XT</div>
-        <div class="user-tag"><span data-lucide="user"></span><span id="user-email-tag">—</span></div>
+<!-- Dashboard -->
+<div id="dashboard">
+  <nav class="admin-nav">
+    <div class="admin-nav-left">
+      <div class="admin-wordmark"><div class="admin-wordmark-dot"></div>N3XT</div>
+      <div class="user-tag"><span data-lucide="user"></span><span id="user-email-tag">—</span></div>
+    </div>
+    <div style="display:flex;align-items:center;gap:8px">
+      <a href="/" style="font-size:11px;color:var(--fg3);text-decoration:none;display:flex;align-items:center;gap:5px"><span data-lucide="external-link" style="width:12px;height:12px"></span>View Site</a>
+      <button class="logout-btn" id="logout-btn"><span data-lucide="log-out"></span>Sign Out</button>
+    </div>
+  </nav>
+
+  <div class="dashboard-body">
+    <div class="sidebar">
+      <div class="sidebar-label">Navigation</div>
+      <div class="sidebar-item active" data-section="overview"><span data-lucide="layout-dashboard"></span>Overview</div>
+      <div class="sidebar-item" data-section="manage"><span data-lucide="library"></span>Manage Content</div>
+      <div class="sidebar-item" data-section="searches"><span data-lucide="search"></span>Search Logs</div>
+      <div class="sidebar-item" data-section="downloads"><span data-lucide="download"></span>Download Logs</div>
+      <div class="sidebar-item" data-section="add-album"><span data-lucide="plus-circle"></span>Add Album</div>
+      <div class="sidebar-item" data-section="add-single"><span data-lucide="music"></span>Add Single</div>
+      <div class="sidebar-item" data-section="settings"><span data-lucide="settings"></span>Settings</div>
+    </div>
+
+    <div class="dashboard-main">
+
+      <!-- Overview -->
+      <div class="dash-section active" id="section-overview">
+        <div class="section-title">Overview</div>
+        <div class="section-sub">Your N3XT platform at a glance.</div>
+        <div class="stats-grid">
+          <div class="stat-card"><div class="stat-val" id="stat-searches">—</div><div class="stat-label">Total Searches</div><div class="stat-change"><span data-lucide="trending-up"></span>Firebase</div></div>
+          <div class="stat-card"><div class="stat-val" id="stat-downloads">—</div><div class="stat-label">Downloads</div><div class="stat-change"><span data-lucide="trending-up"></span>Firebase</div></div>
+          <div class="stat-card"><div class="stat-val" id="stat-albums">—</div><div class="stat-label">Firestore Albums</div></div>
+          <div class="stat-card"><div class="stat-val" id="stat-singles">—</div><div class="stat-label">Firestore Singles</div></div>
+        </div>
+        <div style="background:var(--bg2);border:1px solid var(--border);border-radius:16px;padding:20px">
+          <div style="font-size:10px;font-weight:700;letter-spacing:.18em;text-transform:uppercase;color:var(--fg3);margin-bottom:14px">Recent Activity</div>
+          <div id="recent-activity"><div class="spinner-sm"></div></div>
+        </div>
       </div>
-      <div style="display:flex;align-items:center;gap:8px">
-        <a href="/" style="font-size:11px;color:var(--fg3);text-decoration:none;display:flex;align-items:center;gap:5px"><span data-lucide="external-link" style="width:12px;height:12px"></span>View Site</a>
-        <button class="logout-btn" id="logout-btn"><span data-lucide="log-out"></span>Sign Out</button>
-      </div>
-    </nav>
 
-    <div class="dashboard-body">
-      <div class="sidebar">
-        <div class="sidebar-label">Navigation</div>
-        <div class="sidebar-item active" data-section="overview"><span data-lucide="layout-dashboard"></span>Overview</div>
-        <div class="sidebar-item" data-section="searches"><span data-lucide="search"></span>Search Logs</div>
-        <div class="sidebar-item" data-section="downloads"><span data-lucide="download"></span>Download Logs</div>
-        <div class="sidebar-item" data-section="add-album"><span data-lucide="plus-circle"></span>Add Album</div>
-        <div class="sidebar-item" data-section="add-single"><span data-lucide="music"></span>Add Single</div>
-        <div class="sidebar-item" data-section="settings"><span data-lucide="settings"></span>Settings</div>
-      </div>
+      <!-- Manage Content -->
+      <div class="dash-section" id="section-manage">
+        <div class="section-title">Manage Content</div>
+        <div class="section-sub">Edit albums and singles — both Firestore and HTML-embedded content.</div>
 
-      <div class="dashboard-main">
+        <!-- Firestore albums -->
+        <div style="margin-bottom:28px">
+          <div class="section-header">
+            <div style="font-size:13px;font-weight:700;display:flex;align-items:center;gap:8px">
+              <span data-lucide="database" style="width:14px;height:14px;color:var(--accent)"></span>
+              Firestore Albums
+            </div>
+            <button class="action-btn primary" onclick="loadManage()"><span data-lucide="refresh-cw"></span>Refresh</button>
+          </div>
+          <div id="fb-albums-list"><div class="spinner-sm"></div></div>
+        </div>
 
-        <!-- Overview -->
-        <div class="dash-section active" id="section-overview">
-          <div class="section-title">Overview</div>
-          <div class="section-sub">Your N3XT platform at a glance.</div>
-          <div class="stats-grid">
-            <div class="stat-card">
-              <div class="stat-val" id="stat-searches">—</div>
-              <div class="stat-label">Total Searches</div>
-              <div class="stat-change"><span data-lucide="trending-up"></span>Live from Firebase</div>
-            </div>
-            <div class="stat-card">
-              <div class="stat-val" id="stat-downloads">—</div>
-              <div class="stat-label">Downloads</div>
-              <div class="stat-change"><span data-lucide="trending-up"></span>Live from Firebase</div>
-            </div>
-            <div class="stat-card">
-              <div class="stat-val">6</div>
-              <div class="stat-label">Injected Albums</div>
-            </div>
-            <div class="stat-card">
-              <div class="stat-val">6</div>
-              <div class="stat-label">Singles</div>
+        <!-- Firestore singles -->
+        <div style="margin-bottom:28px">
+          <div class="section-header">
+            <div style="font-size:13px;font-weight:700;display:flex;align-items:center;gap:8px">
+              <span data-lucide="music" style="width:14px;height:14px;color:var(--blue)"></span>
+              Firestore Singles
             </div>
           </div>
-          <div style="background:var(--bg2);border:1px solid var(--border);border-radius:16px;padding:20px">
-            <div style="font-size:10px;font-weight:700;letter-spacing:.18em;text-transform:uppercase;color:var(--fg3);margin-bottom:14px">Recent Activity</div>
-            <div id="recent-activity"><div class="spinner-sm"></div></div>
+          <div id="fb-singles-list"><div class="spinner-sm"></div></div>
+        </div>
+
+        <!-- HTML-hardcoded albums -->
+        <div>
+          <div class="section-header">
+            <div style="font-size:13px;font-weight:700;display:flex;align-items:center;gap:8px">
+              <span data-lucide="code-2" style="width:14px;height:14px;color:var(--yellow)"></span>
+              HTML-Embedded Albums
+              <span style="font-size:9px;font-weight:600;color:var(--fg3);background:var(--surface);border:1px solid var(--border);padding:2px 8px;border-radius:4px">Editable via Admin</span>
+            </div>
           </div>
+          <div id="html-albums-list"></div>
         </div>
+      </div>
 
-        <!-- Search Logs -->
-        <div class="dash-section" id="section-searches">
-          <div class="section-title">Search Logs</div>
-          <div class="section-sub">All searches logged to Firestore in real-time.</div>
-          <div id="search-logs"><div class="spinner-sm"></div></div>
-        </div>
+      <!-- Search Logs -->
+      <div class="dash-section" id="section-searches">
+        <div class="section-title">Search Logs</div>
+        <div class="section-sub">All searches logged to Firestore in real-time.</div>
+        <div id="search-logs"><div class="spinner-sm"></div></div>
+      </div>
 
-        <!-- Download Logs -->
-        <div class="dash-section" id="section-downloads">
-          <div class="section-title">Download Logs</div>
-          <div class="section-sub">All download attempts logged to Firestore.</div>
-          <div id="download-logs"><div class="spinner-sm"></div></div>
-        </div>
+      <!-- Download Logs -->
+      <div class="dash-section" id="section-downloads">
+        <div class="section-title">Download Logs</div>
+        <div class="section-sub">All download attempts logged to Firestore.</div>
+        <div id="download-logs"><div class="spinner-sm"></div></div>
+      </div>
 
-        <!-- Add Album -->
-        <div class="dash-section" id="section-add-album">
-          <div class="section-title">Add Album</div>
-          <div class="section-sub">Add a new injected album to the database. It will appear in search results immediately.</div>
-          <div class="admin-form">
+      <!-- Add Album -->
+      <div class="dash-section" id="section-add-album">
+        <div class="section-title">Add Album</div>
+        <div class="section-sub">Add a new album to Firestore. Appears in search results immediately.</div>
+        <div class="admin-form">
+
+          <div class="form-row-half">
             <div class="form-row"><label>Album Name *</label><input type="text" id="alb-name" placeholder="$AD BOYZ 4 LIFE III"></div>
             <div class="form-row"><label>Artist *</label><input type="text" id="alb-artist" placeholder="Junior H"></div>
+          </div>
+          <div class="form-row-half">
             <div class="form-row"><label>Year</label><input type="text" id="alb-year" placeholder="2026"></div>
             <div class="form-row"><label>Source</label>
-              <select id="alb-source">
-                <option value="Instagram">Instagram</option>
-                <option value="Telegram">Telegram</option>
-              </select>
+              <select id="alb-source"><option value="Instagram">Instagram</option><option value="Telegram">Telegram</option></select>
             </div>
-            <div class="form-row"><label>Cover Image URL</label><input type="url" id="alb-cover" placeholder="https://…"></div>
-            <div class="form-row"><label>Download URL (ZIP)</label><input type="url" id="alb-dlurl" placeholder="https://github.com/…"></div>
-            <div class="form-row"><label>Tracklist (one per line: Track Name — Artist)</label><textarea id="alb-tracks" placeholder="24K — Junior H&#10;Fotos Que Borré — Junior H, Tito Double P"></textarea></div>
-            <div class="form-row"><label>Password Override (leave blank for default)</label><input type="text" id="alb-pw" placeholder="n3xt2026"></div>
-            <button class="form-submit" id="submit-album"><span data-lucide="upload-cloud"></span>Add to Firebase</button>
-            <div class="form-success" id="album-success"><span data-lucide="check-circle"></span>Album added successfully to Firestore!</div>
           </div>
-        </div>
 
-        <!-- Add Single -->
-        <div class="dash-section" id="section-add-single">
-          <div class="section-title">Add Single</div>
-          <div class="section-sub">Add a new single release.</div>
-          <div class="admin-form">
+          <!-- Download Mode -->
+          <div class="form-row">
+            <label>Download Mode</label>
+            <div class="mode-btns">
+              <button class="mode-btn on" id="mode-std" onclick="setMode('standard')"><span data-lucide="album"></span>Standard</button>
+              <button class="mode-btn" id="mode-avail" onclick="setMode('availability')"><span data-lucide="list-checks"></span>Availability</button>
+            </div>
+            <div style="font-size:10px;color:var(--fg3);margin-top:7px" id="mode-desc">Standard: user picks full album or single track.</div>
+          </div>
+
+          <!-- Password toggle -->
+          <div class="toggle-row">
+            <div><div class="toggle-label">Password Protection</div><div class="toggle-sub">Require a password before download</div></div>
+            <label class="toggle"><input type="checkbox" id="alb-pw-toggle" checked onchange="togglePwField('alb')"><div class="toggle-slider"></div></label>
+          </div>
+          <div id="alb-pw-field" class="form-row"><label>Password</label><input type="text" id="alb-pw" placeholder="n3xt2026"></div>
+
+          <div class="form-row"><label>Cover Image URL</label><input type="url" id="alb-cover" placeholder="https://…"></div>
+          <div class="form-row"><label>Download URL (ZIP)</label><input type="url" id="alb-dlurl" placeholder="https://github.com/…"></div>
+
+          <!-- Tracklist -->
+          <div class="form-row">
+            <label>Tracklist — one per line: Track Name | Artist | Duration</label>
+            <textarea id="alb-tracks" placeholder="24K | Junior H | 3:27&#10;Fotos Que Borré | Junior H, Tito Double P | 3:16"></textarea>
+          </div>
+
+          <!-- Availability editor (shown when mode=availability) -->
+          <div id="alb-avail-section" style="display:none">
+            <div class="form-row">
+              <label>Track Availability — toggle which tracks are available</label>
+              <div class="track-avail-list" id="alb-avail-list"><div style="padding:14px;font-size:12px;color:var(--fg3)">Enter tracklist above first, then switch to Availability mode.</div></div>
+            </div>
+          </div>
+
+          <button class="form-submit" id="submit-album"><span data-lucide="upload-cloud"></span>Add to Firebase</button>
+          <div class="form-success" id="album-success"><span data-lucide="check-circle"></span>Album added successfully!</div>
+        </div>
+      </div>
+
+      <!-- Add Single -->
+      <div class="dash-section" id="section-add-single">
+        <div class="section-title">Add Single</div>
+        <div class="section-sub">Add a new single to Firestore.</div>
+        <div class="admin-form">
+          <div class="form-row-half">
             <div class="form-row"><label>Song Name *</label><input type="text" id="sng-name" placeholder="GATA"></div>
             <div class="form-row"><label>Artist *</label><input type="text" id="sng-artist" placeholder="Junior H"></div>
+          </div>
+          <div class="form-row-half">
             <div class="form-row"><label>Year</label><input type="text" id="sng-year" placeholder="2026"></div>
             <div class="form-row"><label>Source</label>
-              <select id="sng-source">
-                <option value="Instagram">Instagram</option>
-                <option value="Telegram">Telegram</option>
-              </select>
-            </div>
-            <div class="form-row"><label>Preview Audio URL (optional)</label><input type="url" id="sng-audio" placeholder="https://…"></div>
-            <button class="form-submit" id="submit-single"><span data-lucide="upload-cloud"></span>Add to Firebase</button>
-            <div class="form-success" id="single-success"><span data-lucide="check-circle"></span>Single added successfully!</div>
-          </div>
-        </div>
-
-        <!-- Settings -->
-        <div class="dash-section" id="section-settings">
-          <div class="section-title">Settings</div>
-          <div class="section-sub">Platform configuration.</div>
-          <div class="admin-form">
-            <div style="font-size:11px;color:var(--fg3);line-height:1.7;margin-bottom:16px">
-              <strong style="color:var(--fg)">Firebase Project:</strong> n3xt-c488a<br>
-              <strong style="color:var(--fg)">Firestore:</strong> Connected<br>
-              <strong style="color:var(--fg)">Auth:</strong> Email/Password<br>
-              <strong style="color:var(--fg)">Version:</strong> N3XT v6.2
-            </div>
-            <div style="background:rgba(250,45,72,.08);border:1px solid rgba(250,45,72,.2);border-radius:10px;padding:14px;font-size:11px;color:var(--fg2);line-height:1.65">
-              <strong style="color:var(--accent)">⚠ Security reminder:</strong> Restrict your Firebase API key to your Vercel domain in Google Cloud Console → APIs & Services → Credentials. Set Firestore rules to require auth for writes.
+              <select id="sng-source"><option value="Instagram">Instagram</option><option value="Telegram">Telegram</option></select>
             </div>
           </div>
+          <div class="toggle-row">
+            <div><div class="toggle-label">Password Protection</div><div class="toggle-sub">Require a password before download</div></div>
+            <label class="toggle"><input type="checkbox" id="sng-pw-toggle" checked onchange="togglePwField('sng')"><div class="toggle-slider"></div></label>
+          </div>
+          <div id="sng-pw-field" class="form-row"><label>Password</label><input type="text" id="sng-pw" placeholder="n3xt2026"></div>
+          <div class="form-row"><label>Preview Audio URL (optional)</label><input type="url" id="sng-audio" placeholder="https://…"></div>
+          <button class="form-submit" id="submit-single"><span data-lucide="upload-cloud"></span>Add to Firebase</button>
+          <div class="form-success" id="single-success"><span data-lucide="check-circle"></span>Single added!</div>
         </div>
+      </div>
 
-      </div><!-- /dashboard-main -->
-    </div>
+      <!-- Settings -->
+      <div class="dash-section" id="section-settings">
+        <div class="section-title">Settings</div>
+        <div class="section-sub">Platform configuration.</div>
+        <div class="admin-form">
+          <div style="font-size:11px;color:var(--fg3);line-height:1.7;margin-bottom:16px">
+            <strong style="color:var(--fg)">Firebase Project:</strong> n3xt-c488a<br>
+            <strong style="color:var(--fg)">Firestore:</strong> Connected<br>
+            <strong style="color:var(--fg)">Auth:</strong> Email/Password<br>
+            <strong style="color:var(--fg)">Version:</strong> N3XT v6.2
+          </div>
+          <div style="background:rgba(250,45,72,.08);border:1px solid rgba(250,45,72,.2);border-radius:10px;padding:14px;font-size:11px;color:var(--fg2);line-height:1.65">
+            <strong style="color:var(--accent)">⚠ Security reminder:</strong> Restrict your Firebase API key to your Vercel domain in Google Cloud Console → APIs & Services → Credentials. Set Firestore rules to require auth for writes.
+          </div>
+        </div>
+      </div>
+
+    </div><!-- /dashboard-main -->
   </div>
+</div>
 
+</div><!-- /app -->
+
+<!-- Edit Overlay -->
+<div class="edit-overlay" id="edit-overlay">
+  <div class="edit-box">
+    <div class="edit-title">
+      <span id="edit-title-text">Edit Content</span>
+      <button class="edit-close" onclick="closeEdit()"><span data-lucide="x"></span></button>
+    </div>
+    <div id="edit-body"></div>
+  </div>
 </div>
 
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-import { getFirestore, collection, addDoc, getDocs, query, orderBy, limit, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+import { getFirestore, collection, addDoc, getDocs, updateDoc, deleteDoc, doc, query, orderBy, limit, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 import { getAuth, signInWithEmailAndPassword, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
 
 const firebaseConfig = {
@@ -348,9 +452,37 @@ const auth = getAuth(app);
 
 lucide.createIcons();
 
+// ── HTML-embedded albums (mirrors index.html data) ─────────────────
+// These are the hardcoded albums. Admin can edit password/mode/availability via Firestore overrides collection.
+const HTML_ALBUMS = [
+  { id:'sad-boyz-4-life-iii', name:'$AD BOYZ 4 LIFE III', artist:'Junior H', year:'2026', source:'Instagram', tracks:17 },
+  { id:'la-boveda',           name:'LA BOVEDA',            artist:'Natanael Cano', year:'2026', source:'Telegram', tracks:18 },
+  { id:'levitico',            name:'LEVITICO',             artist:'Peso Pluma',    year:'2026', source:'Telegram', tracks:1  },
+  { id:'mi-vida-3',           name:'Mi Vida En Un Cigarro 3', artist:'Junior H',  year:'2026', source:'Instagram', tracks:0 },
+  { id:'contingente-ii',      name:'CONTINGENTE II',       artist:'Junior H',      year:'2026', source:'Instagram', tracks:20 },
+];
+const HTML_SINGLES = [
+  { id:'s-gata',     name:'GATA',          artist:'Junior H',                    year:'2026', source:'Instagram' },
+  { id:'s-teniente', name:'EL TENIENTE',   artist:'Junior H & Gael Valenzuela', year:'2026', source:'Instagram' },
+  { id:'s-chango',   name:'EL CHANGO',     artist:'Junior H',                    year:'2026', source:'Instagram' },
+  { id:'s-tigre',    name:'EL TIGRE',      artist:'Junior H',                    year:'2026', source:'Instagram' },
+  { id:'s-cripto',   name:'CRIPTOMONEDAS', artist:'Junior H, Jorsshh & Calle 24',year:'2026', source:'Instagram' },
+  { id:'s-000666',   name:'000666',        artist:'Junior H',                    year:'2026', source:'Instagram' },
+];
+
+// ── Overrides collection: stores admin edits to html-embedded content ─
+// Key: htmlAlbumId, Value: { password, passwordEnabled, mode, trackAvailability:{idx:bool} }
+let overridesCache = {};
+async function loadOverrides(){
+  try{
+    const snap = await getDocs(collection(db,'overrides'));
+    snap.forEach(d=>{ overridesCache[d.id]=d.data(); });
+  }catch(e){ console.warn('overrides load failed',e); }
+}
+
 // ── Auth state ─────────────────────────────────────────────────────
-onAuthStateChanged(auth, user => {
-  if(user) showDashboard(user);
+onAuthStateChanged(auth, async user => {
+  if(user){ await loadOverrides(); showDashboard(user); }
   else showLogin();
 });
 
@@ -368,10 +500,10 @@ function showDashboard(user){
 
 // ── Login ──────────────────────────────────────────────────────────
 document.getElementById('login-btn').addEventListener('click', async () => {
-  const email = document.getElementById('email-inp').value.trim();
-  const pass  = document.getElementById('pass-inp').value;
-  const errEl = document.getElementById('login-err');
-  const btn   = document.getElementById('login-btn');
+  const email=document.getElementById('email-inp').value.trim();
+  const pass=document.getElementById('pass-inp').value;
+  const errEl=document.getElementById('login-err');
+  const btn=document.getElementById('login-btn');
   if(!email||!pass){errEl.innerHTML='<span data-lucide="alert-circle"></span>Enter email and password.';lucide.createIcons();return;}
   btn.disabled=true;btn.innerHTML='<div style="width:16px;height:16px;border:2px solid rgba(255,255,255,.3);border-top-color:#fff;border-radius:50%;animation:spin .7s linear infinite"></div> Signing in…';
   try{
@@ -396,50 +528,297 @@ document.querySelectorAll('.sidebar-item').forEach(item=>{
     if(sec)sec.classList.add('active');
     if(item.dataset.section==='searches')loadSearchLogs();
     if(item.dataset.section==='downloads')loadDownloadLogs();
+    if(item.dataset.section==='manage')loadManage();
   });
 });
 
 // ── Stats ──────────────────────────────────────────────────────────
 async function loadStats(){
   try{
-    const [sSnap, dSnap] = await Promise.all([
+    const [sSnap,dSnap,aSnap,sgSnap]=await Promise.all([
       getDocs(collection(db,'searches')),
-      getDocs(collection(db,'downloads'))
+      getDocs(collection(db,'downloads')),
+      getDocs(collection(db,'albums')),
+      getDocs(collection(db,'singles')),
     ]);
-    document.getElementById('stat-searches').textContent = sSnap.size.toLocaleString();
-    document.getElementById('stat-downloads').textContent = dSnap.size.toLocaleString();
-    // Recent activity
-    const actEl = document.getElementById('recent-activity');
-    const allItems = [];
+    document.getElementById('stat-searches').textContent=sSnap.size.toLocaleString();
+    document.getElementById('stat-downloads').textContent=dSnap.size.toLocaleString();
+    document.getElementById('stat-albums').textContent=aSnap.size;
+    document.getElementById('stat-singles').textContent=sgSnap.size;
+    const actEl=document.getElementById('recent-activity');
+    const allItems=[];
     sSnap.forEach(d=>allItems.push({...d.data(),_type:'search'}));
     dSnap.forEach(d=>allItems.push({...d.data(),_type:'download'}));
     allItems.sort((a,b)=>(b.ts?.seconds||0)-(a.ts?.seconds||0));
-    actEl.innerHTML = allItems.slice(0,8).map(item=>`
+    actEl.innerHTML=allItems.slice(0,8).map(item=>`
       <div class="log-item">
         <div class="log-icon"><span data-lucide="${item._type==='search'?'search':'download'}"></span></div>
         <div class="log-info">
-          <div class="log-name">${item.query||item.album||'—'}</div>
+          <div class="log-name">${esc(item.query||item.album||'—')}</div>
           <div class="log-sub">${item.ts?new Date(item.ts.seconds*1000).toLocaleString():'—'}</div>
         </div>
         <div class="log-badge ${item._type}">${item._type}</div>
-      </div>`).join('') || '<div style="color:var(--fg3);font-size:12px;padding:10px 0">No activity yet.</div>';
+      </div>`).join('')||'<div style="color:var(--fg3);font-size:12px;padding:10px 0">No activity yet.</div>';
     lucide.createIcons();
-  }catch(e){
-    document.getElementById('stat-searches').textContent='Err';
-    document.getElementById('stat-downloads').textContent='Err';
-  }
+  }catch(e){console.error(e);}
 }
 
+// ── Manage ─────────────────────────────────────────────────────────
+window.loadManage = async function(){
+  await loadOverrides();
+  // Firestore albums
+  const aEl=document.getElementById('fb-albums-list');
+  const sEl=document.getElementById('fb-singles-list');
+  aEl.innerHTML='<div class="spinner-sm"></div>';
+  sEl.innerHTML='<div class="spinner-sm"></div>';
+  try{
+    const aSnap=await getDocs(collection(db,'albums'));
+    const sgSnap=await getDocs(collection(db,'singles'));
+    if(aSnap.empty){aEl.innerHTML='<div style="color:var(--fg3);font-size:12px;padding:10px 0">No Firestore albums yet.</div>';}
+    else{
+      aEl.innerHTML=renderContentRows(aSnap,'album');
+    }
+    if(sgSnap.empty){sEl.innerHTML='<div style="color:var(--fg3);font-size:12px;padding:10px 0">No Firestore singles yet.</div>';}
+    else{
+      sEl.innerHTML=renderContentRows(sgSnap,'single');
+    }
+  }catch(e){aEl.innerHTML='<div style="color:var(--fg3);font-size:12px">Error loading Firestore content.</div>';sEl.innerHTML='';}
+
+  // HTML albums
+  const hEl=document.getElementById('html-albums-list');
+  hEl.innerHTML=HTML_ALBUMS.map(a=>{
+    const ov=overridesCache[a.id]||{};
+    const hasPw=ov.passwordEnabled!==false;
+    const mode=ov.mode||'standard';
+    const srcBadge=a.source==='Telegram'?'badge-tg':'badge-ig';
+    return`<div class="html-album-card">
+      <div class="html-album-thumb">${a.name.slice(0,4)}</div>
+      <div class="html-album-info">
+        <div class="html-album-name">${esc(a.name)}</div>
+        <div class="html-album-meta">
+          <span class="badge ${srcBadge}">${esc(a.source)}</span>
+          <span class="badge ${mode==='availability'?'badge-avail':'badge-std'}">${mode}</span>
+          ${hasPw?'<span class="badge" style="background:rgba(245,245,245,.07);color:var(--fg3);border:1px solid var(--border)">🔒 password</span>':'<span class="badge" style="background:rgba(22,163,74,.1);color:#4ade80;border:1px solid rgba(22,163,74,.2)">🔓 open</span>'}
+          <span style="color:var(--fg4)">${a.tracks} tracks</span>
+        </div>
+      </div>
+      <div class="html-album-actions">
+        <button class="action-btn primary" onclick="editHTMLAlbum('${a.id}')"><span data-lucide="edit-3"></span>Edit</button>
+      </div>
+    </div>`;
+  }).join('');
+  lucide.createIcons();
+};
+
+function renderContentRows(snap, type){
+  let html='';
+  snap.forEach(d=>{
+    const x=d.data();
+    const srcBadge=x.source==='Telegram'?'badge-tg':'badge-ig';
+    const mode=x.mode||'standard';
+    const hasPw=x.passwordEnabled!==false&&x.password;
+    html+=`<div class="html-album-card">
+      <div class="html-album-thumb">${(x.name||'?').slice(0,4)}</div>
+      <div class="html-album-info">
+        <div class="html-album-name">${esc(x.name||'Untitled')}</div>
+        <div class="html-album-meta">
+          <span class="badge ${srcBadge}">${esc(x.source||'—')}</span>
+          <span class="badge ${mode==='availability'?'badge-avail':'badge-std'}">${mode}</span>
+          ${hasPw?'<span class="badge" style="background:rgba(245,245,245,.07);color:var(--fg3);border:1px solid var(--border)">🔒 password</span>':'<span class="badge badge-std">🔓 open</span>'}
+          <span style="color:var(--fg4)">${esc(x.artist||'')}</span>
+        </div>
+      </div>
+      <div class="html-album-actions">
+        <button class="action-btn primary" onclick="editFBContent('${d.id}','${type}')"><span data-lucide="edit-3"></span>Edit</button>
+        <button class="action-btn danger" onclick="deleteFBContent('${d.id}','${type}')"><span data-lucide="trash-2"></span></button>
+      </div>
+    </div>`;
+  });
+  return html;
+}
+
+// ── Edit HTML-embedded album (overrides in Firestore) ───────────────
+window.editHTMLAlbum = function(albumId){
+  const a=HTML_ALBUMS.find(x=>x.id===albumId);
+  if(!a)return;
+  const ov=overridesCache[albumId]||{};
+  const hasPw=ov.passwordEnabled!==false;
+  const pw=ov.password||'n3xt2026';
+  const mode=ov.mode||'standard';
+  // Build track availability data from override
+  const trackAvail=ov.trackAvailability||{};
+  document.getElementById('edit-title-text').textContent=`Edit: ${a.name}`;
+  document.getElementById('edit-body').innerHTML=buildEditForm(albumId, a.name, hasPw, pw, mode, null, trackAvail, a.tracks, true, false);
+  document.getElementById('edit-overlay').classList.add('on');
+  lucide.createIcons();
+};
+
+// ── Edit Firestore album/single ─────────────────────────────────────
+window.editFBContent = async function(docId, type){
+  try{
+    const snap=await getDocs(collection(db, type==='album'?'albums':'singles'));
+    let data=null;
+    snap.forEach(d=>{ if(d.id===docId)data={...d.data(),_id:d.id}; });
+    if(!data)return;
+    const hasPw=data.passwordEnabled!==false;
+    const pw=data.password||'n3xt2026';
+    const mode=data.mode||'standard';
+    const tracks=(data.tracks||[]);
+    const trackAvail={};
+    tracks.forEach((t,i)=>{ trackAvail[i]=t.available!==false; });
+    document.getElementById('edit-title-text').textContent=`Edit: ${data.name}`;
+    document.getElementById('edit-body').innerHTML=buildEditForm(docId, data.name, hasPw, pw, mode, tracks, trackAvail, tracks.length, false, true);
+    document.getElementById('edit-overlay').classList.add('on');
+    lucide.createIcons();
+  }catch(e){alert('Error loading: '+e.message);}
+};
+
+function buildEditForm(id, name, hasPw, pw, mode, tracks, trackAvail, trackCount, isHTML, isFB){
+  const trackRows=tracks?tracks.map((t,i)=>{
+    const avail=trackAvail[i]!==false;
+    return`<div class="track-avail-item">
+      <span class="track-avail-num">${i+1}</span>
+      <span class="track-avail-name">${esc(t.name||'Track '+(i+1))}</span>
+      <div class="avail-toggle">
+        <button class="avail-toggle-btn ${avail?'avail':'unavail'}" id="avbtn_${id}_${i}" onclick="toggleAvailBtn('${id}',${i})" data-avail="${avail?'1':'0'}">
+          ${avail?'Available':'Unavailable'}
+        </button>
+      </div>
+    </div>`;
+  }).join(''):'';
+
+  return`
+  <div class="form-row"><label>Mode</label>
+    <div class="mode-btns">
+      <button class="mode-btn ${mode==='standard'?'on':''}" id="em-std-${id}" onclick="setEditMode('${id}','standard')"><span data-lucide="album"></span>Standard</button>
+      <button class="mode-btn ${mode==='availability'?'on':''}" id="em-av-${id}" onclick="setEditMode('${id}','availability')"><span data-lucide="list-checks"></span>Availability</button>
+    </div>
+    <div style="font-size:10px;color:var(--fg3);margin-top:6px" id="em-desc-${id}">${mode==='availability'?'Users pick individual tracks — each can be toggled available or not.':'Users pick full album or single track.'}</div>
+  </div>
+  <div class="toggle-row">
+    <div><div class="toggle-label">Password Protection</div><div class="toggle-sub">Require password before download</div></div>
+    <label class="toggle"><input type="checkbox" id="em-pw-toggle-${id}" ${hasPw?'checked':''} onchange="toggleEditPwField('${id}')"><div class="toggle-slider"></div></label>
+  </div>
+  <div id="em-pw-field-${id}" class="form-row" style="${hasPw?'':'display:none'}"><label>Password</label><input type="text" id="em-pw-${id}" value="${esc(pw)}" placeholder="n3xt2026" style="width:100%;height:44px;border:1.5px solid var(--border);border-radius:8px;background:var(--surface);color:var(--fg);padding:0 12px;font-size:13px;font-family:inherit;outline:none"></div>
+  ${tracks&&tracks.length?`
+  <div id="em-avail-section-${id}" style="${mode==='availability'?'':'display:none'}">
+    <div class="form-row"><label>Track Availability</label>
+      <div class="track-avail-list">${trackRows}</div>
+    </div>
+  </div>`:''}
+  <div style="display:flex;gap:8px;margin-top:8px">
+    <button class="form-submit" style="flex:1" onclick="saveEdit('${id}','${isHTML?'html':'fb'}','${isFB?'albums':''}')"><span data-lucide="save"></span>Save Changes</button>
+    <button class="action-btn" style="height:44px;padding:0 16px" onclick="closeEdit()">Cancel</button>
+  </div>
+  <div id="em-success-${id}" style="display:none;font-size:12px;color:var(--green);margin-top:10px;display:flex;align-items:center;gap:6px"><span data-lucide="check-circle"></span>Saved!</div>`;
+}
+
+// ── Edit helpers ───────────────────────────────────────────────────
+window.toggleEditPwField=function(id){
+  const t=document.getElementById(`em-pw-toggle-${id}`);
+  const f=document.getElementById(`em-pw-field-${id}`);
+  if(f)f.style.display=t.checked?'':'none';
+};
+window.setEditMode=function(id,mode){
+  const stdBtn=document.getElementById(`em-std-${id}`);
+  const avBtn=document.getElementById(`em-av-${id}`);
+  const avSec=document.getElementById(`em-avail-section-${id}`);
+  const desc=document.getElementById(`em-desc-${id}`);
+  if(stdBtn)stdBtn.classList.toggle('on',mode==='standard');
+  if(avBtn)avBtn.classList.toggle('on',mode==='availability');
+  if(avSec)avSec.style.display=mode==='availability'?'':'none';
+  if(desc)desc.textContent=mode==='availability'?'Users pick individual tracks — each can be toggled available or not.':'Users pick full album or single track.';
+};
+window.toggleAvailBtn=function(id,idx){
+  const btn=document.getElementById(`avbtn_${id}_${idx}`);
+  if(!btn)return;
+  const cur=btn.dataset.avail==='1';
+  const newAvail=!cur;
+  btn.dataset.avail=newAvail?'1':'0';
+  btn.className=`avail-toggle-btn ${newAvail?'avail':'unavail'}`;
+  btn.textContent=newAvail?'Available':'Unavailable';
+};
+window.closeEdit=function(){
+  document.getElementById('edit-overlay').classList.remove('on');
+};
+document.getElementById('edit-overlay').addEventListener('click',e=>{if(e.target===document.getElementById('edit-overlay'))closeEdit();});
+
+// ── Save edit ──────────────────────────────────────────────────────
+window.saveEdit=async function(id, sourceType, fbCol){
+  const hasPw=document.getElementById(`em-pw-toggle-${id}`)?.checked;
+  const pw=document.getElementById(`em-pw-${id}`)?.value||'n3xt2026';
+  // Determine mode
+  const stdOn=document.getElementById(`em-std-${id}`)?.classList.contains('on');
+  const mode=stdOn?'standard':'availability';
+  // Gather track availability from buttons
+  const trackAvailability={};
+  document.querySelectorAll(`[id^="avbtn_${id}_"]`).forEach(btn=>{
+    const idx=parseInt(btn.id.split('_').pop());
+    trackAvailability[idx]=btn.dataset.avail==='1';
+  });
+
+  try{
+    if(sourceType==='html'){
+      // Save to overrides collection
+      const overrideRef=doc(db,'overrides',id);
+      await updateDoc(overrideRef,{ passwordEnabled:hasPw, password:pw, mode, trackAvailability, updatedAt:serverTimestamp() })
+        .catch(async()=>{
+          // doc may not exist yet, use addDoc workaround via set
+          const {setDoc}=await import("https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js");
+          await setDoc(overrideRef,{ passwordEnabled:hasPw, password:pw, mode, trackAvailability, updatedAt:serverTimestamp() });
+        });
+      overridesCache[id]={passwordEnabled:hasPw,password:pw,mode,trackAvailability};
+    }else{
+      // Update Firestore document directly
+      // Also update track availability inside tracks array if mode=availability
+      const colName=fbCol||'albums';
+      const docRef=doc(db,colName,id);
+      const updateData={ passwordEnabled:hasPw, password:pw, mode, updatedAt:serverTimestamp() };
+      if(Object.keys(trackAvailability).length>0){
+        // We need to update track.available on each track — read first
+        const snap=await getDocs(collection(db,colName));
+        let existingTracks=[];
+        snap.forEach(d=>{ if(d.id===id)existingTracks=d.data().tracks||[]; });
+        updateData.tracks=existingTracks.map((t,i)=>({...t,available:trackAvailability[i]!==false}));
+      }
+      await updateDoc(docRef,updateData);
+    }
+    const succEl=document.getElementById(`em-success-${id}`);
+    if(succEl){succEl.style.display='flex';lucide.createIcons();}
+    setTimeout(()=>{ closeEdit();loadManage(); },1200);
+  }catch(e){alert('Save failed: '+e.message);}
+};
+
+// ── Delete Firestore content ───────────────────────────────────────
+window.deleteFBContent=async function(docId,type){
+  if(!confirm(`Delete this ${type} from Firestore? This cannot be undone.`))return;
+  try{
+    await deleteDoc(doc(db, type==='album'?'albums':'singles', docId));
+    showToast('Deleted successfully.');
+    loadManage();
+  }catch(e){alert('Delete failed: '+e.message);}
+};
+
+// ── Toast ──────────────────────────────────────────────────────────
+function showToast(msg){
+  const t=document.createElement('div');
+  t.style.cssText='position:fixed;bottom:24px;right:24px;background:var(--surface2);border:1px solid var(--border);border-radius:12px;padding:10px 16px;font-size:12px;color:var(--fg);z-index:999;box-shadow:0 8px 24px rgba(0,0,0,.6);animation:fadeUp .3s ease both';
+  t.textContent=msg;
+  document.body.appendChild(t);
+  setTimeout(()=>t.remove(),2800);
+}
+
+// ── Search / Download Logs ─────────────────────────────────────────
 async function loadSearchLogs(){
   const el=document.getElementById('search-logs');
   el.innerHTML='<div class="spinner-sm"></div>';
   try{
     const snap=await getDocs(query(collection(db,'searches'),orderBy('ts','desc'),limit(50)));
     if(snap.empty){el.innerHTML='<div style="color:var(--fg3);font-size:12px;padding:10px 0">No searches logged yet.</div>';return;}
-    el.innerHTML=`<table class="data-table"><thead><tr><th>Query</th><th>Time</th><th>User Agent</th></tr></thead><tbody>${
-      snap.docs.map(d=>{const x=d.data();return`<tr><td>${x.query||'—'}</td><td class="mono">${x.ts?new Date(x.ts.seconds*1000).toLocaleString():'—'}</td><td class="mono" style="max-width:180px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${x.ua||'—'}</td></tr>`;}).join('')
+    el.innerHTML=`<table class="content-table"><thead><tr><th>Query</th><th>Time</th><th>User Agent</th></tr></thead><tbody>${
+      snap.docs.map(d=>{const x=d.data();return`<tr><td>${esc(x.query||'—')}</td><td class="mono">${x.ts?new Date(x.ts.seconds*1000).toLocaleString():'—'}</td><td class="mono" style="max-width:180px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${esc(x.ua||'—')}</td></tr>`;}).join('')
     }</tbody></table>`;
-  }catch(e){el.innerHTML='<div style="color:var(--fg3);font-size:12px">Error loading. Check Firestore rules.</div>';}
+  }catch(e){el.innerHTML='<div style="color:var(--fg3);font-size:12px">Error. Check Firestore rules.</div>';}
 }
 
 async function loadDownloadLogs(){
@@ -448,11 +827,55 @@ async function loadDownloadLogs(){
   try{
     const snap=await getDocs(query(collection(db,'downloads'),orderBy('ts','desc'),limit(50)));
     if(snap.empty){el.innerHTML='<div style="color:var(--fg3);font-size:12px;padding:10px 0">No downloads logged yet.</div>';return;}
-    el.innerHTML=`<table class="data-table"><thead><tr><th>Album</th><th>Type</th><th>Time</th></tr></thead><tbody>${
-      snap.docs.map(d=>{const x=d.data();return`<tr><td>${x.album||'—'}</td><td>${x.type||'—'}</td><td class="mono">${x.ts?new Date(x.ts.seconds*1000).toLocaleString():'—'}</td></tr>`;}).join('')
+    el.innerHTML=`<table class="content-table"><thead><tr><th>Album</th><th>Type</th><th>Time</th></tr></thead><tbody>${
+      snap.docs.map(d=>{const x=d.data();return`<tr><td>${esc(x.album||'—')}</td><td>${esc(x.type||'—')}</td><td class="mono">${x.ts?new Date(x.ts.seconds*1000).toLocaleString():'—'}</td></tr>`;}).join('')
     }</tbody></table>`;
-  }catch(e){el.innerHTML='<div style="color:var(--fg3);font-size:12px">Error loading. Check Firestore rules.</div>';}
+  }catch(e){el.innerHTML='<div style="color:var(--fg3);font-size:12px">Error. Check Firestore rules.</div>';}
 }
+
+// ── Mode selector (add forms) ──────────────────────────────────────
+let currentMode='standard';
+window.setMode=function(m){
+  currentMode=m;
+  document.getElementById('mode-std').classList.toggle('on',m==='standard');
+  document.getElementById('mode-avail').classList.toggle('on',m==='availability');
+  document.getElementById('mode-desc').textContent=m==='availability'?'Availability: user picks individual tracks, each can be set available or unavailable.':'Standard: user picks full album or single track.';
+  document.getElementById('alb-avail-section').style.display=m==='availability'?'':'none';
+  if(m==='availability')buildAvailList();
+  lucide.createIcons();
+};
+function buildAvailList(){
+  const raw=document.getElementById('alb-tracks').value.trim();
+  const lines=raw?raw.split('\n').filter(l=>l.trim()):[];
+  const listEl=document.getElementById('alb-avail-list');
+  if(!lines.length){listEl.innerHTML='<div style="padding:14px;font-size:12px;color:var(--fg3)">Enter tracklist first.</div>';return;}
+  listEl.innerHTML=lines.map((line,i)=>{
+    const parts=line.split('|');
+    const name=(parts[0]||'Track '+(i+1)).trim();
+    return`<div class="track-avail-item">
+      <span class="track-avail-num">${i+1}</span>
+      <span class="track-avail-name">${esc(name)}</span>
+      <div class="avail-toggle">
+        <button class="avail-toggle-btn avail" id="new-avbtn-${i}" onclick="toggleNewAvail(${i})" data-avail="1">Available</button>
+      </div>
+    </div>`;
+  }).join('');
+}
+window.toggleNewAvail=function(i){
+  const btn=document.getElementById(`new-avbtn-${i}`);
+  if(!btn)return;
+  const cur=btn.dataset.avail==='1';
+  btn.dataset.avail=cur?'0':'1';
+  btn.className=`avail-toggle-btn ${cur?'unavail':'avail'}`;
+  btn.textContent=cur?'Unavailable':'Available';
+};
+document.getElementById('alb-tracks').addEventListener('input',()=>{ if(currentMode==='availability')buildAvailList(); });
+
+window.togglePwField=function(prefix){
+  const tog=document.getElementById(`${prefix}-pw-toggle`);
+  const field=document.getElementById(`${prefix}-pw-field`);
+  if(field)field.style.display=tog.checked?'':'none';
+};
 
 // ── Add Album ──────────────────────────────────────────────────────
 document.getElementById('submit-album').addEventListener('click', async () => {
@@ -460,23 +883,37 @@ document.getElementById('submit-album').addEventListener('click', async () => {
   const artist=document.getElementById('alb-artist').value.trim();
   if(!name||!artist){alert('Name and Artist are required.');return;}
   const btn=document.getElementById('submit-album');
-  btn.disabled=true;btn.innerHTML='<div style="width:14px;height:14px;border:2px solid rgba(255,255,255,.3);border-top-color:#fff;border-radius:50%;animation:spin .7s linear infinite"></div>Saving…';
+  btn.disabled=true;btn.innerHTML='<div class="spinner-sm" style="border-top-color:#fff"></div>Saving…';
   try{
     const tracksRaw=document.getElementById('alb-tracks').value.trim();
-    const tracks=tracksRaw?tracksRaw.split('\n').map((line,i)=>{const[tname,...rest]=line.split('—');return{name:tname.trim(),artist:rest.join('—').trim()||artist};}):[];
+    const lines=tracksRaw?tracksRaw.split('\n').filter(l=>l.trim()):[];
+    const tracks=lines.map((line,i)=>{
+      const parts=line.split('|');
+      const tname=(parts[0]||'Track '+(i+1)).trim();
+      const tartist=(parts[1]||artist).trim();
+      const tlen=(parts[2]||'').trim();
+      const avBtn=document.getElementById(`new-avbtn-${i}`);
+      const available=avBtn?avBtn.dataset.avail!=='0':true;
+      return{name:tname,artist:tartist,len:tlen,available};
+    });
+    const hasPw=document.getElementById('alb-pw-toggle').checked;
+    const pw=document.getElementById('alb-pw').value.trim()||'n3xt2026';
     await addDoc(collection(db,'albums'),{
       name,artist,
       year:document.getElementById('alb-year').value.trim()||'2026',
       source:document.getElementById('alb-source').value,
       cover:document.getElementById('alb-cover').value.trim(),
       dlUrl:document.getElementById('alb-dlurl').value.trim(),
-      password:document.getElementById('alb-pw').value.trim()||'n3xt2026',
+      password:hasPw?pw:null,
+      passwordEnabled:hasPw,
+      mode:currentMode,
       tracks,
       createdAt:serverTimestamp()
     });
     const s=document.getElementById('album-success');s.style.display='flex';lucide.createIcons();
     setTimeout(()=>s.style.display='none',4000);
     ['alb-name','alb-artist','alb-year','alb-cover','alb-dlurl','alb-tracks','alb-pw'].forEach(id=>document.getElementById(id).value='');
+    currentMode='standard';setMode('standard');
   }catch(e){alert('Error: '+e.message);}
   btn.disabled=false;btn.innerHTML='<span data-lucide="upload-cloud"></span>Add to Firebase';lucide.createIcons();
 });
@@ -489,20 +926,26 @@ document.getElementById('submit-single').addEventListener('click', async () => {
   const btn=document.getElementById('submit-single');
   btn.disabled=true;
   try{
+    const hasPw=document.getElementById('sng-pw-toggle').checked;
+    const pw=document.getElementById('sng-pw').value.trim()||'n3xt2026';
     await addDoc(collection(db,'singles'),{
       name,artist,
       year:document.getElementById('sng-year').value.trim()||'2026',
       source:document.getElementById('sng-source').value,
       audioUrl:document.getElementById('sng-audio').value.trim(),
+      password:hasPw?pw:null,
+      passwordEnabled:hasPw,
       isSingle:true,
       createdAt:serverTimestamp()
     });
     const s=document.getElementById('single-success');s.style.display='flex';lucide.createIcons();
     setTimeout(()=>s.style.display='none',4000);
-    ['sng-name','sng-artist','sng-year','sng-audio'].forEach(id=>document.getElementById(id).value='');
+    ['sng-name','sng-artist','sng-year','sng-audio','sng-pw'].forEach(id=>document.getElementById(id).value='');
   }catch(e){alert('Error: '+e.message);}
   btn.disabled=false;
 });
+
+function esc(s){return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
 </script>
 </body>
 </html>
