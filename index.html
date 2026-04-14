@@ -1253,7 +1253,7 @@ const leviticoAlbum={id:'levitico',name:'LEVITICO',artist:'Peso Pluma',year:'202
 const miVida3Album={id:'mi-vida-3',name:'Mi Vida En Un Cigarro 3',artist:'Junior H',year:'2026',source:'Instagram',
   cover:'https://github.com/Rainfun/rainfun.github.io/blob/well-known/photo_5107148283603258266_x.jpg?raw=true',dlTime:10000,failedCount:14};
 const contingente2Album={
-  id:'contingente-ii',name:'CONTINGENTE II',artist:'Junior H',year:'2026',source:'Instagram',cover:'',dlTime:10000,
+  id:'contingente-ii',name:'CONTINGENTE II',artist:'Junior H',year:'2026',source:'Instagram',cover:'https://github.com/Rainfun/Pulse/blob/main/kbqwybc5.jpeg?raw=true',artworkUrl100:'https://github.com/Rainfun/Pulse/blob/main/kbqwybc5.jpeg?raw=true',dlTime:10000,
   tracks:[
     {name:'CNTGNT II (Intro)',artist:'Junior H',len:'2:41'},{name:'Bon Appétit',artist:'Junior H, Ovi',len:'3:31'},
     {name:'Escribiendo Canciones',artist:'Junior H',len:'2:53'},{name:'Lo Qué Quisiera',artist:'Junior H',len:'2:38'},
@@ -1267,12 +1267,12 @@ const contingente2Album={
     {name:'La Señal',artist:'Junior H',len:'2:34'},{name:'Última Vez',artist:'Junior H',len:'2:50'},
   ]
 };
-const gataS     ={id:'s-gata',    name:'GATA',          artist:'Junior H',                      year:'2026',source:'Instagram',isSingle:true};
-const tenienteS ={id:'s-teniente',name:'EL TENIENTE',   artist:'Junior H & Gael Valenzuela',    year:'2026',source:'Instagram',isSingle:true};
-const changoS   ={id:'s-chango',  name:'EL CHANGO',     artist:'Junior H',                      year:'2026',source:'Instagram',isSingle:true};
-const tigreS    ={id:'s-tigre',   name:'EL TIGRE',      artist:'Junior H',                      year:'2026',source:'Instagram',isSingle:true};
-const criptoS   ={id:'s-cripto',  name:'CRIPTOMONEDAS', artist:'Junior H, Jorsshh & Calle 24', year:'2026',source:'Instagram',isSingle:true};
-const s000666   ={id:'s-000666',  name:'000666',        artist:'Junior H',                      year:'2026',source:'Instagram',isSingle:true};
+const gataS     ={id:'s-gata',    name:'GATA',          artist:'Junior H',                      year:'2026',source:'Instagram',isSingle:true,cover:'https://github.com/Rainfun/Pulse/blob/main/web.telegram%20(1).png?raw=true',artworkUrl100:'https://github.com/Rainfun/Pulse/blob/main/web.telegram%20(1).png?raw=true'};
+const tenienteS ={id:'s-teniente',name:'EL TENIENTE',   artist:'Junior H & Gael Valenzuela',    year:'2026',source:'Instagram',isSingle:true,cover:'https://github.com/Rainfun/Pulse/blob/main/photo_5001677823982373838_x.jpg?raw=true',artworkUrl100:'https://github.com/Rainfun/Pulse/blob/main/photo_5001677823982373838_x.jpg?raw=true'};
+const changoS   ={id:'s-chango',  name:'EL CHANGO',     artist:'Junior H',                      year:'2026',source:'Instagram',isSingle:true,cover:'https://github.com/Rainfun/Pulse/blob/main/photo_5001677823982373838_x.jpg?raw=true',artworkUrl100:'https://github.com/Rainfun/Pulse/blob/main/photo_5001677823982373838_x.jpg?raw=true'};
+const tigreS    ={id:'s-tigre',   name:'EL TIGRE',      artist:'Junior H',                      year:'2026',source:'Instagram',isSingle:true,cover:'https://github.com/Rainfun/Pulse/blob/main/photo_5001677823982373838_x.jpg?raw=true',artworkUrl100:'https://github.com/Rainfun/Pulse/blob/main/photo_5001677823982373838_x.jpg?raw=true'};
+const criptoS   ={id:'s-cripto',  name:'CRIPTOMONEDAS', artist:'Junior H, Jorsshh & Calle 24', year:'2026',source:'Instagram',isSingle:true,cover:'https://github.com/Rainfun/Pulse/blob/main/photo_5001677823982373838_x.jpg?raw=true',artworkUrl100:'https://github.com/Rainfun/Pulse/blob/main/photo_5001677823982373838_x.jpg?raw=true'};
+const s000666   ={id:'s-000666',  name:'000666',        artist:'Junior H',                      year:'2026',source:'Instagram',isSingle:true,cover:'https://github.com/Rainfun/Pulse/blob/main/photo_5001677823982373838_x.jpg?raw=true',artworkUrl100:'https://github.com/Rainfun/Pulse/blob/main/photo_5001677823982373838_x.jpg?raw=true'};
 
 // ── Override resolution (admin edits to HTML albums) ───────────────
 function _getOverride(albumObj){
@@ -1935,7 +1935,13 @@ function renderResults(items,injectFake,injectBoveda,injectLevitico,q,injectMiVi
   if(showLevitico){const a=getEffectiveAlbum(leviticoAlbum);html+=resultRow(resultThumbHTML(a),a.name,a.artist,`<span class="badge b-tg">Telegram</span>`,'openLevitico()',a.id);}
 
   const singles=[{show:showGata,data:gataS,fn:'openSingleGata()'},{show:showTeniente,data:tenienteS,fn:'openSingleTeniente()'},{show:showChango,data:changoS,fn:'openSingleChango()'},{show:showTigre,data:tigreS,fn:'openSingleTigre()'},{show:showCripto,data:criptoS,fn:'openSingleCripto()'},{show:show000666,data:s000666,fn:'openSingle000666()'}];
-  singles.forEach(({show,data,fn})=>{if(!show)return;html+=resultRow(phCircle,data.name,data.artist,`<span class="badge b-single">Single</span><span class="badge b-ig">Instagram</span>`,fn,data.id);});
+  singles.forEach(({show,data,fn})=>{
+    if(!show)return;
+    const singleThumb=(data.cover||data.artworkUrl100)
+      ? `<img class="result-thumb circle" src="${esc(data.cover||data.artworkUrl100)}" alt="" loading="lazy">`
+      : phCircle;
+    html+=resultRow(singleThumb,data.name,data.artist,`<span class="badge b-single">Single</span><span class="badge b-ig">Instagram</span>`,fn,data.id);
+  });
 
   // Firestore dynamic albums
   fbAlbumsFiltered.forEach(a=>{
