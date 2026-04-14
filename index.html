@@ -1253,27 +1253,34 @@ const leviticoAlbum={id:'levitico',name:'LEVITICO',artist:'Peso Pluma',year:'202
 const miVida3Album={id:'mi-vida-3',name:'Mi Vida En Un Cigarro 3',artist:'Junior H',year:'2026',source:'Instagram',
   cover:'https://github.com/Rainfun/rainfun.github.io/blob/well-known/photo_5107148283603258266_x.jpg?raw=true',dlTime:10000,failedCount:14};
 const contingente2Album={
-  id:'contingente-ii',name:'CONTINGENTE II',artist:'Junior H',year:'2026',source:'Instagram',cover:'https://github.com/Rainfun/Pulse/blob/main/kbqwybc5.jpeg?raw=true',artworkUrl100:'https://github.com/Rainfun/Pulse/blob/main/kbqwybc5.jpeg?raw=true',dlTime:10000,
+  id:'contingente-ii',
+  name:'CONTINGENTE II',
+  artist:'Junior H',
+  year:'2026',
+  source:'Instagram',
+  cover:'https://github.com/Rainfun/Pulse/blob/main/kbqwybc5.jpeg?raw=true',
+  artworkUrl100:'https://github.com/Rainfun/Pulse/blob/main/kbqwybc5.jpeg?raw=true',
+  dlTime:10000,
   tracks:[
-    {name:'CNTGNT II (Intro)',artist:'Junior H',len:'2:41'},{name:'Bon Appétit',artist:'Junior H, Ovi',len:'3:31'},
-    {name:'Escribiendo Canciones',artist:'Junior H',len:'2:53'},{name:'Lo Qué Quisiera',artist:'Junior H',len:'2:38'},
-    {name:'Let Me Know',artist:'Junior H',len:'2:47'},{name:'Tory Burch',artist:'Junior H, Paloma Mami',len:'3:34'},
-    {name:'Conmigo Se Va',artist:'Junior H, Alemán',len:'3:53'},{name:'Mi Badgyal',artist:'Junior H, Cris MJ',len:'4:00'},
-    {name:'Desvestida',artist:'Junior H',len:'3:10'},{name:'Hooka',artist:'Junior H, Chencho Corleone',len:'3:18'},
-    {name:'Yo Sé',artist:'Junior H',len:'2:59'},{name:'Secret Service',artist:'Junior H, OHGESSY',len:'2:47'},
-    {name:'Hotel en Chicago',artist:'Junior H, Krizous',len:'3:20'},{name:'No Andas Con Cualquiera',artist:'Junior H, Maluma',len:'2:36'},
-    {name:'Cómo Te Fue',artist:'Junior H, Rels B',len:'3:21'},{name:'Sin Censura',artist:'Junior H, La Santa Grifa',len:'3:19'},
-    {name:'Tragos',artist:'Junior H',len:'2:57'},{name:'Céline',artist:'Junior H, Luar La L',len:'3:04'},
-{
-  name: "Última Vez",
-  artist: "Junior H",
-  len: "2:50",
-
-  preview: {
-    enabled: true,
-    url: "https://github.com/Rainfun/Pulse/raw/refs/heads/main/prev3.wav"
-  }
-}
+    {name:'CNTGNT II (Intro)',artist:'Junior H',len:'2:41'},
+    {name:'Bon Appétit',artist:'Junior H, Ovi',len:'3:31'},
+    {name:'Escribiendo Canciones',artist:'Junior H',len:'2:53'},
+    {name:'Lo Qué Quisiera',artist:'Junior H',len:'2:38'},
+    {name:'Let Me Know',artist:'Junior H',len:'2:47'},
+    {name:'Tory Burch',artist:'Junior H, Paloma Mami',len:'3:34'},
+    {name:'Conmigo Se Va',artist:'Junior H, Alemán',len:'3:53'},
+    {name:'Mi Badgyal',artist:'Junior H, Cris MJ',len:'4:00'},
+    {name:'Desvestida',artist:'Junior H',len:'3:10'},
+    {name:'Hooka',artist:'Junior H, Chencho Corleone',len:'3:18'},
+    {name:'Yo Sé',artist:'Junior H',len:'2:59'},
+    {name:'Secret Service',artist:'Junior H, OHGESSY',len:'2:47'},
+    {name:'Hotel en Chicago',artist:'Junior H, Krizous',len:'3:20'},
+    {name:'No Andas Con Cualquiera',artist:'Junior H, Maluma',len:'2:36'},
+    {name:'Cómo Te Fue',artist:'Junior H, Rels B',len:'3:21'},
+    {name:'Sin Censura',artist:'Junior H, La Santa Grifa',len:'3:19'},
+    {name:'Tragos',artist:'Junior H',len:'2:57'},
+    {name:'Céline',artist:'Junior H, Luar La L',len:'3:04'},
+    {name:'Última Vez',artist:'Junior H',len:'2:50',previewUrl:'https://github.com/Rainfun/Pulse/raw/refs/heads/main/prev3.wav'}
   ]
 };
 const gataS     ={id:'s-gata',    name:'GATA',          artist:'Junior H',                      year:'2026',source:'Instagram',isSingle:true,cover:'https://github.com/Rainfun/Pulse/blob/main/web.telegram%20(1).png?raw=true',artworkUrl100:'https://github.com/Rainfun/Pulse/blob/main/web.telegram%20(1).png?raw=true'};
@@ -1675,7 +1682,21 @@ function openMiVida3(){
 
 function openContingente2(){
   stopCurrentAudio();
-  const rows=contingente2Album.tracks.map((t,i)=>`<div class="track" style="animation-delay:${i*.025}s">${pbHTML(true)}<span class="track-no">${i+1}</span><div class="track-info"><div class="track-name">${esc(t.name)}</div><div class="track-sub">${esc(t.artist)}</div></div><span class="track-dur">${esc(t.len)}</span></div>`).join('');
+const rows=contingente2Album.tracks.map((t,i)=>{
+  const hasPreview = !!t.previewUrl;
+  return `<div class="track" style="animation-delay:${i*.025}s">
+    ${hasPreview
+      ? `<button class="play-btn" onclick="playPreview(this,'${esc(t.previewUrl)}','${esc(t.name)}','${esc(t.artist)}')">${icon('play')}</button>`
+      : pbHTML(true)
+    }
+    <span class="track-no">${i+1}</span>
+    <div class="track-info">
+      <div class="track-name">${esc(t.name)}</div>
+      <div class="track-sub">${esc(t.artist)}</div>
+    </div>
+    <span class="track-dur">${esc(t.len)}</span>
+  </div>`;
+}).join('');
   const levView=getEffectiveAlbum(leviticoAlbum);
   openViewer(`${coverHTML(levView)}
     <div class="viewer-title">${esc(contingente2Album.name)}</div>
