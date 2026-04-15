@@ -1219,18 +1219,31 @@ function pbHTML(disabled=false){return`<button class="play-btn"${disabled?' disa
 function bigPbHTML(disabled=false){return`<button class="big-play-btn"${disabled?' disabled style="opacity:.25;cursor:default"':''}><span data-lucide="play"></span></button>`;}
 // ── Local Album / Single Data ──────────────────────────────────────
 const sadBoyzAlbum={
-  id:'sad-boyz-4-life-iii',name:'$AD BOYZ 4 LIFE III',artist:'Junior H',year:'2026',source:'Instagram',
-  cover:'https://github.com/Rainfun/rainfun.github.io/blob/well-known/photo_5107148283603258265_x.jpg?raw=true',dlTime:10000,
-  dlUrl: 'https://github.com/Rainfun/Pulse/raw/refs/heads/main/N3XT%20-%20$ad%20Boyz%204%20Life%20III.zip',
+  id:'sad-boyz-4-life-iii',
+  name:'$AD BOYZ 4 LIFE III',
+  artist:'Junior H',
+  year:'2026',
+  source:'Instagram',
+  cover:'https://github.com/Rainfun/rainfun.github.io/blob/well-known/photo_5107148283603258265_x.jpg?raw=true',
+  dlTime:10000,
+  dlUrl:'https://github.com/Rainfun/Pulse/raw/refs/heads/main/N3XT%20-%20$ad%20Boyz%204%20Life%20III.zip',
   tracks:[
-    {name:'24K',artist:'Junior H',len:'3:27'},{name:'Fotos Que Borré',artist:'Junior H, Tito Double P',len:'3:16'},
-    {name:'Bohemio',artist:'Junior H',len:'2:53'},{name:'Vogue Girl',artist:'Junior H, Chino Pacas',len:'3:51'},
-    {name:'Otro Polvo',artist:'Junior H, Gael Valenzuela',len:'3:03'},{name:'Vestido Rojo',artist:'Junior H, Luis R Conriquez',len:'3:57'},
-    {name:'Tormenta',artist:'Junior H',len:'3:06'},{name:'Ya No Llames',artist:'Junior H, Gabriel SSOE',len:'3:00'},
-    {name:'Diez De Copas',artist:'Junior H, Peso Pluma',len:'3:38'},{name:'Noche Eterna',artist:'Junior H',len:'3:21'},
-    {name:'Cicatrices',artist:'Junior H, Jasiel Núñez',len:'3:55'},{name:'Mi Nombre En La Radio',artist:'Junior H',len:'2:53'},
-    {name:"L'Amour",artist:'Junior H, Eslabon Armado',len:'4:04'},{name:'Milán',artist:'Junior H',len:'3:33'},
-    {name:'Reina De Mi Amor',artist:'Junior H',len:'2:39'},{name:'Sirena',artist:'Junior H, Neton Vega',len:'4:17'},
+    {name:'24K',artist:'Junior H',len:'3:27'},
+    {name:'Fotos Que Borré',artist:'Junior H, Tito Double P',len:'3:16'},
+    {name:'Bohemio',artist:'Junior H',len:'2:53'},
+    {name:'Vogue Girl',artist:'Junior H, Chino Pacas',len:'3:51'},
+    {name:'Otro Polvo',artist:'Junior H, Gael Valenzuela',len:'3:03'},
+    {name:'Vestido Rojo',artist:'Junior H, Luis R Conriquez',len:'3:57'},
+    {name:'Tormenta',artist:'Junior H',len:'3:06'},
+    {name:'Ya No Llames',artist:'Junior H, Gabriel SSOE',len:'3:00'},
+    {name:'Diez De Copas',artist:'Junior H, Peso Pluma',len:'3:38'},
+    {name:'Noche Eterna',artist:'Junior H',len:'3:21'},
+    {name:'Cicatrices',artist:'Junior H, Jasiel Núñez',len:'3:55'},
+    {name:'Mi Nombre En La Radio',artist:'Junior H',len:'2:53'},
+    {name:"L'Amour",artist:'Junior H, Eslabon Armado',len:'4:04'},
+    {name:'Milán',artist:'Junior H',len:'3:33'},
+    {name:'Reina De Mi Amor',artist:'Junior H',len:'2:39'},
+    {name:'Sirena',artist:'Junior H, Neton Vega',len:'4:17'},
     {name:'Fin Del Mundo',artist:'Junior H',len:'2:35'}
   ]
 };
@@ -1309,31 +1322,18 @@ function _getOverride(albumObj){
   if(window._fbOverrides && window._fbOverrides[id]) return window._fbOverrides[id];
   return null;
 }
-function resolveMediaUrl(obj){
-  if(!obj) return '';
-  return obj.dlUrl || obj.dlurl || obj.downloadUrl || obj.downloadURL || obj.url || obj.rawUrl || '';
-}
-function normalizeTrack(track){
-  if(!track) return track;
-  return {...track, dlUrl: resolveMediaUrl(track)};
-}
 function getEffectiveTracks(albumObj){
   if(!albumObj) return [];
-  if(albumObj._fromFirestore){
-    const tracks = Array.isArray(albumObj.tracks) ? albumObj.tracks : [];
-    return tracks.map(normalizeTrack);
-  }
+  if(albumObj._fromFirestore) return Array.isArray(albumObj.tracks) ? albumObj.tracks : [];
   const ov = _getOverride(albumObj);
-  if(Array.isArray(ov?.tracks)) return ov.tracks.map(normalizeTrack);
-  const tracks = Array.isArray(albumObj.tracks) ? albumObj.tracks : [];
-  return tracks.map(normalizeTrack);
+  if(Array.isArray(ov?.tracks)) return ov.tracks;
+  return Array.isArray(albumObj.tracks) ? albumObj.tracks : [];
 }
 function getEffectiveAlbum(albumObj){
   if(!albumObj) return {};
   const ov = _getOverride(albumObj);
   const merged = {...albumObj};
   merged.tracks = getEffectiveTracks(albumObj);
-  merged.dlUrl = resolveMediaUrl(ov && ov.dlUrl != null ? {...albumObj, dlUrl: ov.dlUrl} : albumObj);
   if(ov?.mode) merged.mode = ov.mode;
   if(ov?.passwordEnabled != null) merged.passwordEnabled = ov.passwordEnabled;
   if(ov?.password != null) merged.password = ov.password;
@@ -1545,33 +1545,19 @@ function runProgress(type){
       closeModal();
       const mob=/iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
 
-      const fullAlbumUrl = resolveMediaUrl(currentLeakedAlbum);
-      const rawTrackUrl = resolveMediaUrl(selectedTrack);
-      const fallbackTrackUrl = (!rawTrackUrl && selectedTrack && (currentLeakedAlbum?.tracks?.length||0) <= 1) ? fullAlbumUrl : '';
-      const trackUrl = rawTrackUrl || fallbackTrackUrl;
+      const fullAlbumUrl = currentLeakedAlbum?.dlUrl || '';
+      const trackUrl = selectedTrack?.dlUrl || '';
 
       function triggerDownload(url, filename){
         if(!url) return false;
-        const a=document.createElement('a');
-        a.href=url;
-        a.download=filename;
-        a.rel='noopener';
-        a.target='_blank';
-        document.body.appendChild(a);
-
-        if(mob){
-          a.click();
-          document.body.removeChild(a);
-          return true;
-        }
-
-        fetch(url,{mode:'cors'}).then(r=>r.blob()).then(blob=>{
+        if(mob){window.location.href=url;return true;}
+        fetch(url).then(r=>r.blob()).then(blob=>{
           const u=URL.createObjectURL(blob);
-          a.href=u;a.download=filename;a.click();
+          const a=document.createElement('a');
+          a.href=u;a.download=filename;
+          document.body.appendChild(a);a.click();document.body.removeChild(a);
           setTimeout(()=>URL.revokeObjectURL(u),10000);
-        }).catch(()=>a.click()).finally(()=>{
-          if(a.parentNode) document.body.removeChild(a);
-        });
+        }).catch(()=>window.open(url,'_blank'));
         return true;
       }
 
@@ -1585,8 +1571,7 @@ function runProgress(type){
         if(selectedTrack?.available===false){
           showNotif('Download Failed',`"${songName}" is unavailable.`,'err');
         }else if(triggerDownload(trackUrl, `${songName}.mp3`)){
-          const usedFallback = !rawTrackUrl && !!fallbackTrackUrl;
-          showNotif(usedFallback ? 'Opened Release File' : 'Download Complete', usedFallback ? `"${songName}" has no individual track URL, so the release file was opened instead.` : `"${songName}" — downloaded successfully.`,'ok');
+          showNotif('Download Complete',`"${songName}" — downloaded successfully.`,'ok');
         }else{
           showNotif('Download Failed',`"${songName}" has no track URL set.`,'err');
         }
