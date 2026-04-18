@@ -301,24 +301,26 @@
 (async function () {
   // ── INSTANCES (same community Tidal API proxies that Monochrome uses) ──
   const INSTANCES_URL = 'https://raw.githubusercontent.com/EduardPrigoana/hifi-instances/refs/heads/main/instances.json';
-  const FALLBACK = [
+  const CORS = 'https://corsproxy.io/?url=';
+  const RAW = [
     'https://monochrome-api.samidy.com','https://api.monochrome.tf',
     'https://hifi.geeked.wtf',
     'https://wolf.qqdl.site','https://maus.qqdl.site','https://vogel.qqdl.site',
     'https://katze.qqdl.site','https://hund.qqdl.site','https://tidal.401658.xyz',
     'https://triton.squid.wtf','https://tidal.squid.wtf',
   ];
+  const FALLBACK = RAW.map(u => CORS + encodeURIComponent(u));
   let instances = [...FALLBACK];
   let activeInstance = null;
 
   async function loadInstances() {
     try {
-      const r = await fetch(INSTANCES_URL, { signal: AbortSignal.timeout(6000) });
+      const r = await fetch(CORS + encodeURIComponent(INSTANCES_URL), { signal: AbortSignal.timeout(6000) });
       if (!r.ok) throw 0;
       const data = await r.json();
       const all = [];
       for (const [,cfg] of Object.entries(data.api || {})) {
-        if (Array.isArray(cfg.urls)) all.push(...cfg.urls);
+        if (Array.isArray(cfg.urls)) all.push(...cfg.urls.map(u => CORS + encodeURIComponent(u)));
       }
       if (all.length) instances = [...all, ...FALLBACK];
     } catch {}
