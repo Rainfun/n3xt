@@ -302,12 +302,11 @@
   // ── INSTANCES (same community Tidal API proxies that Monochrome uses) ──
   const INSTANCES_URL = 'https://raw.githubusercontent.com/EduardPrigoana/hifi-instances/refs/heads/main/instances.json';
   const FALLBACK = [
-    'https://ohio.monochrome.tf','https://virginia.monochrome.tf','https://oregon.monochrome.tf',
-    'https://california.monochrome.tf','https://frankfurt.monochrome.tf','https://singapore.monochrome.tf',
-    'https://tokyo.monochrome.tf','https://jakarta.monochrome.tf','https://wolf.qqdl.site',
-    'https://maus.qqdl.site','https://vogel.qqdl.site','https://katze.qqdl.site',
-    'https://hund.qqdl.site','https://tidal.401658.xyz','https://aether.squid.wtf',
-    'https://zeus.squid.wtf','https://kraken.squid.wtf','https://phoenix.squid.wtf',
+    'https://monochrome-api.samidy.com','https://api.monochrome.tf',
+    'https://hifi.geeked.wtf',
+    'https://wolf.qqdl.site','https://maus.qqdl.site','https://vogel.qqdl.site',
+    'https://katze.qqdl.site','https://hund.qqdl.site','https://tidal.401658.xyz',
+    'https://triton.squid.wtf','https://tidal.squid.wtf',
   ];
   let instances = [...FALLBACK];
   let activeInstance = null;
